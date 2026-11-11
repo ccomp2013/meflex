@@ -408,7 +408,14 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .tile { padding: var(--sp4); }
 .ghost { min-height: 48px; }
 #rList .label.link { min-height: var(--tap); align-content: center; }
-#setGoal { gap: var(--sp1); } /* 7 × 44px choices fit on one line at 375px */
+#setGoal { gap: var(--sp1); }
+/* ---------- Player timing (Stage 15) ---------- */
+.stage { container-type: inline-size; }
+.stage .art.dim { opacity: .22; }
+.cdnum { position: absolute; inset: 0; display: grid; place-items: center; font-size: 120px; font-size: 46cqi; font-weight: 300; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); pointer-events: none; }
+.nextlbl { color: var(--accent); font-weight: 600; }
+.time.resting { color: var(--muted); }
+.setlabel { color: var(--muted); font-size: var(--fs-small); font-weight: 400; margin: var(--sp5) 0 10px; } /* 7 × 44px choices fit on one line at 375px */
 .skip { min-width: var(--tap); }
 </style>
 <style>
@@ -536,6 +543,11 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <h2 class="sec">Default hold</h2>
     <div class="segs" id="setHold" role="radiogroup" aria-label="Default hold"></div>
     <p class="note">Used for every stretch, on each side. A time you set inside a routine still wins.</p>
+    <h2 class="sec">Timing</h2>
+    <div class="group"><label class="opt" for="set-countdown" style="border-top:0"><span>Start countdown<small>3, 2, 1 before the first stretch</small></span><input type="checkbox" id="set-countdown" role="switch"></label></div>
+    <h3 class="setlabel" id="gapLabel">Pause between stretches</h3>
+    <div class="segs" id="setGap" role="radiogroup" aria-labelledby="gapLabel"></div>
+    <p class="note">A rest before each new stretch, showing what comes next. The 3-second switch between the two sides of a stretch always stays. Pauses never count toward your time.</p>
     <h2 class="sec">Your setup</h2>
     <div class="group" id="setProfile" data-private><dl class="profile" id="profileRows"></dl></div>
     <p class="note">Stored only on this device. Never sent anywhere.</p>
@@ -544,7 +556,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <div class="group"><label class="opt" for="set-analytics" style="border-top:0"><span>Share anonymous usage data<small>Which routines you start, finish or stop early, plus screen recordings with all text hidden. Never your name, email or location.</small></span><input type="checkbox" id="set-analytics" role="switch"></label></div>
     <button class="ghost" id="restoreBtn">Restore defaults</button>
     <p class="restoremsg" id="restoreMsg" aria-live="polite"></p>
-    <p class="note" style="text-align:center;margin-inline:auto">Restores sound, colors, default hold and weekly goal. Your routine times, history and privacy choice stay.</p>
+    <p class="note" style="text-align:center;margin-inline:auto">Restores sound, colors, timing, default hold and weekly goal. Your routine times, history and privacy choice stay.</p>
     <h2 class="sec">Start over</h2>
     <button class="ghost danger" id="resetAppBtn">Reset app and show setup again</button>
     <p class="note">Deletes your setup answers, history, routine times and settings on this device.</p>
@@ -584,6 +596,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
         <circle id="ringFill" cx="50" cy="50" r="47" stroke="var(--ink)" stroke-linecap="round" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="1000"/>
       </svg>
       <div class="art" id="art"></div>
+      <div class="cdnum" id="cdNum" aria-live="polite" hidden></div>
     </div>
     <div class="name"><span id="name"></span><button class="info" id="infoBtn" aria-label="How to do this stretch"><svg viewBox="0 0 16 16"><circle cx="8" cy="3.4" r="1.4"/><rect x="6.9" y="6" width="2.2" height="7.6" rx="1.1"/></svg></button></div>
     <div class="time" id="time" aria-live="off">0:45</div>
@@ -1237,11 +1250,14 @@ const OPTIONS = {
   circle: [['mixed', 'Mixed'], ['#C9785A', 'Clay'], ['#6F9A86', 'Sage'], ['#5A74A6', 'Dusk'], ['#D8B678', 'Sand'], ['#87668F', 'Plum'], ['#4F8A8B', 'Teal'], ['#B9727F', 'Rose']],
   hold: [[0, 'Suggested'], [30, '30s'], [45, '45s'], [60, '1 min'], [90, '1½ min']],
   goal: [1, 2, 3, 4, 5, 6, 7].map(n => [n, String(n)]), // weekly goal, in days
+  countdown: [[true, 'On'], [false, 'Off']],             // 3-2-1 before the first stretch
+  gap: [[0, 'Off'], [5, '5s'], [10, '10s'], [15, '15s'], [20, '20s']], // pause between different stretches, seconds
 };
-const LOOK_DEFAULTS = { skin: 0, hair: 0, outfit: 0, circle: 'mixed', hold: 0, goal: 3 };
+const LOOK_DEFAULTS = { skin: 0, hair: 0, outfit: 0, circle: 'mixed', hold: 0, goal: 3, countdown: true, gap: 0 };
+const BY_VALUE = ['circle', 'hold', 'goal', 'countdown', 'gap']; // stored as the value itself, not a list position
 const look = { ...LOOK_DEFAULTS };
 try { const v = JSON.parse(localStorage.getItem(LOOK_KEY) || '{}');
-  for (const k of Object.keys(LOOK_DEFAULTS)) if (k in v && OPTIONS[k].some(([val], i) => (k === 'circle' || k === 'hold' || k === 'goal' ? val === v[k] : i === v[k]))) look[k] = v[k]; } catch (e) {}
+  for (const k of Object.keys(LOOK_DEFAULTS)) if (k in v && OPTIONS[k].some(([val], i) => (BY_VALUE.includes(k) ? val === v[k] : i === v[k]))) look[k] = v[k]; } catch (e) {}
 const saveLook = () => { try { localStorage.setItem(LOOK_KEY, JSON.stringify(look)); } catch (e) {} };
 
 // ---------- Setup answers (profile) ----------
@@ -1531,8 +1547,20 @@ $('rBack').onclick = () => {
 // while the phone is locked or the page is in the background. Each step has a phase:
 //   hold   - the stretch is timed (this is the only time that counts toward hold time and duration)
 //   switch - a fixed 3-second pause between the two sides of a stretch, to change position
+//   count  - the 3-2-1 countdown before the first stretch (Settings: Start countdown, on by default)
+//   gap    - the pause before each new, different stretch (Settings: Pause between stretches, default Off)
+// Only hold counts. count, switch and gap never count toward hold time, recorded seconds or the routine's length.
 let STEPS = [];
-const SWITCH_MS = 3000;
+const SWITCH_MS = 3000, COUNT_MS = 3000;
+const waitMs = (phase) => phase === 'switch' ? SWITCH_MS : phase === 'count' ? COUNT_MS : look.gap * 1000;
+// What comes after phase `phase` of step i ends: { i, phase }, or null when the routine is over.
+function nextPhase(i, phase) {
+  if (phase !== 'hold') return { i, phase: 'hold' };            // countdown, switch or gap over: hold step i
+  if (i + 1 >= STEPS.length) return null;                       // no pause after the last stretch
+  if (isSecondSide(i + 1)) return { i: i + 1, phase: 'switch' };// other side of the same stretch: fixed 3 s
+  if (look.gap) return { i: i + 1, phase: 'gap' };              // a new stretch: the chosen pause, if any
+  return { i: i + 1, phase: 'hold' };
+}
 const P = { i: 0, phase: 'hold', remaining: 0, swLeft: 0, endAt: 0, running: false, raf: 0, lastFrame: 0, lastSec: 0, active: 0, runFrom: 0 };
 const ICON_PAUSE = '<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1.3"/><rect x="14" y="5" width="4" height="14" rx="1.3"/></svg>';
 const ICON_PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5.2v13.6a1 1 0 0 0 1.5.86l11-6.8a1 1 0 0 0 0-1.72l-11-6.8A1 1 0 0 0 8 5.2z"/></svg>';
@@ -1555,27 +1583,35 @@ function load(i, { animate = true, remaining } = {}) {
   const el = $('art');
   const put = () => { el.innerHTML = art(st.s, st.mirror); el.classList.remove('swap'); };
   if (animate && el.innerHTML && !document.hidden) { el.classList.add('swap'); setTimeout(put, 180); } else put();
-  $('name').textContent = st.s.name;
   $('count').textContent = `${st.si + 1} of ${cur.items.length}`;
   $('prevBtn').disabled = i === 0;
   render();
 }
-// Show step i (the second side) behind a 3-second "Switch sides" pause.
-function beginSwitch(i, now = Date.now(), left = SWITCH_MS, animate = true) {
+// Show step i behind a wait: 'switch' (the 3-second "Switch sides" pause), 'count' (3-2-1) or 'gap' (Next: ...).
+function beginWait(i, phase, now = Date.now(), left = waitMs(phase), animate = true) {
   load(i, { animate });
-  P.phase = 'switch'; P.swLeft = left; P.endAt = now + left;
+  P.phase = phase; P.swLeft = left; P.endAt = now + left; P.lastSec = Math.ceil(left / 1000);
   render();
 }
+const beginSwitch = (i, now = Date.now(), left = SWITCH_MS, animate = true) => beginWait(i, 'switch', now, left, animate);
 function switchCue() {
   if (prefs.chime) { Sound.chime('switch'); if (prefs.voice) Sound.after(1000, () => Sound.say('Switch sides.')); }
   else if (prefs.voice) Sound.say('Switch sides.');
 }
 function render() {
-  const st = STEPS[P.i], sw = P.phase === 'switch';
+  const st = STEPS[P.i], sw = P.phase === 'switch', cd = P.phase === 'count', gap = P.phase === 'gap';
+  const secLeft = Math.max(1, Math.ceil(P.swLeft / 1000));
+  $('name').innerHTML = (gap ? '<span class="nextlbl">Next:</span> ' : '') + esc(st.s.name);
   $('time').classList.toggle('switching', sw);
-  if (sw) $('time').innerHTML = '<span class="sw">Switch sides</span>'; else $('time').textContent = fmt(P.remaining);
-  $('side').textContent = sw ? `${st.side} in ${Math.max(1, Math.ceil(P.swLeft / 1000))}` : st.s.dynamic ? (st.side ? `${st.side} · keep moving` : 'Keep moving') : (st.side || '');
-  const left = sw ? 1 : Math.min(1, Math.max(0, P.remaining / holdMs(P.i)));
+  $('time').classList.toggle('resting', gap || cd);
+  if (sw) $('time').innerHTML = '<span class="sw">Switch sides</span>';
+  else if (cd) $('time').innerHTML = '<span class="sw">Get ready</span>';
+  else $('time').textContent = fmt(gap ? P.swLeft : P.remaining);
+  $('side').textContent = sw ? `${st.side} in ${secLeft}` : gap ? (st.side ? `Rest · then ${st.side.toLowerCase()}` : 'Rest') : st.s.dynamic ? (st.side ? `${st.side} · keep moving` : 'Keep moving') : (st.side || '');
+  $('cdNum').hidden = !cd; if (cd) $('cdNum').textContent = secLeft;
+  $('art').classList.toggle('dim', cd);
+  // the ring fills as time runs down: the hold, or the countdown / pause before it (the switch pause keeps an empty ring)
+  const left = sw ? 1 : (cd || gap) ? Math.min(1, Math.max(0, P.swLeft / waitMs(P.phase))) : Math.min(1, Math.max(0, P.remaining / holdMs(P.i)));
   $('ringFill').setAttribute('stroke-dashoffset', String(1000 * left)); // ring fills as time runs down
   $('ringFill').style.visibility = left > 0.995 ? 'hidden' : 'visible';
   $('playBtn').innerHTML = P.running ? ICON_PAUSE : ICON_PLAY;
@@ -1592,41 +1628,45 @@ function frame() {
       const sec = Math.ceil(left / 1000);
       if (live && prefs.tick && sec < P.lastSec && sec <= 3 && sec >= 1) Sound.tick();
       P.lastSec = sec;
-    } else P.swLeft = left;
+    } else {
+      P.swLeft = left;
+      const sec = Math.ceil(left / 1000);                     // 3-2-1: a tick on each new number (3 ticked at Start)
+      if (P.phase === 'count' && live && prefs.tick && sec < P.lastSec && sec >= 1) Sound.tick();
+      P.lastSec = sec;
+    }
     render();
   } else if (!live) {
     catchUp(now);                              // came back after time passed: jump silently
-  } else if (P.phase === 'switch') {           // pause over: the second side starts now
+  } else if (P.phase !== 'hold') {             // countdown, switch or pause over: the hold starts now
     P.phase = 'hold'; P.remaining = holdMs(P.i); P.endAt = now + P.remaining; P.runFrom = now; P.lastSec = Math.ceil(P.remaining / 1000);
     cueStart(STEPS[P.i]); render();
   } else {                                     // a hold ended
     P.active += P.endAt - P.runFrom;
-    if (P.i + 1 >= STEPS.length) { if (prefs.chime) Sound.chime('end'); P.phase = 'end'; finish(true); return; }
-    if (isSecondSide(P.i + 1)) { switchCue(); beginSwitch(P.i + 1, now); }
-    else { if (prefs.chime) Sound.chime('end'); load(P.i + 1); P.runFrom = now; Sound.after(prefs.chime ? 1000 : 0, () => cueStart(STEPS[P.i])); }
+    const n = nextPhase(P.i, 'hold');
+    if (!n) { if (prefs.chime) Sound.chime('end'); P.phase = 'end'; finish(true); return; }
+    if (n.phase === 'switch') { switchCue(); beginSwitch(n.i, now); }
+    else if (n.phase === 'gap') { if (prefs.chime) Sound.chime('end'); beginWait(n.i, 'gap', now); }
+    else { if (prefs.chime) Sound.chime('end'); load(n.i); P.runFrom = now; Sound.after(prefs.chime ? 1000 : 0, () => cueStart(STEPS[P.i])); }
   }
   if (P.running) P.raf = requestAnimationFrame(frame);
 }
-// Replay the timeline (holds and side-switch pauses) that elapsed while the page was asleep.
-// No sounds. Time away inside a hold counts toward it; the pauses never do.
+// Replay the timeline (countdown, holds, side-switch pauses and between-stretch pauses) that elapsed
+// while the page was asleep. No sounds. Time away inside a hold counts toward it; the waits never do.
 function catchUp(now) {
   let t = P.endAt, i = P.i, phase = P.phase;
   if (phase === 'hold') P.active += t - P.runFrom;
   Sound.stopAll();
   for (;;) {
-    let ni, next, end;
-    if (phase === 'switch') { ni = i; next = 'hold'; end = t + holdMs(i); }
-    else {
-      if (i + 1 >= STEPS.length) { P.phase = 'end'; finish(false); return; }
-      ni = i + 1; next = isSecondSide(ni) ? 'switch' : 'hold'; end = t + (next === 'switch' ? SWITCH_MS : holdMs(ni));
-    }
+    const n = nextPhase(i, phase);
+    if (!n) { P.phase = 'end'; finish(false); return; }
+    const end = t + (n.phase === 'hold' ? holdMs(n.i) : waitMs(n.phase));
     if (end > now) {
-      if (next === 'hold') { load(ni, { animate: false, remaining: end - now }); P.endAt = end; P.runFrom = t; }
-      else beginSwitch(ni, now, end - now, false);
+      if (n.phase === 'hold') { load(n.i, { animate: false, remaining: end - now }); P.endAt = end; P.runFrom = t; }
+      else beginWait(n.i, n.phase, now, end - now, false);
       return;
     }
-    if (next === 'hold') P.active += end - t;
-    t = end; i = ni; phase = next;
+    if (n.phase === 'hold') P.active += end - t;
+    t = end; i = n.i; phase = n.phase;
   }
 }
 function setRunning(on, { cue = false } = {}) {
@@ -1639,7 +1679,7 @@ function setRunning(on, { cue = false } = {}) {
   P.running = on; cancelAnimationFrame(P.raf);
   if (on) {
     if (P.phase === 'hold') { if (!wasRunning) P.runFrom = now; P.endAt = now + P.remaining; P.lastSec = Math.ceil(P.remaining / 1000); }
-    else P.endAt = now + P.swLeft;
+    else { P.endAt = now + P.swLeft; P.lastSec = Math.ceil(P.swLeft / 1000); }
     P.lastFrame = now; P.raf = requestAnimationFrame(frame);
     if (cue && P.phase === 'hold') cueStart(STEPS[P.i]);
   }
@@ -1665,7 +1705,9 @@ function begin() {
   STEPS = cur.items.flatMap((it, si) => (it.st.sides || [null]).map((side, k) => ({ s: it.st, it, si, side, mirror: k === 1 })));
   P.active = 0; P.running = false; P.phase = 'hold';
   if (!cur.r.youth) Analytics.track('routine_started', { routine_id: cur.r.id }); // youth routines send nothing
-  show('player'); load(0, { animate: false }); setRunning(true, { cue: true });
+  show('player');
+  if (look.countdown) { beginWait(0, 'count', Date.now(), COUNT_MS, false); setRunning(true); if (prefs.tick) Sound.tick(); } // 3 (then 2, 1 from frame)
+  else { load(0, { animate: false }); setRunning(true, { cue: true }); }  // countdown off: as before Stage 15
 }
 // Leaving a routine before its finish screen counts as abandoned. step_index is the
 // stretch's position in the routine, from 0 (the "1 of 6" counter minus one).
@@ -1689,7 +1731,8 @@ $('playBtn').onclick = () => {
   if (P.running) setRunning(false);
   else setRunning(true, { cue: P.phase === 'hold' && P.remaining >= holdMs(P.i) - 50 }); // chime only if the hold hasn't begun yet
 };
-$('nextBtn').onclick = () => jump(P.i + 1);
+// Next during the countdown or a between-stretch pause ends the wait at once and starts that stretch.
+$('nextBtn').onclick = () => jump(P.phase === 'count' || P.phase === 'gap' ? P.i : P.i + 1);
 $('prevBtn').onclick = () => { if (P.i > 0) jump(P.i - 1); };
 
 // ---------- Instructions (its own screen) ----------
@@ -1774,6 +1817,7 @@ $('setLook').innerHTML =
   swatchGroup('outfit', 'Outfit', ([t, b]) => `background:linear-gradient(135deg, ${t} 50%, ${b} 50%)`) +
   swatchGroup('circle', 'Background circle', v => v === 'mixed' ? '' : `background:${v}`);
 $('setGoal').innerHTML = OPTIONS.goal.map(([v, name], i) => `<label class="seg"><input type="radio" name="goal" id="goal-${i}" value="${i}" aria-label="${v} day${v === 1 ? '' : 's'} a week"><span>${name}</span></label>`).join('');
+$('setGap').innerHTML = OPTIONS.gap.map(([v, name], i) => `<label class="seg"><input type="radio" name="gap" id="gap-${i}" value="${i}" aria-label="${v ? v + ' seconds' : 'Off'}"><span>${name}</span></label>`).join('');
 $('setHold').innerHTML = OPTIONS.hold.map(([v, name], i) => `<label class="seg"><input type="radio" name="hold" id="hold-${i}" value="${i}"><span>${name}</span></label>`).join('');
 
 function renderPreview() {
@@ -1791,6 +1835,8 @@ function renderSettings() {
   $(`circle-${OPTIONS.circle.findIndex(([v]) => v === look.circle)}`).checked = true;
   $(`hold-${OPTIONS.hold.findIndex(([v]) => v === look.hold)}`).checked = true;
   $(`goal-${OPTIONS.goal.findIndex(([v]) => v === look.goal)}`).checked = true;
+  $(`gap-${OPTIONS.gap.findIndex(([v]) => v === look.gap)}`).checked = true;
+  $('set-countdown').checked = look.countdown;
   renderPreview();
   renderProfileSummary();
 }
@@ -1816,6 +1862,8 @@ $('setLook').addEventListener('change', (e) => {
   look[name] = name === 'circle' ? OPTIONS.circle[i][0] : i; saveLook(); renderPreview();
 });
 $('setHold').addEventListener('change', (e) => { look.hold = OPTIONS.hold[+e.target.value][0]; saveLook(); });
+$('setGap').addEventListener('change', (e) => { look.gap = OPTIONS.gap[+e.target.value][0]; saveLook(); });
+$('set-countdown').addEventListener('change', (e) => { look.countdown = e.target.checked; saveLook(); });
 $('setGoal').addEventListener('change', (e) => { look.goal = OPTIONS.goal[+e.target.value][0]; saveLook(); });
 
 // Restore defaults: an in-page two-tap confirm
