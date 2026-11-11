@@ -12,12 +12,6 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
-<style>
-:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
-html, body { margin: 0; }
-[hidden] { display: none !important; }
-img { max-width: 100%; }
-</style>
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,6 +23,7 @@ img { max-width: 100%; }
   --bg: #0E1113; --raised: #171B1E; --line: #252B2F;
   --ink: #F2EEE8; --muted: #8E979C; --accent: #C9785A;
   --ring-track: #22282C;
+  --sat: 0px; --sab: 0px; /* extra top/bottom safe-area space; the site build sets these to the phone's insets */
   --font: "Inter", -apple-system, "SF Pro Text", system-ui, sans-serif;
   color-scheme: dark;
 }
@@ -38,7 +33,7 @@ body { background: var(--bg); color: var(--ink); font: 16px/1.45 var(--font); -w
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .screen { height: 100%; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 4px 16px; }
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: calc(4px + var(--sat)) calc(16px + var(--sab)); }
 .icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; }
 .icon:active { background: var(--raised); }
 .icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -47,7 +42,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .plate { width: 100%; height: 100%; display: block; }
 
 /* Routine screen */
-#routine .scroll { flex: 1; overflow-y: auto; min-height: 0; padding-block: 28px 120px; -webkit-overflow-scrolling: touch; }
+#routine .scroll { flex: 1; overflow-y: auto; min-height: 0; padding-block: 28px calc(120px + var(--sab)); -webkit-overflow-scrolling: touch; }
 #routine .meta { color: var(--accent); font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; }
 #routine h1 { font-size: 34px; line-height: 1.1; letter-spacing: -0.6px; margin: 6px 0 0; text-wrap: balance; }
 #routine .desc { color: var(--muted); margin: 10px 0 22px; max-width: 40ch; }
@@ -65,22 +60,27 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .stepper button:active:not(:disabled) { background: var(--line); }
 .stepper output { width: 44px; text-align: center; font-variant-numeric: tabular-nums; font-size: 15px; }
 .reset { color: var(--muted); font-size: 14px; text-decoration: underline; text-underline-offset: 3px; margin-top: 16px; padding: 6px 0; }
-.startbar { position: absolute; left: 0; right: 0; bottom: 0; padding: 28px max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px));
+.startbar { position: absolute; left: 0; right: 0; bottom: 0; padding: 28px max(16px, env(safe-area-inset-right, 0px)) calc(16px + var(--sab)) max(16px, env(safe-area-inset-left, 0px));
   background: linear-gradient(transparent, var(--bg) 38%); }
 .cta { height: 56px; border-radius: 28px; background: var(--accent); color: #fff; font-size: 18px; font-weight: 600; width: 100%; }
 .cta:active { filter: brightness(0.92); }
 
 /* Player */
-#player .stage-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 0; gap: 0; }
-.stage { position: relative; width: min(82vw, 46vh, 360px); aspect-ratio: 1; max-width: 100%; }
+#player .stage-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 0; gap: 0; container-type: size; }
+.stage { position: relative; width: min(82vw, 46vh, 360px); aspect-ratio: 1; max-width: 100%; flex: none; }
+/* Size the picture from the space actually left between the header and the controls,
+   minus room for the name, time and side lines, so nothing overlaps on shorter screens. */
+@supports (width: 1cqh) { .stage { width: min(82vw, 360px, calc(100cqh - 190px)); } }
 .stage .ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
 .stage .ring circle { fill: none; stroke-width: 5; }
 .stage .art { position: absolute; inset: 5.5%; transition: opacity .22s ease; }
 .stage .art.swap { opacity: 0; }
-.name { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5vh; font-size: 24px; font-weight: 600; letter-spacing: -0.3px; text-align: center; }
+.name { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 3vh; margin-top: clamp(10px, 3.5cqh, 40px); font-size: 24px; font-weight: 600; letter-spacing: -0.3px; text-align: center; }
 .info { width: 28px; height: 28px; border-radius: 50%; border: 1.6px solid var(--muted); color: var(--muted); display: grid; place-items: center; flex: none; }
 .info svg { width: 14px; height: 14px; fill: currentColor; }
-.time { font-size: clamp(60px, 19vw, 84px); font-weight: 300; letter-spacing: -2px; font-variant-numeric: tabular-nums; line-height: 1.05; margin-top: 4px; }
+.time { font-size: clamp(60px, 19vw, 84px); font-weight: 300; letter-spacing: -2px; font-variant-numeric: tabular-nums; line-height: 1.05; margin-top: 4px;
+  height: 1.05em; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+.time .sw { font-size: 0.46em; font-weight: 600; letter-spacing: -0.3px; color: var(--accent); }
 .side { color: var(--muted); font-size: 15px; min-height: 22px; }
 .controls { display: flex; align-items: center; justify-content: center; gap: 48px; padding-block: 18px 22px; }
 .controls .icon { width: 56px; height: 56px; }
@@ -125,7 +125,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .stage .art { transition: none; } }
 
 /* Tabbed screens */
-.screen.tabbed, #routine, #list { padding-block: 0; position: relative; }
+.screen.tabbed, #routine, #list { padding-block: var(--sat) 0; position: relative; }
 .scroll { flex: 1; overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .tabbed .scroll { padding-block: 22px calc(96px + env(safe-area-inset-bottom, 0px)); }
 .title { font-size: 34px; line-height: 1.1; letter-spacing: -0.6px; margin: 0; text-wrap: balance; }
@@ -245,9 +245,9 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 #info .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: -8px 0 6px; }
 #info .tags span { font-size: 12px; font-weight: 600; color: var(--muted); border: 1px solid var(--line); border-radius: 12px; padding: 3px 9px; }
 /* Setup */
-#setup { padding-block: 0; position: relative; }
+#setup { padding-block: var(--sat) 0; position: relative; }
 #setup .bar { grid-template-columns: 64px 1fr 64px; }
-#setup .scroll { padding-block: 18px 120px; }
+#setup .scroll { padding-block: 18px calc(120px + var(--sab)); }
 .skip { height: 44px; color: var(--muted); font-weight: 600; font-size: 15px; justify-self: end; padding: 0 4px; }
 .q { font-size: 30px; line-height: 1.15; letter-spacing: -0.5px; margin: 0; text-wrap: balance; }
 .qsub { color: var(--muted); margin: 8px 0 0; }
@@ -266,6 +266,72 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .profile div:first-child { border-top: 0; }
 .profile dt { color: var(--muted); }
 .profile dd { margin: 0; text-align: right; }
+/* Progress (History) */
+.mini { color: var(--muted); font-size: 13px; margin: 0; }
+.pcard { background: var(--raised); border-radius: 18px; padding: 16px; margin-top: 18px; }
+.wkhead { display: flex; align-items: baseline; gap: 8px; }
+.wkcount { font-size: 22px; font-weight: 500; } .wkcount b { font-size: 30px; font-weight: 600; }
+.wknote { color: var(--muted); font-size: 14px; }
+.wkdots { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 14px 0 10px; }
+.wd { display: grid; justify-items: center; gap: 5px; }
+.wd i { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--line); box-sizing: border-box; }
+.wd.done i { background: var(--accent); border-color: var(--accent); }
+.wd.today i { box-shadow: 0 0 0 2px var(--raised), 0 0 0 4px var(--ink); }
+.wd.future i { opacity: .5; }
+.wd small { color: var(--muted); font-size: 11px; font-weight: 600; }
+.meter { display: flex; gap: 16px; align-items: center; }
+.mring { position: relative; width: 96px; height: 96px; flex: none; }
+.mring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.mtrack { fill: none; stroke: var(--line); stroke-width: 8; }
+.mfill { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; }
+.mmark { stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; }
+.mpct { position: absolute; inset: 0; display: grid; place-items: center; font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.mtext { min-width: 0; display: grid; gap: 2px; }
+.mtext b { font-size: 17px; }
+.mtarget { color: var(--muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.mtext p { margin: 4px 0 0; font-size: 14px; }
+.mtext .mini { font-size: 12px; line-height: 1.4; }
+.cal { margin-top: 22px; }
+.calhead { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; text-align: center; }
+.calhead b { font-size: 17px; }
+.calhead .icon:disabled { opacity: .25; }
+.calwk, .calgrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+.calwk span { color: var(--muted); font-size: 11px; font-weight: 600; padding: 6px 0; }
+.cd { height: 40px; border-radius: 50%; font-size: 15px; font-variant-numeric: tabular-nums; position: relative; justify-self: center; width: 40px; max-width: 100%; }
+.cd.has { background: var(--accent); color: #fff; font-weight: 600; }
+.cd.today { box-shadow: inset 0 0 0 2px var(--ink); }
+.cd.sel:not(.has) { background: var(--line); }
+.cd.sel.has { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+.cd.sel.today.has { box-shadow: inset 0 0 0 2px var(--ink), 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+.cd:disabled { color: var(--line); filter: brightness(1.8); cursor: default; }
+.blank .mini { margin-top: 2px; }
+/* Describe your routine */
+.descform { display: flex; gap: 8px; }
+.descform input { flex: 1; min-width: 0; height: 46px; border-radius: 23px; border: 0; background: var(--raised); color: var(--ink); font: 16px var(--font); padding: 0 16px; outline: none; -webkit-appearance: none; appearance: none; }
+.descform input::placeholder { color: var(--muted); }
+.descform input:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+.build { flex: none; height: 46px; padding: 0 18px; border-radius: 23px; background: var(--accent); color: #fff; font-weight: 600; }
+.excs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.chip.small { height: 30px; padding: 0 11px; font-size: 13px; color: var(--muted); }
+.understood { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 16px 0 4px; font-size: 13px; }
+.understood span { color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: 12px; margin-right: 2px; }
+.understood i { font-style: normal; background: var(--raised); border-radius: 12px; padding: 3px 9px; }
+#descOut .row .why { display: block; color: var(--muted); font-size: 12.5px; margin-top: 4px; line-height: 1.35; }
+#descOut .row .whylabel { display: block; color: var(--accent); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+#descOut .row em { font-style: normal; color: var(--accent); font-size: 12px; font-weight: 600; margin-left: 4px; }
+.descfail { color: var(--muted); background: var(--raised); border-radius: 14px; padding: 12px 14px; margin: 14px 0 0; font-size: 14px; }
+/* Ice hockey */
+.hockeycard { width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 16px; background: var(--raised); text-align: left; }
+.hockeycard .hk { font-size: 26px; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; background: var(--line); flex: none; }
+.hockeycard .hk svg { width: 24px; height: 24px; fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.hockeycard b { display: block; font-size: 16px; } .hockeycard small { color: var(--muted); font-size: 13px; }
+.hockeycard > span:nth-child(2) { flex: 1; min-width: 0; }
+.youthnote { margin: 0 0 12px; padding: 10px 14px; border-radius: 12px; border: 1.5px solid var(--accent); color: var(--ink); font-size: 14px; font-weight: 500; }
+#rYouth { margin: -8px 0 18px; } #infoYouth { margin: 0 0 6px; }
+.reviewnote { margin: 30px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--raised); color: var(--muted); font-size: 13px; }
+.ghost.danger { width: 100%; color: #E9A08A; border-color: #5A3A33; }
+.dangercta { background: #B5533F; }
+.resettext { color: var(--muted); font-size: 15px; margin: 0 0 14px; }
 /* Tab bar */
 .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: flex; justify-content: center; gap: 8px;
   background: rgba(14,17,19,.94); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-top: 1px solid var(--line);
@@ -273,6 +339,14 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .tabbar button { flex: 1; max-width: 140px; display: grid; justify-items: center; gap: 2px; padding: 6px 0; color: var(--muted); font-size: 11px; font-weight: 600; }
 .tabbar button svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 .tabbar button[aria-current="page"] { color: var(--ink); }
+</style>
+<style>
+/* The page fills the whole screen, under the status bar and home indicator; content keeps clear of them. */
+:root { --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px); }
+html { height: 100%; background: #0E1113; }
+/* Pin the app to the dynamic viewport (follows Safari's toolbar), so no gap opens at the bottom. */
+body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh; margin: 0; }
+[hidden] { display: none !important; }
 </style>
 </head>
 <body>
@@ -288,9 +362,20 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     </form>
     <div id="searchResults" hidden><h2 class="sec">Routines</h2><ul class="rows" id="searchList"></ul><p class="empty" id="searchEmpty" hidden></p></div>
     <div id="homeSections">
+      <section class="describe" id="describe" data-private aria-labelledby="descHead">
+        <h2 class="sec" id="descHead">Describe your routine</h2>
+        <form class="descform" id="descForm" autocomplete="off">
+          <input type="text" id="descInput" maxlength="300" placeholder="e.g. tight hips, 10 minutes, no floor work" aria-label="Describe the routine you want" enterkeyhint="go" spellcheck="false">
+          <button class="build" type="submit">Build</button>
+        </form>
+        <div class="excs" id="descChips" aria-label="Examples"></div>
+        <div id="descOut" aria-live="polite"></div>
+      </section>
       <h2 class="sec">Body areas</h2><div class="chips" id="areaChips"></div>
       <h2 class="sec" id="recHead">Recommended</h2><div class="cards" id="recList"></div>
       <h2 class="sec">Quick routines <span>4 min or less</span></h2><ul class="rows" id="quickList"></ul>
+      <h2 class="sec">Ice hockey</h2>
+      <button class="hockeycard" id="hockeyCard"><span class="hk" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 3l-6.5 14.5H4.5a1.5 1.5 0 0 0 0 3h5.2L18 3"/><ellipse cx="17.5" cy="18.5" rx="3" ry="1.6"/></svg></span><span><b>Warm-ups and cool-downs</b><small>For players, youth players and referees</small></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <h2 class="sec">Categories</h2><div class="grid" id="catGrid"></div>
     </div>
   </div>
@@ -305,6 +390,15 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   </div>
 </section>
 
+<section class="screen tabbed" id="hockey" hidden>
+  <div class="bar"><button class="icon" id="hockeyBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
+  <div class="scroll" style="padding-top:4px">
+    <h1 class="title">Ice hockey</h1>
+    <p class="lede">Moving warm-ups before you skate, still holds after. Focus: hips, groin, hamstrings, low back, shoulders, calves and ankles, and skating posture.</p>
+    <div id="hockeyBody"></div>
+    <p class="reviewnote">These routines are general guidance. Before sharing them with a team or league, have a certified athletic trainer or physical therapist review them.</p>
+  </div>
+</section>
 <section class="screen tabbed" id="library" hidden>
   <div class="scroll">
     <h1 class="title">Library</h1><p class="lede">Every exercise in MeFlex. Tap one for how to do it.</p>
@@ -321,8 +415,28 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <section class="screen tabbed" id="history" hidden>
   <div class="scroll">
     <h1 class="title">History</h1>
-    <div class="blank" id="histEmpty"><div class="ring0"></div><b>No sessions yet</b><span>Finish a routine and it will show up here.</span><button class="ghost" id="histBrowse">Browse routines</button></div>
-    <div id="histBody" hidden><div class="stats" id="histStats"></div><div id="histList"></div></div>
+    <div class="blank" id="histEmpty"><div class="ring0"></div><b>Your progress starts here</b><span>Finish any routine and your week, calendar and consistency appear here.</span><span class="mini" id="histEmptyGoal"></span><button class="ghost" id="histBrowse">Browse routines</button></div>
+    <div id="histBody" data-private hidden>
+      <div class="pcard">
+        <div class="wkhead"><span class="wkcount" id="wkCount"></span><span class="wknote" id="wkNote"></span></div>
+        <div class="wkdots" id="wkDots" aria-label="This week, Monday to Sunday"></div>
+        <p class="mini" id="wkSub"></p>
+      </div>
+      <div class="pcard meter">
+        <div class="mring"><svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="42" class="mtrack"/>
+          <circle cx="50" cy="50" r="42" class="mfill" id="mRing" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="1000"/>
+          <line x1="50" y1="2" x2="50" y2="15" class="mmark" transform="rotate(54 50 50)"/>
+        </svg><span class="mpct" id="mPct"></span></div>
+        <div class="mtext"><b>Consistency</b><span class="mtarget">90% target</span><p id="mMsg"></p><p class="mini" id="mHow"></p></div>
+      </div>
+      <div class="cal">
+        <div class="calhead"><button class="icon" id="calPrev" aria-label="Previous month"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><b id="calMonth"></b><button class="icon" id="calNext" aria-label="Next month"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></div>
+        <div class="calwk" aria-hidden="true"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+        <div class="calgrid" id="calGrid"></div>
+      </div>
+      <h2 class="sec" id="dayHead"></h2><ul class="rows" id="dayList"></ul><p class="empty" id="dayEmpty">No sessions on this day.</p>
+    </div>
   </div>
 </section>
 
@@ -334,6 +448,9 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     <h2 class="sec">Colors</h2>
     <div class="preview" id="setPreview" aria-label="Preview"></div>
     <div id="setLook"></div>
+    <h2 class="sec">Weekly goal</h2>
+    <div class="segs" id="setGoal" role="radiogroup" aria-label="Weekly goal, days a week"></div>
+    <p class="note">Days a week you aim to stretch. History compares each week, and your 4-week consistency, with this goal.</p>
     <h2 class="sec">Default hold</h2>
     <div class="segs" id="setHold" role="radiogroup" aria-label="Default hold"></div>
     <p class="note">Used for every stretch, on each side. A time you set inside a routine still wins.</p>
@@ -345,7 +462,10 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     <div class="group"><label class="opt" for="set-analytics" style="border-top:0"><span>Share anonymous usage data<small>Which routines you start, finish or stop early, plus screen recordings with all text hidden. Never your name, email or location.</small></span><input type="checkbox" id="set-analytics" role="switch"></label></div>
     <button class="ghost" id="restoreBtn">Restore defaults</button>
     <p class="restoremsg" id="restoreMsg" aria-live="polite"></p>
-    <p class="note" style="text-align:center;margin-inline:auto">Restores sound, colors and default hold. Your routine times, history and privacy choice stay.</p>
+    <p class="note" style="text-align:center;margin-inline:auto">Restores sound, colors, default hold and weekly goal. Your routine times, history and privacy choice stay.</p>
+    <h2 class="sec">Start over</h2>
+    <button class="ghost danger" id="resetAppBtn">Reset app and show setup again</button>
+    <p class="note">Deletes your setup answers, history, routine times and settings on this device.</p>
   </div>
 </section>
 
@@ -362,6 +482,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     <h1 id="rTitle"></h1>
     <p class="desc" id="rDesc"></p>
     <p class="rwhy" id="rWhy" data-private hidden></p>
+    <p class="youthnote" id="rYouth" hidden>Stop if anything hurts. Ask a coach or doctor.</p>
     <ul class="list" id="rList"></ul>
     <button class="reset" id="resetTimes" hidden>Reset times</button>
   </div>
@@ -397,6 +518,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   <div class="bar"><button class="icon" id="infoBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="mid">How to</div><span></span></div>
   <div class="head"><div class="mini" id="infoArt"></div><div><h2 id="infoName"></h2><div class="focus" id="infoFocus"></div></div></div>
   <div class="tags" id="infoTags"></div>
+  <p class="youthnote" id="infoYouth" hidden>Stop if anything hurts. Ask a coach or doctor.</p>
   <h3>Steps</h3><ol id="infoSteps"></ol>
   <h3>Tips</h3><ul id="infoTips"></ul>
 </section>
@@ -413,6 +535,15 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   </div>
 </div>
 
+<div class="sheet" id="resetSheet" hidden>
+  <div class="panel" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle" aria-describedby="resetText">
+    <div class="grab"></div>
+    <h2 id="resetTitle">Reset MeFlex?</h2>
+    <p id="resetText" class="resettext">This deletes your setup answers, history, routine times and settings on this device, then shows setup again. It can’t be undone. Your analytics choice stays as it is.</p>
+    <button class="cta dangercta" id="resetConfirm">Reset app</button>
+    <button class="ghost" id="resetCancel">Cancel</button>
+  </div>
+</div>
 <section class="screen" id="done" hidden>
   <h1>Nice work</h1>
   <p id="doneText"></p>
@@ -685,9 +816,80 @@ const STRETCHES = [
   { id: 'rdlhold', name: 'Romanian Hinge Hold', areas: ['hamstrings', 'back'], kind: 'weight', level: 'advanced', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.teal, focus: 'Hamstrings',
     steps: ['Stand holding light dumbbells in front of your thighs, knees soft.', 'Push your hips back and slide the weights down your legs, back flat.', 'Stop when you feel the hamstrings and hold.'],
     tips: [SAFETY, 'Keep your back flat; stop before it rounds.'] },
+  // ---- Ice hockey: dynamic moves (keep moving for the time shown) and hockey-specific holds ----
+  { id: 'legswing', name: 'Front Leg Swings', areas: ['hips', 'hamstrings'], kind: 'body', level: 'beginner', pos: 'standing', balance: true, overhead: false, dynamic: true, sides: LR, circle: C.dusk, focus: 'Hip flexors · hamstrings',
+    steps: ['Stand side-on to a wall or the boards and hold on with one hand.', 'Swing the outside leg forward and back in a smooth arc.', 'Let the swing grow a little bigger each time, staying in control.'],
+    tips: ['Stand tall; let the hip do the work, not the lower back.', 'Keep the swing easy at first.'] },
+  { id: 'sideswing', name: 'Side Leg Swings', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'standing', balance: true, overhead: false, dynamic: true, sides: LR, circle: C.teal, focus: 'Groin · outer hip',
+    steps: ['Face a wall or the boards with both hands on it.', 'Swing one leg across your body and back out to the side.', 'Keep your hips facing forward as the swing grows.'],
+    tips: ['A key warm-up for the groin before skating.', 'Do not force the end of the swing.'] },
+  { id: 'gate', name: 'Open the Gate', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'standing', balance: true, overhead: false, dynamic: true, sides: LR, circle: C.clay, focus: 'Hip rotation · groin',
+    steps: ['Stand tall, holding a wall if you need to.', 'Lift one knee to hip height in front of you.', 'Circle that knee out to the side and back down, like opening a gate.', 'Repeat, then reverse the circle (closing the gate).'],
+    tips: ['Move slowly enough to feel the whole circle.', 'Keep the standing knee soft.'] },
+  { id: 'walklunge', name: 'Walking Lunge with Twist', areas: ['hips', 'quads', 'back'], kind: 'body', level: 'intermediate', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.sand, focus: 'Hip flexors · quads · upper back',
+    steps: ['Step forward into a lunge, back knee just above the floor.', 'Turn your chest toward the front leg, then back to centre.', 'Step through into the next lunge on the other leg and repeat.'],
+    tips: ['Front knee over the ankle, not past the toes.', 'Lunge in place if you have no room to walk.'] },
+  { id: 'lateral', name: 'Lateral Lunge Shifts', areas: ['hips', 'hamstrings'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.plum, focus: 'Groin · inner thighs',
+    steps: ['Stand with feet wide, toes forward.', 'Shift your weight to one side, bending that knee and keeping the other leg straight.', 'Shift across to the other side and keep moving side to side.'],
+    tips: ['Sit the hips back as you shift.', 'Keep both heels down.'] },
+  { id: 'skatestance', name: 'Skating Stance Shifts', areas: ['quads', 'hips', 'back'], kind: 'body', level: 'intermediate', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.rose, focus: 'Skating posture · quads · hips',
+    steps: ['Get into a low skating stance: knees bent, chest up, back flat.', 'Push out to the side with one leg, then bring it back under you.', 'Alternate legs, staying low the whole time.'],
+    tips: ['Knees bent, chest up, eyes forward: the same posture as on the ice.', 'Stay low rather than going fast.'] },
+  { id: 'highknees', name: 'High Knee March', areas: ['hips', 'quads'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.sage, focus: 'Hip flexors · warm-up',
+    steps: ['March on the spot, lifting each knee to hip height.', 'Swing your arms as you march.', 'Pick up the pace once you feel warm.'],
+    tips: ['Stand tall; do not lean back.', 'Hold a wall if you wobble.'] },
+  { id: 'buttkicks', name: 'Heel Flicks', areas: ['quads'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.dusk, focus: 'Quads · warm-up',
+    steps: ['Jog gently on the spot.', 'Flick each heel up toward your seat.', 'Keep the knees pointing down.'],
+    tips: ['Light and quick; no need to touch your seat.', 'Walk it instead of jogging if space is tight.'] },
+  { id: 'armcircles', name: 'Arm Circles', areas: ['shoulders', 'chest'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: true, dynamic: true, sides: null, circle: C.teal, focus: 'Shoulders',
+    steps: ['Stand tall with arms out to the sides.', 'Make small circles, then gradually bigger ones.', 'Halfway through, change direction.'],
+    tips: ['Keep your shoulders down away from your ears.', 'Good for stick handling and shooting shoulders.'] },
+  { id: 'torsotwist', name: 'Standing Torso Twists', areas: ['back'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.clay, focus: 'Mid and lower back',
+    steps: ['Stand with feet hip-width apart, arms relaxed.', 'Turn your chest to one side, letting the arms swing.', 'Turn to the other side and keep a steady rhythm.'],
+    tips: ['Turn from the middle of the back; keep the hips facing mostly forward.', 'Start small and let the turn grow.'] },
+  { id: 'anklerock', name: 'Knee-to-Wall Ankle Rocks', areas: ['calves'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: LR, circle: C.sand, focus: 'Ankles · calves',
+    steps: ['Face a wall with one foot a hand-width away from it.', 'Keep the heel down and rock the knee forward to touch the wall.', 'Rock back and repeat in a steady rhythm.'],
+    tips: ['Skating needs a lot of forward ankle bend; this prepares it.', 'Move the foot back a little once it gets easy.'] },
+  { id: 'inchworm', name: 'Inchworm', areas: ['hamstrings', 'shoulders', 'back'], kind: 'body', level: 'intermediate', pos: 'floor', balance: false, overhead: false, dynamic: true, sides: null, circle: C.plum, focus: 'Hamstrings · shoulders',
+    steps: ['From standing, fold forward and put your hands on the floor.', 'Walk your hands out to a plank.', 'Walk your feet up toward your hands and stand up. Repeat.'],
+    tips: ['Bend your knees as much as you need to.', 'Keep your hips level in the plank.'] },
+  { id: 'groinhold', name: 'Standing Groin Stretch', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: LR, circle: C.rose, focus: 'Groin · inner thigh',
+    steps: ['Stand with feet wide.', 'Bend one knee and shift your weight over it, keeping the other leg straight.', 'Hold where you feel the inside of the straight leg.'],
+    tips: ['Hands on the bent knee or a wall for support.', 'Groin strains are common in hockey; never bounce this one.'] },
+  { id: 'ankledf', name: 'Wall Ankle Stretch', areas: ['calves'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: LR, circle: C.teal, focus: 'Ankles · lower calf',
+    steps: ['Face a wall with one foot close to it, the other behind.', 'Keep the front heel down and bend that knee toward the wall.', 'Hold where you feel the lower calf and ankle.'],
+    tips: ['Skate boots hold the ankle stiff; this gives it back some range.', 'Hands on the wall for balance.'] },
+  { id: 'postwall', name: 'Wall Posture Reset', areas: ['back', 'shoulders', 'chest'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.sage, focus: 'Upright posture · upper back',
+    steps: ['Stand with your back to a wall, heels a little away from it.', 'Rest your head, upper back and seat against the wall.', 'Open your arms out low, palms forward, and breathe slowly.'],
+    tips: ['Undoes the bent-over skating posture after a game.', 'Do not force your head back.'] },
+  { id: 'hiplunge', name: 'Half-Kneeling Hip Flexor', areas: ['hips', 'quads'], kind: 'body', level: 'beginner', pos: 'kneeling', balance: false, overhead: false, sides: LR, circle: C.clay, focus: 'Hip flexors after skating',
+    steps: ['Kneel on one knee, the other foot flat in front.', 'Tuck your tailbone under and squeeze the glute of the back leg.', 'Shift forward a little until you feel the front of the back hip.'],
+    tips: ['Pad the knee.', 'Skating keeps the hips bent for a long time; this opens them back up.'] },
 ];
+
+// Simple-language steps, shown when these exercises are part of a youth routine.
+const KID_STEPS = {
+  legswing: ['Hold the wall with one hand.', 'Swing your outside leg forward and back.', 'Swing a bit bigger each time.'],
+  sideswing: ['Face the wall and hold it.', 'Swing one leg across, then out to the side.'],
+  gate: ['Lift one knee up high.', 'Move it out to the side and down, like opening a gate.'],
+  lateral: ['Stand with your feet wide.', 'Bend one knee and lean to that side.', 'Then lean to the other side.'],
+  skatestance: ['Bend your knees like you are skating.', 'Push one foot out to the side, then bring it back.', 'Swap legs. Stay low.'],
+  highknees: ['March on the spot.', 'Lift your knees up high.', 'Swing your arms.'],
+  buttkicks: ['Jog on the spot.', 'Kick your heels up behind you.'],
+  armcircles: ['Hold your arms out to the sides.', 'Make small circles, then big circles.', 'Change direction.'],
+  torsotwist: ['Stand tall.', 'Turn your body to one side, then the other.', 'Let your arms swing.'],
+  anklerock: ['Face a wall.', 'Keep your heel down.', 'Bend your knee to touch the wall, then back.'],
+  lunge: ['Put one knee on the mat and one foot in front.', 'Sit up tall.', 'Lean forward a little. Hold still.'],
+  butterfly: ['Sit down and put the bottoms of your feet together.', 'Let your knees drop to the sides.', 'Sit tall and hold still.'],
+  groinhold: ['Stand with your feet wide.', 'Bend one knee and lean to that side.', 'Hold still.'],
+  fold: ['Sit with your legs straight out.', 'Reach toward your toes.', 'Hold still. No bouncing.'],
+  calf: ['Put your hands on a wall.', 'Step one foot back, heel down.', 'Lean in and hold still.'],
+  child: ['Kneel down and sit back on your heels.', 'Reach your arms forward on the mat.', 'Rest your head down and breathe.'],
+  crossbody: ['Bring one arm across your chest.', 'Hold it with your other hand.', 'Hold still.'],
+};
+Object.entries(KID_STEPS).forEach(([id, steps]) => { const st = STRETCHES.find(s => s.id === id); if (st) st.kidSteps = steps; });
 // supported: done in a chair or with a wall or door frame to lean on (preferred for ages 45+).
-const SUPPORTED = ['chairfig4', 'chairham', 'seatedtwist', 'necktilt', 'levator', 'chintuck', 'neckturn', 'calf', 'doorway', 'crossbody', 'chestclasp', 'bandchest'];
+const SUPPORTED = ['groinhold', 'ankledf', 'postwall', 'chairfig4', 'chairham', 'seatedtwist', 'necktilt', 'levator', 'chintuck', 'neckturn', 'calf', 'doorway', 'crossbody', 'chestclasp', 'bandchest'];
 STRETCHES.forEach(s => { s.supported = SUPPORTED.includes(s.id); });
 const BY_ID = Object.fromEntries(STRETCHES.map(s => [s.id, s]));
 
@@ -698,6 +900,7 @@ const CATEGORIES = [
   { id: 'evening', name: 'Evening', blurb: 'Slow down before bed' },
   { id: 'band', name: 'Band Work', blurb: 'Deeper holds with a band' },
   { id: 'loaded', name: 'Loaded Stretch', blurb: 'Light weights, longer reach' },
+  { id: 'hockey', name: 'Ice Hockey', blurb: 'Warm-ups and cool-downs for the rink' },
 ];
 
 // items: [stretch id, default seconds per side]
@@ -722,6 +925,32 @@ const ROUTINES = [
     items: [['bandham', 60], ['bandadd', 50], ['passthrough', 40], ['fold', 45]] },
   { id: 'loaded-hips', title: 'Loaded Hips', cat: 'loaded', desc: 'Light weights help you sink deeper into hips, calves and lats. Go easy on the load.',
     items: [['goblet', 60], ['pullover', 45], ['calfdrop', 45], ['lunge', 45]] },
+  // ---- Ice hockey. dynamic: warm-ups are movement, held for the time shown. youth: simple language,
+  // a safety note, and no analytics while they run. group/phase are used by the Hockey screen and the matcher.
+  { id: 'hockey-pre', title: 'Hockey Pre-game Warm-up', cat: 'hockey', group: 'players', phase: 'pre', dynamic: true,
+    desc: 'Moving warm-up before you skate: hips, groin, hamstrings, ankles and shoulders, finishing in your skating stance.',
+    items: [['highknees', 40], ['legswing', 40], ['sideswing', 40], ['gate', 30], ['walklunge', 45], ['lateral', 45], ['anklerock', 30], ['torsotwist', 30], ['armcircles', 30], ['skatestance', 45]] },
+  { id: 'hockey-post', title: 'Hockey Post-game Cool-down', cat: 'hockey', group: 'players', phase: 'post',
+    desc: 'Slow holds after the game for hip flexors, groin, hamstrings, low back, calves and shoulders.',
+    items: [['hiplunge', 40], ['groinhold', 30], ['butterfly', 40], ['fold', 40], ['figure4', 30], ['ankledf', 30], ['crossbody', 30], ['postwall', 40]] },
+  { id: 'youth-pre', title: 'Youth Hockey Warm-up', cat: 'hockey', group: 'youth', phase: 'pre', dynamic: true, youth: true,
+    desc: 'A fun moving warm-up for young players before the game.',
+    items: [['highknees', 30], ['buttkicks', 30], ['legswing', 25], ['gate', 25], ['lateral', 30], ['anklerock', 20], ['torsotwist', 30], ['armcircles', 30], ['skatestance', 30]] },
+  { id: 'youth-post', title: 'Youth Hockey Cool-down', cat: 'hockey', group: 'youth', phase: 'post', youth: true,
+    desc: 'Easy, still stretches for young players after the game.',
+    items: [['lunge', 30], ['groinhold', 30], ['butterfly', 30], ['fold', 30], ['calf', 30], ['crossbody', 30], ['child', 30]] },
+  { id: 'ref-pre', title: 'Referee Pre-game Warm-up', cat: 'hockey', group: 'refs', phase: 'pre', dynamic: true,
+    desc: 'Moving warm-up for officials: hips, groin, hamstrings and ankles for a night of skating backwards and stopping hard.',
+    items: [['highknees', 40], ['legswing', 40], ['sideswing', 40], ['walklunge', 45], ['lateral', 45], ['anklerock', 30], ['torsotwist', 30], ['skatestance', 40]] },
+  { id: 'ref-between', title: 'Referee Between-games Reset', cat: 'hockey', group: 'refs', phase: 'between', dynamic: true,
+    desc: 'A three-minute standing reset between games on a long night, to keep hips, groin and calves loose.',
+    items: [['highknees', 30], ['legswing', 20], ['sideswing', 20], ['lateral', 30], ['anklerock', 15]] },
+  { id: 'ref-post', title: 'Referee Post-game Cool-down', cat: 'hockey', group: 'refs', phase: 'post',
+    desc: 'Standing and seated holds after a game, no floor needed: hips, groin, hamstrings, calves and back.',
+    items: [['quad', 30], ['groinhold', 30], ['standfold', 40], ['ankledf', 30], ['seatedtwist', 30], ['crossbody', 30], ['postwall', 30]] },
+  { id: 'ref-recovery', title: 'Referee Post-night Recovery', cat: 'hockey', group: 'refs', phase: 'recovery',
+    desc: 'Longer, gentle floor holds at the end of a multi-game night.',
+    items: [['kneeschest', 45], ['figure4', 45], ['lyingham', 45], ['butterfly', 45], ['twist', 40], ['hiplunge', 40], ['calf', 40], ['child', 60]] },
 ];
 
 // ---------- Analytics config (PostHog) ----------
@@ -782,7 +1011,8 @@ const Analytics = {
         maskAllInputs: true,           // every text field
         maskTextSelector: '*',         // and every piece of text on screen
         // Not recorded at all (shown as blank boxes): every figure, which reveals the guide choice,
-        // and anything marked data-private: setup screens, the Settings profile, "Why this routine".
+        // and anything marked data-private: setup screens, the Settings profile, "Why this routine",
+        // and the History progress area (week, meter, calendar), whose labels name the days you stretched.
         blockSelector: '.plate, [data-private]',
         recordCrossOriginIframes: false,
       },
@@ -791,7 +1021,8 @@ const Analytics = {
     ph.register({ $geoip_disable: true }); // no IP-based location lookup
     this.loading = false; this.ready = true;
     if (!this.enabled) { this.applyOff(); return; }
-    if (ph.has_opted_out_capturing()) { ph.opt_in_capturing({ captureEventName: false }); ph.startSessionRecording(); } // switched back on after being off
+    if (ph.has_opted_out_capturing()) { ph.opt_in_capturing({ captureEventName: false }); if (!this.isQuiet) ph.startSessionRecording(); } // switched back on after being off
+    if (this.isQuiet) ph.stopSessionRecording(); // loaded while a youth routine is open
     this.queue.splice(0).forEach(([n, p, o]) => ph.capture(n, p, o));
   },
 
@@ -818,8 +1049,16 @@ const Analytics = {
     this.enabled = !!on;
     try { localStorage.setItem(ANALYTICS_PREF_KEY, JSON.stringify({ enabled: this.enabled })); } catch (e) {}
     if (!on) { this.queue = []; this.applyOff(); return; }
-    if (this.ready) { try { window.posthog.opt_in_capturing({ captureEventName: false }); window.posthog.startSessionRecording(); } catch (e) {} }
+    if (this.ready) { try { window.posthog.opt_in_capturing({ captureEventName: false }); if (!this.isQuiet) window.posthog.startSessionRecording(); } catch (e) {} }
     else this.load();
+  },
+  // Pause session replay (used while a youth routine is open). Events are skipped by the app itself.
+  isQuiet: false,
+  quiet(on) {
+    if (on === this.isQuiet) return;
+    this.isQuiet = on;
+    if (!this.ready || !this.enabled) return;
+    try { if (on) window.posthog.stopSessionRecording(); else window.posthog.startSessionRecording(); } catch (e) {}
   },
   // Opt out first so the recorder's last buffered batch is dropped, not sent.
   applyOff() { if (!this.ready) return; try { window.posthog.opt_out_capturing(); window.posthog.stopSessionRecording(); } catch (e) {} },
@@ -879,7 +1118,7 @@ const Sound = {
     this.log.push({ k: kind, t: performance.now(), dur: dur * 1000, vol });
   },
   chime(which) { // soft bell; the end chime sits a fourth lower
-    const f = which === 'end' ? 659.3 : 880;
+    const f = which === 'end' ? 659.3 : which === 'switch' ? 783.99 : 880; // start A5, switch sides G5, end E5
     this.tone([[f, 1], [f * 2, 0.22], [f * 3.01, 0.06]], 0.95, 0.4 * prefs.chimeVol, 'chime-' + which);
   },
   tick() { this.tone([[1320, 1], [2640, 0.15]], 0.06, 0.225 * prefs.tickVol, 'tick'); },
@@ -914,11 +1153,12 @@ const OPTIONS = {
   outfit: [[['#A8D2D2', '#C9CDD4'], 'Mint and grey'], [['#F4EFE6', '#2F3B47'], 'Cream and navy'], [['#E6A57E', '#3A3F47'], 'Peach and charcoal'], [['#B9B4E0', '#5A5F86'], 'Lilac and indigo']],
   circle: [['mixed', 'Mixed'], ['#C9785A', 'Clay'], ['#6F9A86', 'Sage'], ['#5A74A6', 'Dusk'], ['#D8B678', 'Sand'], ['#87668F', 'Plum'], ['#4F8A8B', 'Teal'], ['#B9727F', 'Rose']],
   hold: [[0, 'Suggested'], [30, '30s'], [45, '45s'], [60, '1 min'], [90, '1½ min']],
+  goal: [1, 2, 3, 4, 5, 6, 7].map(n => [n, String(n)]), // weekly goal, in days
 };
-const LOOK_DEFAULTS = { skin: 0, hair: 0, outfit: 0, circle: 'mixed', hold: 0 };
+const LOOK_DEFAULTS = { skin: 0, hair: 0, outfit: 0, circle: 'mixed', hold: 0, goal: 3 };
 const look = { ...LOOK_DEFAULTS };
 try { const v = JSON.parse(localStorage.getItem(LOOK_KEY) || '{}');
-  for (const k of Object.keys(LOOK_DEFAULTS)) if (k in v && OPTIONS[k].some(([val], i) => (k === 'circle' || k === 'hold' ? val === v[k] : i === v[k]))) look[k] = v[k]; } catch (e) {}
+  for (const k of Object.keys(LOOK_DEFAULTS)) if (k in v && OPTIONS[k].some(([val], i) => (k === 'circle' || k === 'hold' || k === 'goal' ? val === v[k] : i === v[k]))) look[k] = v[k]; } catch (e) {}
 const saveLook = () => { try { localStorage.setItem(LOOK_KEY, JSON.stringify(look)); } catch (e) {} };
 
 // ---------- Setup answers (profile) ----------
@@ -983,13 +1223,15 @@ const QUICK_S = 240; // quick routine: 4 minutes or less
 const isQuick = (r) => routineSecs(r) <= QUICK_S;
 
 // ---------- Navigation ----------
-const SCREENS = ['home', 'list', 'library', 'history', 'settings', 'routine', 'player', 'info', 'done', 'setup'];
-const TABBED = { home: 'home', list: 'home', library: 'library', history: 'history', settings: 'settings' };
+const SCREENS = ['home', 'list', 'library', 'history', 'settings', 'routine', 'player', 'info', 'done', 'setup', 'hockey'];
+const TABBED = { home: 'home', list: 'home', hockey: 'home', library: 'library', history: 'history', settings: 'settings' };
 let current = 'home';
 function show(id) {
   SCREENS.forEach(s => { $(s).hidden = s !== id; });
   current = id;
   $('tabbar').hidden = !TABBED[id];
+  // Youth routines send nothing: replay pauses while one is open (routine, player, its instructions, finish screen).
+  Analytics.quiet(!!(cur && cur.r.youth && (['routine', 'player', 'done'].includes(id) || (id === 'info' && ['routine', 'player'].includes(infoFrom)))));
   document.querySelectorAll('#tabbar button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === TABBED[id] ? 'page' : 'false'));
 }
 $('tabbar').addEventListener('click', (e) => {
@@ -1001,7 +1243,7 @@ $('tabbar').addEventListener('click', (e) => {
 // Shared rows: any element with data-routine / data-stretch / data-area / data-cat is a link.
 document.addEventListener('click', (e) => {
   const el = e.target.closest('[data-routine],[data-stretch],[data-area],[data-cat]'); if (!el) return;
-  if (el.dataset.routine) openRoutine(el.dataset.routine, current, el.dataset.rec !== undefined ? REC[+el.dataset.rec] : null);
+  if (el.dataset.routine) openRoutine(el.dataset.routine, current, el.dataset.rec !== undefined ? REC[+el.dataset.rec] : el.dataset.desc !== undefined ? DESC[+el.dataset.desc] : null);
   else if (el.dataset.stretch) openInfo(BY_ID[el.dataset.stretch], false, current, false);
   else if (el.dataset.area) openList('area', el.dataset.area);
   else if (el.dataset.cat) openList('cat', el.dataset.cat);
@@ -1012,7 +1254,7 @@ function routineRow(r) {
   return `<li><button class="row" data-routine="${r.id}"><span class="thumb">${art(items[0].st)}</span>
     <span class="label"><span class="n">${esc(r.title)}</span><span class="sub">${fmtMin(secsOf(items))} · ${esc(catOf(r).name)}</span></span>${CHEV}</button></li>`;
 }
-const tagLine = (st) => [LEVELS[st.level], POSITIONS[st.pos], st.sides && 'each side', st.balance && 'balance'].filter(Boolean).join(' · ');
+const tagLine = (st) => [LEVELS[st.level], POSITIONS[st.pos], st.dynamic && 'moving', st.sides && 'each side', st.balance && 'balance'].filter(Boolean).join(' · ');
 function stretchRow(st) {
   return `<li><button class="row" data-stretch="${st.id}"><span class="thumb">${art(st)}</span>
     <span class="label"><span class="n">${esc(st.name)}</span><span class="sub">${tagLine(st)}</span></span>${CHEV}</button></li>`;
@@ -1053,7 +1295,19 @@ $('searchForm').addEventListener('submit', (e) => { e.preventDefault(); $('searc
 $('searchClear').onclick = () => { $('search').value = ''; applySearch(); $('search').focus(); };
 
 // ---------- Area / category list ----------
+// ---------- Ice hockey ----------
+const YOUTH_NOTE = 'Stop if anything hurts. Ask a coach or doctor.';
+const HOCKEY_GROUPS = [['players', 'Players', 'Adult players'], ['youth', 'Youth players', 'Simple steps for kids'], ['refs', 'Referees', 'Including nights with 3 to 6 games']];
+function openHockey() {
+  $('hockeyBody').innerHTML = HOCKEY_GROUPS.map(([g, name, sub]) => `<h2 class="sec">${name} <span>${sub}</span></h2>
+    ${g === 'youth' ? `<p class="youthnote">${YOUTH_NOTE}</p>` : ''}
+    <ul class="rows">${ROUTINES.filter(r => r.group === g).map(routineRow).join('')}</ul>`).join('');
+  show('hockey'); $('hockey').querySelector('.scroll').scrollTop = 0;
+}
+$('hockeyBack').onclick = () => { renderHome(); show('home'); };
+$('hockeyCard').onclick = openHockey;
 function openList(kind, id) {
+  if (kind === 'cat' && id === 'hockey') return openHockey();
   let title, sub, rs, sts = [];
   if (kind === 'area') {
     const a = AREAS.find(x => x.id === id); title = a.name;
@@ -1107,21 +1361,7 @@ function dayLabel(d) {
   if (diff === 0) return 'Today'; if (diff === 1) return 'Yesterday';
   return day.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric', ...(day.getFullYear() !== today.getFullYear() ? { year: 'numeric' } : {}) });
 }
-function renderHistory() {
-  const h = store.get(HIST_KEY, []);
-  $('histEmpty').hidden = h.length > 0; $('histBody').hidden = !h.length;
-  if (!h.length) return;
-  const weekAgo = Date.now() - 7 * 86400000, wk = h.filter(x => x.at >= weekAgo);
-  $('histStats').innerHTML = `<div><b>${wk.length}</b><span>sessions this week</span></div><div><b>${Math.round(wk.reduce((a, x) => a + x.secs, 0) / 60)}</b><span>minutes this week</span></div><div><b>${h.length}</b><span>sessions in all</span></div>`;
-  const groups = [];
-  h.forEach(x => { const l = dayLabel(x.at); const g = groups[groups.length - 1]; if (g && g.l === l) g.items.push(x); else groups.push({ l, items: [x] }); });
-  $('histList').innerHTML = groups.map(g => `<h2 class="sec">${g.l}</h2><ul class="rows">${g.items.map(x => {
-    const r = R(x.id), cover = r ? art(BY_ID[r.items[0][0]]) : '';
-    const tm = new Date(x.at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
-    return `<li><button class="row" ${r ? `data-routine="${r.id}"` : 'disabled'}><span class="thumb">${cover}</span>
-      <span class="label"><span class="n">${esc(x.title)}</span><span class="sub">${tm} · ${fmtTotal(x.secs)}</span></span>${r ? CHEV : ''}</button></li>`;
-  }).join('')}</ul>`).join('');
-}
+// renderHistory() lives in progress.js (week, consistency meter, calendar).
 $('histBrowse').onclick = () => { renderHome(); show('home'); };
 
 // ---------- Routine screen ----------
@@ -1134,8 +1374,9 @@ function openRoutine(id, from, plan = null) {
   cur = { r, plan, items: itemsOf(r, plan ? plan.items : undefined) }; if (from && from !== 'routine' && from !== 'done') routineFrom = from;
   $('rTitle').textContent = r.title; $('rDesc').textContent = r.desc;
   $('rWhy').hidden = !plan;
+  $('rYouth').hidden = !r.youth;
   if (plan) { const p = tailorPrefs();
-    $('rWhy').innerHTML = `<b>Tailored to your setup</b>${esc(whyLine(plan, p))}` + (p.older && !look.hold ? '<small>Holds follow ACSM’s guidance of 30–60 seconds for older adults.</small>' : ''); }
+    $('rWhy').innerHTML = `<b>${plan.label || 'Tailored to your setup'}</b>${esc(plan.why || whyLine(plan, p))}` + (p.older && !look.hold ? '<small>Holds follow ACSM’s guidance of 30–60 seconds for older adults.</small>' : ''); }
   const note = (st) => !plan ? '' : plan.from[st.id] === 'added' ? 'Added for your focus' : plan.from[st.id] ? `Instead of ${esc(BY_ID[plan.from[st.id]].name)}` : '';
   $('rList').innerHTML = cur.items.map((it, i) => `<li>
     <span class="thumb">${art(it.st, false)}</span>
@@ -1175,13 +1416,17 @@ $('rBack').onclick = () => {
 };
 
 // ---------- Player ----------
-// The hold clock is the device clock (Date.now), not counted frames, so a hold keeps
-// its true length while the phone is locked or the page is in the background.
+// The clock is the device clock (Date.now), not counted frames, so holds keep their true length
+// while the phone is locked or the page is in the background. Each step has a phase:
+//   hold   - the stretch is timed (this is the only time that counts toward hold time and duration)
+//   switch - a fixed 3-second pause between the two sides of a stretch, to change position
 let STEPS = [];
-const P = { i: 0, remaining: 0, endAt: 0, running: false, raf: 0, lastFrame: 0, lastSec: 0, active: 0, runFrom: 0 };
+const SWITCH_MS = 3000;
+const P = { i: 0, phase: 'hold', remaining: 0, swLeft: 0, endAt: 0, running: false, raf: 0, lastFrame: 0, lastSec: 0, active: 0, runFrom: 0 };
 const ICON_PAUSE = '<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1.3"/><rect x="14" y="5" width="4" height="14" rx="1.3"/></svg>';
 const ICON_PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5.2v13.6a1 1 0 0 0 1.5.86l11-6.8a1 1 0 0 0 0-1.72l-11-6.8A1 1 0 0 0 8 5.2z"/></svg>';
 const holdMs = (i) => STEPS[i].it.secs * 1000;
+const isSecondSide = (i) => i > 0 && STEPS[i].si === STEPS[i - 1].si; // step i is the other side of the step before it
 let wakeLock = null;
 async function keepAwake(on) {
   try {
@@ -1190,8 +1435,9 @@ async function keepAwake(on) {
   } catch (e) { wakeLock = null; }
 }
 
+// Show step i, ready to hold.
 function load(i, { animate = true, remaining } = {}) {
-  P.i = i; const st = STEPS[i];
+  P.i = i; P.phase = 'hold'; const st = STEPS[i];
   P.remaining = remaining ?? holdMs(i);
   P.endAt = Date.now() + P.remaining;
   P.lastSec = Math.ceil(P.remaining / 1000);
@@ -1199,15 +1445,26 @@ function load(i, { animate = true, remaining } = {}) {
   const put = () => { el.innerHTML = art(st.s, st.mirror); el.classList.remove('swap'); };
   if (animate && el.innerHTML && !document.hidden) { el.classList.add('swap'); setTimeout(put, 180); } else put();
   $('name').textContent = st.s.name;
-  $('side').textContent = st.side || '';
   $('count').textContent = `${st.si + 1} of ${cur.items.length}`;
   $('prevBtn').disabled = i === 0;
   render();
 }
+// Show step i (the second side) behind a 3-second "Switch sides" pause.
+function beginSwitch(i, now = Date.now(), left = SWITCH_MS, animate = true) {
+  load(i, { animate });
+  P.phase = 'switch'; P.swLeft = left; P.endAt = now + left;
+  render();
+}
+function switchCue() {
+  if (prefs.chime) { Sound.chime('switch'); if (prefs.voice) Sound.after(1000, () => Sound.say('Switch sides.')); }
+  else if (prefs.voice) Sound.say('Switch sides.');
+}
 function render() {
-  const total = holdMs(P.i);
-  $('time').textContent = fmt(P.remaining);
-  const left = Math.min(1, Math.max(0, P.remaining / total));
+  const st = STEPS[P.i], sw = P.phase === 'switch';
+  $('time').classList.toggle('switching', sw);
+  if (sw) $('time').innerHTML = '<span class="sw">Switch sides</span>'; else $('time').textContent = fmt(P.remaining);
+  $('side').textContent = sw ? `${st.side} in ${Math.max(1, Math.ceil(P.swLeft / 1000))}` : st.s.dynamic ? (st.side ? `${st.side} · keep moving` : 'Keep moving') : (st.side || '');
+  const left = sw ? 1 : Math.min(1, Math.max(0, P.remaining / holdMs(P.i)));
   $('ringFill').setAttribute('stroke-dashoffset', String(1000 * left)); // ring fills as time runs down
   $('ringFill').style.visibility = left > 0.995 ? 'hidden' : 'visible';
   $('playBtn').innerHTML = P.running ? ICON_PAUSE : ICON_PLAY;
@@ -1217,47 +1474,77 @@ function frame() {
   if (!P.running) return;
   const now = Date.now(), gap = now - P.lastFrame; P.lastFrame = now;
   const live = gap < 1000 && !document.hidden; // false right after a lock / background stretch
-  P.remaining = P.endAt - now;
-  if (P.remaining <= 0) {
-    if (live) {                               // normal end of a hold
-      if (P.i + 1 < STEPS.length) { if (prefs.chime) Sound.chime('end'); load(P.i + 1); Sound.after(prefs.chime ? 1000 : 0, () => cueStart(STEPS[P.i])); }
-      else { if (prefs.chime) Sound.chime('end'); finish(true); return; }
-    } else catchUp(-P.remaining);             // came back after time passed: jump silently
-  } else {
-    const sec = Math.ceil(P.remaining / 1000);
-    if (live && prefs.tick && sec < P.lastSec && sec <= 3 && sec >= 1) Sound.tick();
-    P.lastSec = sec;
+  const left = P.endAt - now;
+  if (left > 0) {
+    if (P.phase === 'hold') {
+      P.remaining = left;
+      const sec = Math.ceil(left / 1000);
+      if (live && prefs.tick && sec < P.lastSec && sec <= 3 && sec >= 1) Sound.tick();
+      P.lastSec = sec;
+    } else P.swLeft = left;
     render();
+  } else if (!live) {
+    catchUp(now);                              // came back after time passed: jump silently
+  } else if (P.phase === 'switch') {           // pause over: the second side starts now
+    P.phase = 'hold'; P.remaining = holdMs(P.i); P.endAt = now + P.remaining; P.runFrom = now; P.lastSec = Math.ceil(P.remaining / 1000);
+    cueStart(STEPS[P.i]); render();
+  } else {                                     // a hold ended
+    P.active += P.endAt - P.runFrom;
+    if (P.i + 1 >= STEPS.length) { if (prefs.chime) Sound.chime('end'); P.phase = 'end'; finish(true); return; }
+    if (isSecondSide(P.i + 1)) { switchCue(); beginSwitch(P.i + 1, now); }
+    else { if (prefs.chime) Sound.chime('end'); load(P.i + 1); P.runFrom = now; Sound.after(prefs.chime ? 1000 : 0, () => cueStart(STEPS[P.i])); }
   }
   if (P.running) P.raf = requestAnimationFrame(frame);
 }
-// Skip whole holds that elapsed while the page was asleep. No sounds are played.
-function catchUp(over) {
-  let i = P.i + 1;
-  while (i < STEPS.length && over >= holdMs(i)) { over -= holdMs(i); i++; }
+// Replay the timeline (holds and side-switch pauses) that elapsed while the page was asleep.
+// No sounds. Time away inside a hold counts toward it; the pauses never do.
+function catchUp(now) {
+  let t = P.endAt, i = P.i, phase = P.phase;
+  if (phase === 'hold') P.active += t - P.runFrom;
   Sound.stopAll();
-  if (i >= STEPS.length) { finish(false); return; }
-  load(i, { animate: false, remaining: holdMs(i) - over });
+  for (;;) {
+    let ni, next, end;
+    if (phase === 'switch') { ni = i; next = 'hold'; end = t + holdMs(i); }
+    else {
+      if (i + 1 >= STEPS.length) { P.phase = 'end'; finish(false); return; }
+      ni = i + 1; next = isSecondSide(ni) ? 'switch' : 'hold'; end = t + (next === 'switch' ? SWITCH_MS : holdMs(ni));
+    }
+    if (end > now) {
+      if (next === 'hold') { load(ni, { animate: false, remaining: end - now }); P.endAt = end; P.runFrom = t; }
+      else beginSwitch(ni, now, end - now, false);
+      return;
+    }
+    if (next === 'hold') P.active += end - t;
+    t = end; i = ni; phase = next;
+  }
 }
 function setRunning(on, { cue = false } = {}) {
   const now = Date.now();
-  if (P.running && !on) { P.remaining = Math.max(0, P.endAt - now); P.active += now - P.runFrom; }
-  if (!P.running && on) P.runFrom = now;
+  if (P.running && !on) {
+    if (P.phase === 'hold') { P.remaining = Math.max(0, P.endAt - now); P.active += now - P.runFrom; }
+    else P.swLeft = Math.max(0, P.endAt - now);
+  }
+  const wasRunning = P.running;
   P.running = on; cancelAnimationFrame(P.raf);
-  if (on) { P.endAt = now + P.remaining; P.lastFrame = now; P.lastSec = Math.ceil(P.remaining / 1000); P.raf = requestAnimationFrame(frame); if (cue) cueStart(STEPS[P.i]); }
+  if (on) {
+    if (P.phase === 'hold') { if (!wasRunning) P.runFrom = now; P.endAt = now + P.remaining; P.lastSec = Math.ceil(P.remaining / 1000); }
+    else P.endAt = now + P.swLeft;
+    P.lastFrame = now; P.raf = requestAnimationFrame(frame);
+    if (cue && P.phase === 'hold') cueStart(STEPS[P.i]);
+  }
   else Sound.stopAll();
   keepAwake(on);
   render();
 }
 function finish(keepEndChime) {
   const now = Date.now();
-  if (P.running) P.active += now - P.runFrom;
+  if (P.running && P.phase === 'hold') P.active += now - P.runFrom;
   P.running = false; cancelAnimationFrame(P.raf); keepAwake(false);
   if (!keepEndChime) Sound.stopAll();
   const secs = Math.min(P.active / 1000, secsOf(cur.items)); // never more than the routine's own length (e.g. phone left locked)
   const saved = secs >= 10; // skipping straight through is not a session
   if (saved) recordSession(cur.r, secs);
-  if (saved) Analytics.track('routine_completed', { routine_id: cur.r.id, duration_seconds: Math.round(secs) }); // same 10-second rule as history
+  if (saved && !cur.r.youth) Analytics.track('routine_completed', { routine_id: cur.r.id, duration_seconds: Math.round(secs) }); // same 10-second rule as history; youth routines send nothing
   $('doneText').textContent = `${cur.r.title} · ${fmtTotal(secs)}`;
   $('doneSaved').textContent = saved ? 'Saved to your history.' : 'Under 10 seconds, so not saved to history.';
   show('done');
@@ -1265,20 +1552,22 @@ function finish(keepEndChime) {
 function begin() {
   Sound.unlock();
   STEPS = cur.items.flatMap((it, si) => (it.st.sides || [null]).map((side, k) => ({ s: it.st, it, si, side, mirror: k === 1 })));
-  P.active = 0; P.running = false;
-  Analytics.track('routine_started', { routine_id: cur.r.id });
+  P.active = 0; P.running = false; P.phase = 'hold';
+  if (!cur.r.youth) Analytics.track('routine_started', { routine_id: cur.r.id }); // youth routines send nothing
   show('player'); load(0, { animate: false }); setRunning(true, { cue: true });
 }
 // Leaving a routine before its finish screen counts as abandoned. step_index is the
 // stretch's position in the routine, from 0 (the "1 of 6" counter minus one).
-const elapsedSecs = () => Math.round((P.active + (P.running ? Date.now() - P.runFrom : 0)) / 1000);
-const trackAbandon = (opts) => Analytics.track('routine_abandoned', { routine_id: cur.r.id, step_index: STEPS[P.i].si, seconds_elapsed: elapsedSecs() }, opts);
+const elapsedSecs = () => Math.round((P.active + (P.running && P.phase === 'hold' ? Date.now() - P.runFrom : 0)) / 1000);
+const trackAbandon = (opts) => cur.r.youth ? null : Analytics.track('routine_abandoned', { routine_id: cur.r.id, step_index: STEPS[P.i].si, seconds_elapsed: elapsedSecs() }, opts);
 function close() { trackAbandon(); Sound.stopAll(); setRunning(false); show('routine'); renderRoutine(); }
 function jump(i) {
   Sound.stopAll();
   const was = P.running;
   if (i >= STEPS.length) { finish(false); return; }
-  load(i); setRunning(was, { cue: was });
+  if (was) setRunning(false); // closes the current hold's time
+  if (was && i === P.i + 1 && P.phase === 'hold' && isSecondSide(i)) { beginSwitch(i); setRunning(true); switchCue(); } // Next to the other side: pause to change position
+  else { load(i); if (was) setRunning(true, { cue: true }); }
 }
 
 $('startBtn').onclick = begin;
@@ -1287,7 +1576,7 @@ $('doneBtn').onclick = () => { Sound.stopAll(); openRoutine(cur.r.id, undefined,
 $('doneHistory').onclick = () => { Sound.stopAll(); renderHistory(); show('history'); };
 $('playBtn').onclick = () => {
   if (P.running) setRunning(false);
-  else setRunning(true, { cue: P.remaining >= holdMs(P.i) - 50 }); // chime only if the hold hasn't begun yet
+  else setRunning(true, { cue: P.phase === 'hold' && P.remaining >= holdMs(P.i) - 50 }); // chime only if the hold hasn't begun yet
 };
 $('nextBtn').onclick = () => jump(P.i + 1);
 $('prevBtn').onclick = () => { if (P.i > 0) jump(P.i - 1); };
@@ -1300,9 +1589,11 @@ function openInfo(st, mirror, from, fromPlayer) {
   $('infoArt').innerHTML = art(st, mirror);
   $('infoName').textContent = st.name;
   $('infoFocus').textContent = st.focus;
-  $('infoTags').innerHTML = [KINDS[st.kind], LEVELS[st.level], POSITIONS[st.pos], st.sides && 'Each side', st.balance && 'Needs balance', st.overhead && 'Arms overhead'].filter(Boolean).map(t => `<span>${t}</span>`).join('');
-  $('infoSteps').innerHTML = st.steps.map(t => `<li><span>${esc(t)}</span></li>`).join('');
-  $('infoTips').innerHTML = st.tips.map(t => `<li>${esc(t)}</li>`).join('');
+  const kid = cur && cur.r.youth && ['routine', 'player'].includes(from) && st.kidSteps; // simple steps inside a youth routine
+  $('infoTags').innerHTML = [KINDS[st.kind], LEVELS[st.level], POSITIONS[st.pos], st.dynamic && 'Keep moving', st.sides && 'Each side', st.balance && 'Needs balance', st.overhead && 'Arms overhead'].filter(Boolean).map(t => `<span>${t}</span>`).join('');
+  $('infoSteps').innerHTML = (kid || st.steps).map(t => `<li><span>${esc(t)}</span></li>`).join('');
+  $('infoTips').innerHTML = kid ? `<li>${YOUTH_NOTE}</li>` : st.tips.map(t => `<li>${esc(t)}</li>`).join('');
+  $('infoYouth').hidden = !kid;
   show('info'); $('info').scrollTop = 0;
 }
 $('infoBtn').onclick = () => { const s = STEPS[P.i]; openInfo(s.s, s.mirror, 'player', true); };
@@ -1371,6 +1662,7 @@ $('setLook').innerHTML =
   swatchGroup('hair', 'Hair', v => `background:${v}`) +
   swatchGroup('outfit', 'Outfit', ([t, b]) => `background:linear-gradient(135deg, ${t} 50%, ${b} 50%)`) +
   swatchGroup('circle', 'Background circle', v => v === 'mixed' ? '' : `background:${v}`);
+$('setGoal').innerHTML = OPTIONS.goal.map(([v, name], i) => `<label class="seg"><input type="radio" name="goal" id="goal-${i}" value="${i}" aria-label="${v} day${v === 1 ? '' : 's'} a week"><span>${name}</span></label>`).join('');
 $('setHold').innerHTML = OPTIONS.hold.map(([v, name], i) => `<label class="seg"><input type="radio" name="hold" id="hold-${i}" value="${i}"><span>${name}</span></label>`).join('');
 
 function renderPreview() {
@@ -1387,6 +1679,7 @@ function renderSettings() {
   ['skin', 'hair', 'outfit'].forEach(k => { $(`${k}-${look[k]}`).checked = true; });
   $(`circle-${OPTIONS.circle.findIndex(([v]) => v === look.circle)}`).checked = true;
   $(`hold-${OPTIONS.hold.findIndex(([v]) => v === look.hold)}`).checked = true;
+  $(`goal-${OPTIONS.goal.findIndex(([v]) => v === look.goal)}`).checked = true;
   renderPreview();
   renderProfileSummary();
 }
@@ -1412,6 +1705,7 @@ $('setLook').addEventListener('change', (e) => {
   look[name] = name === 'circle' ? OPTIONS.circle[i][0] : i; saveLook(); renderPreview();
 });
 $('setHold').addEventListener('change', (e) => { look.hold = OPTIONS.hold[+e.target.value][0]; saveLook(); });
+$('setGoal').addEventListener('change', (e) => { look.goal = OPTIONS.goal[+e.target.value][0]; saveLook(); });
 
 // Restore defaults: an in-page two-tap confirm
 let restoreArmed = 0;
@@ -1434,6 +1728,114 @@ $('restoreBtn').onclick = () => {
 // Privacy: analytics switch (default on). Restore defaults leaves this choice alone.
 $('set-analytics').checked = Analytics.enabled;
 $('set-analytics').addEventListener('change', (e) => Analytics.setEnabled(e.target.checked));
+
+// Reset app: clears setup answers, history, routine times and settings on this device (every meflex.* key
+// except the analytics choice, so a reset never quietly switches analytics back on), then reloads into setup.
+$('resetAppBtn').onclick = () => { $('resetSheet').hidden = false; $('resetCancel').focus(); };
+$('resetCancel').onclick = () => { $('resetSheet').hidden = true; };
+$('resetSheet').addEventListener('click', (e) => { if (e.target === $('resetSheet')) $('resetSheet').hidden = true; });
+$('resetConfirm').onclick = () => {
+  Sound.stopAll();
+  try { Object.keys(localStorage).filter(k => k.startsWith('meflex.') && k !== ANALYTICS_PREF_KEY).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+  location.reload();
+};
+
+// ---------- Progress: week, consistency meter, calendar (History tab) ----------
+// Everything here is computed on the device from History (finished routines with at least 10 s
+// of stretching). Nothing is sent anywhere. Weeks run Monday to Sunday in local time.
+const pad2 = (n) => String(n).padStart(2, '0');
+const dayKey = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); // calendar days, safe across clock changes
+const startOfWeek = (d) => addDays(startOfDay(d), -((d.getDay() + 6) % 7));           // Monday
+const METER_DAYS = 28, TARGET = 0.9;
+
+// Pure: all progress numbers from a history list, a weekly goal (days) and "now".
+function progressStats(hist, goal, now = new Date()) {
+  const byDay = new Map();
+  for (const x of hist) { const k = dayKey(new Date(x.at)); if (!byDay.has(k)) byDay.set(k, []); byDay.get(k).push(x); }
+  const today = startOfDay(now), ws = startOfWeek(now), we = addDays(ws, 7);
+  const weekDays = Array.from({ length: 7 }, (_, i) => { const d = addDays(ws, i); return { key: dayKey(d), date: d, done: byDay.has(dayKey(d)), today: dayKey(d) === dayKey(today), future: d > today }; });
+  const inWeek = hist.filter(x => x.at >= ws.getTime() && x.at < we.getTime());
+  const week = { days: weekDays, doneDays: weekDays.filter(d => d.done).length, sessions: inWeek.length, minutes: Math.round(inWeek.reduce((a, x) => a + x.secs, 0) / 60), goal };
+  // Consistency: days with a session in the last 4 weeks (28 days including today) / goal days for that time.
+  // Someone who started less than 4 weeks ago is measured from their first session, so new users aren't marked down.
+  let meter = null;
+  if (hist.length) {
+    const first = startOfDay(new Date(Math.min(...hist.map(x => x.at))));
+    const windowStart = addDays(today, -(METER_DAYS - 1));
+    const start = first > windowStart ? first : windowStart;
+    let windowDays = 0, activeDays = 0;
+    for (let d = start; d <= today; d = addDays(d, 1)) { windowDays++; if (byDay.has(dayKey(d))) activeDays++; }
+    const goalDays = windowDays >= METER_DAYS ? goal * 4 : Math.max(1, Math.round(goal * windowDays / 7));
+    meter = { activeDays, goalDays, windowDays, full: windowDays >= METER_DAYS, score: Math.min(1, activeDays / goalDays), raw: activeDays / goalDays };
+  }
+  return { byDay, week, meter, total: hist.length };
+}
+
+// ---------- Rendering ----------
+const CAL = { y: null, m: null, sel: null };
+function histRow(x) {
+  const r = R(x.id), cover = r ? art(BY_ID[r.items[0][0]]) : '';
+  const tm = new Date(x.at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  return `<li><button class="row" ${r ? `data-routine="${r.id}"` : 'disabled'}><span class="thumb">${cover}</span>
+    <span class="label"><span class="n">${esc(x.title)}</span><span class="sub">${tm} · ${fmtTotal(x.secs)}</span></span>${r ? CHEV : ''}</button></li>`;
+}
+function meterMessage(m) {
+  if (m.score >= TARGET) return 'On target. Nice, steady stretching.';
+  if (m.score >= 0.5) return 'Building a habit. A few more days reaches 90%.';
+  return 'Every session counts. A short routine adds a day.';
+}
+function renderHistory() {
+  const h = store.get(HIST_KEY, []), goal = look.goal;
+  const P_ = progressStats(h, goal);
+  $('histEmpty').hidden = h.length > 0; $('histBody').hidden = !h.length;
+  $('histEmptyGoal').textContent = `Your weekly goal is ${goal} day${goal === 1 ? '' : 's'}. You can change it in Settings.`;
+  if (!h.length) return;
+  // This week (Monday to Sunday)
+  const w = P_.week;
+  $('wkCount').innerHTML = `<b>${w.doneDays}</b> of ${goal} day${goal === 1 ? '' : 's'}`;
+  $('wkNote').textContent = w.doneDays >= goal ? 'Weekly goal reached' : 'this week';
+  $('wkDots').innerHTML = w.days.map((d, i) => `<span class="wd${d.done ? ' done' : ''}${d.today ? ' today' : ''}${d.future ? ' future' : ''}" title="${d.date.toLocaleDateString(undefined, { weekday: 'long' })}${d.done ? ', stretched' : ''}"><i></i><small>${'MTWTFSS'[i]}</small></span>`).join('');
+  $('wkSub').textContent = `${w.sessions} session${w.sessions === 1 ? '' : 's'} · ${w.minutes} min · Monday to Sunday`;
+  // Consistency meter
+  const m = P_.meter, pct = Math.round(m.score * 100);
+  $('mPct').textContent = pct + '%';
+  $('mRing').setAttribute('stroke-dashoffset', String(1000 * (1 - m.score)));
+  $('mRing').style.visibility = m.score > 0.005 ? 'visible' : 'hidden';
+  $('mMsg').textContent = meterMessage(m);
+  $('mHow').textContent = (m.full
+    ? `Days you stretched in the last 4 weeks (${m.activeDays}) ÷ your goal for those weeks (${goal} × 4 = ${m.goalDays})`
+    : `Days you stretched since you started ${m.windowDays} day${m.windowDays === 1 ? '' : 's'} ago (${m.activeDays}) ÷ your goal for that time (${m.goalDays})`)
+    + (m.raw > 1 ? ', capped at 100%.' : '.') + ' Target: 90%.';
+  // Calendar
+  const now = new Date();
+  if (CAL.y === null) { CAL.y = now.getFullYear(); CAL.m = now.getMonth(); CAL.sel = dayKey(now); }
+  renderCalendar(P_, h);
+}
+function renderCalendar(P_, h) {
+  const now = new Date(), first = new Date(CAL.y, CAL.m, 1), days = new Date(CAL.y, CAL.m + 1, 0).getDate();
+  const earliest = new Date(Math.min(...h.map(x => x.at)));
+  $('calMonth').textContent = first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+  $('calPrev').disabled = CAL.y * 12 + CAL.m <= earliest.getFullYear() * 12 + earliest.getMonth();
+  $('calNext').disabled = CAL.y * 12 + CAL.m >= now.getFullYear() * 12 + now.getMonth();
+  const lead = (first.getDay() + 6) % 7, todayKey = dayKey(now);
+  let cells = '<span></span>'.repeat(lead);
+  for (let n = 1; n <= days; n++) {
+    const d = new Date(CAL.y, CAL.m, n), k = dayKey(d), list = P_.byDay.get(k) || [];
+    const label = d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' }) + (list.length ? `, ${list.length} session${list.length === 1 ? '' : 's'}` : '');
+    cells += `<button class="cd${list.length ? ' has' : ''}${k === todayKey ? ' today' : ''}${k === CAL.sel ? ' sel' : ''}" data-day="${k}" aria-label="${label}" aria-pressed="${k === CAL.sel}"${d > now ? ' disabled' : ''}>${n}</button>`;
+  }
+  $('calGrid').innerHTML = cells;
+  const [y, mo, da] = CAL.sel.split('-').map(Number), selDate = new Date(y, mo - 1, da);
+  const list = P_.byDay.get(CAL.sel) || [];
+  $('dayHead').textContent = dayLabel(selDate);
+  $('dayList').innerHTML = list.map(histRow).join('');
+  $('dayEmpty').hidden = list.length > 0;
+}
+$('calPrev').onclick = () => { CAL.m--; if (CAL.m < 0) { CAL.m = 11; CAL.y--; } renderHistory(); };
+$('calNext').onclick = () => { CAL.m++; if (CAL.m > 11) { CAL.m = 0; CAL.y++; } renderHistory(); };
+$('calGrid').addEventListener('click', (e) => { const b = e.target.closest('[data-day]'); if (!b) return; CAL.sel = b.dataset.day; renderHistory(); });
 
 // ---------- Tailored recommendations ----------
 // Recommended routines are library routines adapted to the setup answers. A tailored routine
@@ -1459,6 +1861,7 @@ function tailorPrefs() {
     avoid: new Set(profile.avoid), focus: profile.focus,
     target: profile.minutes ? profile.minutes * 60 : null,
     older: profile.age === '45-59' || profile.age === '60+',
+    support: profile.age === '45-59' || profile.age === '60+', // prefer chair / wall options (also set by "gentle" or "seated" in a description)
     hold: AGE_HOLD[profile.age] || null,
   };
 }
@@ -1472,19 +1875,20 @@ const sideCount = (st) => st.sides ? 2 : 1;
 function alternative(st, p, used) {
   let best = null, bestScore = -Infinity;
   for (const c of STRETCHES) {
-    if (used.has(c.id) || !allowed(c, p)) continue;
+    if (used.has(c.id) || !allowed(c, p) || !!c.dynamic !== !!st.dynamic) continue; // moves swap for moves, holds for holds
     const overlap = c.areas.filter(a => st.areas.includes(a)).length; if (!overlap) continue;
     const score = overlap * 2 + c.areas.filter(a => p.focus.includes(a)).length
-      + (p.older ? (c.supported ? 3 : 0) - (lowDown(c) ? 2 : 0) : 0) + (c.kind === st.kind ? 0.5 : 0);
+      + (p.support ? (c.supported ? 3 : 0) - (lowDown(c) ? 2 : 0) : 0) + (c.kind === st.kind ? 0.5 : 0);
     if (score > bestScore) { best = c; bestScore = score; }
   }
   return best;
 }
 
 function tailor(r, p) {
+  if (r.youth) p = { ...p, kinds: new Set(['body']), maxLevel: Math.min(p.maxLevel, 1) }; // youth: no equipment, nothing advanced
   const used = new Set(), items = [], notes = { avoided: new Set(), supported: 0, added: 0, dropped: 0, swaps: 0 };
   for (const [id, suggested] of r.items) {
-    const st = BY_ID[id], ok = allowed(st, p), wantSupport = p.older && !st.supported && lowDown(st);
+    const st = BY_ID[id], ok = allowed(st, p), wantSupport = p.support && !st.supported && lowDown(st);
     if (ok && !wantSupport && !used.has(id)) { items.push({ id, secs: p.hold || suggested, from: null }); used.add(id); continue; }
     const alt = alternative(st, p, used);
     if (alt && (!ok || alt.supported)) {
@@ -1502,8 +1906,8 @@ function tailor(r, p) {
     const tiers = [p.focus, own, AREAS.map(a => a.id)].filter(t => t.length);
     for (const areas of tiers) {
       while (total() < p.target * 0.9) {
-        const pool = STRETCHES.filter(c => !used.has(c.id) && allowed(c, p) && c.areas.some(a => areas.includes(a)))
-          .sort((a, b) => (p.older ? (b.supported ? 1 : 0) - (a.supported ? 1 : 0) : 0) || b.areas.filter(x => p.focus.includes(x)).length - a.areas.filter(x => p.focus.includes(x)).length);
+        const pool = STRETCHES.filter(c => !used.has(c.id) && allowed(c, p) && !!c.dynamic === !!r.dynamic && c.areas.some(a => areas.includes(a)))
+          .sort((a, b) => (p.support ? (b.supported ? 1 : 0) - (a.supported ? 1 : 0) : 0) || b.areas.filter(x => p.focus.includes(x)).length - a.areas.filter(x => p.focus.includes(x)).length);
         const c = pool.find(x => total() + (p.hold || 30) * sideCount(x) <= p.target * 1.1) || null; if (!c) break;
         items.push({ id: c.id, secs: p.hold || 30, from: 'added' }); used.add(c.id); notes.added++;
       }
@@ -1549,10 +1953,226 @@ function recommendations() {
   const p = tailorPrefs();
   // Equipment routines only for people who have that equipment (and, for weights, the level).
   const fits = (r) => (r.cat !== 'band' || p.kinds.has('band')) && (r.cat !== 'loaded' || (p.kinds.has('weight') && p.maxLevel === 2));
-  return ROUTINES.filter(fits).map(r => tailor(r, p)).filter(t => t.items.length >= 3)
-    .map(t => ({ t, s: score(t, p) })).sort((a, b) => b.s - a.s).slice(0, 3)
+  return ROUTINES.filter(fits).filter(r => !r.youth).map(r => tailor(r, p)) // youth routines only via the Hockey screen or a description that mentions kids.filter(t => t.items.length >= 3)
+    // hockey routines are specialised: they can be recommended, but rank a little lower; moving warm-ups can't be
+    // swapped to chair/wall options, so they rank lower for anyone who prefers supported stretches (45+)
+    .map(t => ({ t, s: score(t, p) - (R(t.id).cat === 'hockey' ? 1.5 : 0) - (p.support && R(t.id).dynamic ? 2 : 0) })).sort((a, b) => b.s - a.s).slice(0, 3)
     .map(({ t }) => ({ plan: t, r: R(t.id), why: whyLine(t, p) }));
 }
+
+// ---------- "Describe your routine": a small built-in matcher ----------
+// Runs entirely on the device: no server, no AI, no network. It reads body areas, time, equipment,
+// positions to avoid, difficulty and "gentle"/"seated" wording, fills the rest from the setup answers,
+// then builds the routine with the same swap-and-trim logic as Recommended (tailor.js).
+// The typed text is never stored, never sent to analytics, and the whole box is blocked from replay.
+const DESC_MAX = 300;
+const ALL_AREAS = AREAS.map(a => a.id);
+const AREA_WORDS = {
+  neck: ['neck', 'nape'], shoulders: ['shoulder', 'shoulders', 'delts', 'rotator'], chest: ['chest', 'pecs', 'pec'],
+  back: ['back', 'spine', 'lumbar', 'backache', 'posture'], hips: ['hip', 'hips', 'glute', 'glutes', 'butt', 'groin', 'piriformis', 'flexor', 'flexors'],
+  hamstrings: ['hamstring', 'hamstrings', 'hammies'], quads: ['quad', 'quads', 'quadriceps', 'thigh', 'thighs'],
+  calves: ['calf', 'calves', 'achilles', 'ankle', 'ankles', 'shin', 'shins'],
+};
+const AREA_GROUPS = [[/\b(full|whole|total) body\b|\beverything\b/, ALL_AREAS], [/\bupper body\b/, ['neck', 'shoulders', 'chest', 'back']],
+  [/\blower body\b/, ['hips', 'hamstrings', 'quads', 'calves']], [/(?<!one |single )\blegs?\b/, ['hamstrings', 'quads', 'calves']]];
+const POS_WORDS = { floor: ['floor', 'lying', 'lie', 'ground', 'mat'], kneeling: ['kneel', 'kneeling', 'knee', 'knees'],
+  overhead: ['overhead', 'reaching', 'raised'], balance: ['balance', 'balancing', 'wobbly'] };
+const EQUIP_WORDS = { band: ['band', 'bands', 'resistance', 'theraband', 'strap'], dumbbells: ['dumbbell', 'dumbbells', 'weights', 'weighted', 'weight', 'kettlebell'] };
+const LEVEL_WORDS = { beginner: ['beginner', 'basic', 'newbie'], intermediate: ['intermediate', 'moderate', 'medium'], advanced: ['advanced', 'deep', 'intense', 'challenging', 'hard'] };
+const GENTLE = ['gentle', 'easy', 'light', 'relaxing', 'relaxed', 'slow', 'soft', 'mild', 'calm', 'restorative'];
+const SEATED = ['seated', 'sitting', 'sit', 'chair', 'wheelchair'];
+const CONTEXT = { morning: ['morning', 'wake', 'waking', 'sunrise'], evening: ['bed', 'bedtime', 'sleep', 'evening', 'night', 'tonight'],
+  desk: ['desk', 'office', 'computer', 'screen', 'typing', 'laptop'], training: ['run', 'running', 'runner', 'jog', 'jogging', 'gym', 'workout', 'training', 'hike', 'hiking', 'cycling', 'ride'] };
+const NUM_WORDS = { three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, twelve: 12, fifteen: 15, twenty: 20, thirty: 30 };
+const TIME_UNITS = ['min', 'mins', 'minute', 'minutes', 'm'];
+// Ice hockey: who it is for and when (before, between, after the game, end of the night).
+const HOCKEY_WORDS = ['hockey', 'skate', 'skates', 'skating', 'skater', 'rink', 'puck', 'game', 'games', 'shift', 'shifts'];
+const HOCKEY_GROUP = { refs: ['ref', 'refs', 'referee', 'referees', 'reffing', 'official', 'officials', 'officiating', 'linesman', 'linesmen', 'umpire'],
+  youth: ['kid', 'kids', 'youth', 'child', 'children', 'son', 'daughter', 'junior', 'juniors', 'boy', 'boys', 'girl', 'girls', 'minor', 'peewee', 'bantam', 'squirt', 'atom'] };
+const HOCKEY_PHASE = { between: [/ between /], recovery: [/ (end of|after) (the |my )?(whole )?night /, / recovery /, / recover /, / tournament /],
+  pre: [/ before /, / pre /, / pregame /, / warm( |-)?up /, / warmup /, / prep /], post: [/ after /, / post /, / postgame /, / cool( |-)?down /, / cooldown /] };
+const NEGATORS = ['no', 'not', 'without', 'avoid', 'avoiding', 'skip', 'cant', 'cannot', 'dont', 'never', 'except', 'nothing'];
+const HURT = ['bad', 'sore', 'injured', 'painful', 'hurt', 'hurts', 'dodgy', 'weak'];
+
+// Words worth correcting typos against (length 4+), mapped to themselves.
+const VOCAB = [...new Set([...Object.values(AREA_WORDS).flat(), ...Object.values(POS_WORDS).flat(), ...Object.values(EQUIP_WORDS).flat(),
+  ...Object.values(LEVEL_WORDS).flat(), ...GENTLE, ...SEATED, ...Object.values(CONTEXT).flat(), ...Object.keys(NUM_WORDS),
+  ...HOCKEY_WORDS, ...Object.values(HOCKEY_GROUP).flat(), 'recovery', 'warmup', 'cooldown',
+  'minute', 'minutes', 'hour', 'quick', 'short', 'long', 'body', 'full', 'whole', 'upper', 'lower', 'legs', 'equipment', 'bodyweight', 'tight', 'stiff', 'without', 'avoid', 'cannot', 'balance'])].filter(w => w.length >= 4);
+function editDistance(a, b, max) {
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i]; let best = i;
+    for (let j = 1; j <= b.length; j++) { cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); best = Math.min(best, cur[j]); }
+    if (best > max) return max + 1; prev = cur;
+  }
+  return prev[b.length];
+}
+// Ordinary words that look like vocabulary words but must never be "corrected" (e.g. half -> calf).
+const KEEP = new Set(['half', 'hour', 'hold', 'help', 'feel', 'feet', 'foot', 'fine', 'want', 'need', 'then', 'this', 'that', 'with', 'from', 'have', 'some',
+  'after', 'before', 'please', 'really', 'very', 'little', 'stretch', 'stretches', 'routine', 'today', 'work', 'more', 'less', 'just', 'like', 'make', 'into',
+  'also', 'only', 'over', 'down', 'left', 'right', 'side', 'sides', 'both', 'arms', 'hands', 'knot', 'knots', 'pain', 'ache', 'aches', 'sore', 'tired', 'week', 'mine']);
+function correct(w) {
+  if (w.length < 4 || KEEP.has(w) || VOCAB.includes(w) || /\d/.test(w)) return w;
+  const max = w.length >= 8 ? 2 : 1; let best = w, bestD = max + 1;
+  for (const v of VOCAB) { const d = editDistance(w, v, max); if (d < bestD) { best = v; bestD = d; } }
+  return best;
+}
+
+// Pure: text -> what it understood.
+function parseRequest(text) {
+  const raw = String(text || '').slice(0, DESC_MAX).toLowerCase().replace(/[’']/g, '').replace(/½/g, ' half ');
+  // words, with clause breaks ("|") at punctuation so a "no" only reaches into its own clause
+  const words = raw.replace(/[,.;:!?\n()]+/g, ' | ').replace(/[^a-z0-9|\s-]/g, ' ').split(/[\s-]+/).filter(Boolean).map(w => w === '|' ? w : correct(w));
+  const s = ' ' + words.filter(w => w !== '|').join(' ') + ' ';
+  const has = (list, w) => list.includes(w);
+  const q = { areas: [], noAreas: [], minutes: null, equip: [], noEquip: [], avoid: [], level: null, gentle: false, seated: false, context: null, understood: [] };
+  // negation scope: the next 3 words after a negator, stopping at a clause break, "and" or "but";
+  // "bad/sore knees" means avoid kneeling
+  const negated = new Set();
+  words.forEach((w, i) => { if (has(NEGATORS, w)) for (let k = i + 1; k <= i + 3 && k < words.length; k++) { if (['|', 'and', 'but'].includes(words[k])) break; negated.add(k); } });
+  words.forEach((w, i) => { if (has(HURT, w) && (words[i + 1] === 'knee' || words[i + 1] === 'knees')) negated.add(i + 1); });
+  // one-leg balance: negated anywhere in its clause before "one/single leg"
+  words.forEach((w, i) => { if ((w === 'one' || w === 'single') && /^legs?$/.test(words[i + 1] || '')) {
+    for (let k = i - 1; k >= 0 && words[k] !== '|'; k--) if (has(NEGATORS, words[k])) { q.avoid.push('balance'); break; } } });
+  // phrases first
+  if (/ (arms|hands|reach) (up|above) | above (my |the )?head /.test(s) && / (no|not|avoid|cant|cannot|without|dont) /.test(s)) q.avoid.push('overhead');
+  if (/ (get|getting) (down|up) /.test(s) && / (no|not|avoid|cant|cannot|without|dont|hard|trouble) /.test(s)) q.avoid.push('floor', 'kneeling');
+  if (/ no equipment | without equipment | bodyweight | nothing but /.test(s)) q.equip.push('none');
+  for (const [re, list] of AREA_GROUPS) if (re.test(s)) list.forEach(a => q.areas.push(a));
+  // time
+  const t = s.match(/ (\d{1,3}) ?(?:min|mins|minute|minutes|m) /) || s.match(/ (three|four|five|six|seven|eight|nine|ten|twelve|fifteen|twenty|thirty) (?:min|mins|minute|minutes) /);
+  if (t) q.minutes = +t[1] || NUM_WORDS[t[1]];
+  else if (/ half (an )?hour /.test(s)) q.minutes = 30;
+  else if (/ (an |one )?hour /.test(s)) q.minutes = 30;
+  else {
+    // a bare number is minutes only when nothing follows it ("hips 10"), not "5 games" or "3 periods"
+    const bi = words.findIndex(w => /^\d{1,2}$/.test(w)), next = bi >= 0 ? words[bi + 1] : null;
+    const bare = bi >= 0 && (!next || next === '|' || ['and', 'please', 'today', 'now', 'total'].includes(next)) ? [null, words[bi]] : null;
+    if (bare && +bare[1] >= 3 && +bare[1] <= 30) q.minutes = +bare[1]; else if (/ (quick|short) /.test(s)) q.vague = 5; else if (/ long /.test(s)) q.vague = 15; }
+  if (q.minutes) q.minutes = Math.min(30, Math.max(3, q.minutes));
+  const wordCount = words.filter(w => w !== '|').length;
+  // words
+  words.forEach((w, i) => {
+    if (w === '|') return;
+    const neg = negated.has(i);
+    for (const [a, list] of Object.entries(AREA_WORDS)) if (has(list, w)) {
+      (neg ? q.noAreas : q.areas).push(a);
+    }
+    for (const [p, list] of Object.entries(POS_WORDS)) if (has(list, w) && neg) q.avoid.push(p);
+    for (const [e, list] of Object.entries(EQUIP_WORDS)) if (has(list, w)) (neg ? q.noEquip : q.equip).push(e);
+    for (const [l, list] of Object.entries(LEVEL_WORDS)) if (has(list, w) && !neg) q.level = l;
+    if (has(GENTLE, w) && !neg) q.gentle = true;
+    if (has(SEATED, w) && !neg) q.seated = true;
+    for (const [c, list] of Object.entries(CONTEXT)) if (has(list, w) && !q.context) q.context = c;
+  });
+  // ice hockey: any hockey word, or a referee/youth word next to "game"
+  const hockeyWord = words.some(w => has(HOCKEY_WORDS, w) && w !== 'game' && w !== 'games' && w !== 'shift' && w !== 'shifts');
+  const group = Object.entries(HOCKEY_GROUP).find(([, list]) => words.some(w => has(list, w)));
+  const gameWord = / games? /.test(s);
+  if (hockeyWord || (group && gameWord) || (group && group[0] === 'refs')) {
+    q.hockey = true; q.context = 'hockey';
+    if (group) q.group = group[0];
+    const ph = Object.entries(HOCKEY_PHASE).find(([, res]) => res.some(re => re.test(s)));
+    if (ph) q.phase = ph[0];
+  }
+  if (q.gentle && !q.level) q.level = 'beginner';
+  // "quick"/"short"/"long" count as a time only in a short request or next to something else we understood,
+  // so a random sentence that happens to contain "quick" gets the friendly fallback instead.
+  if (q.vague && (wordCount <= 5 || q.areas.length || q.context || q.avoid.length || q.equip.length || q.level || q.seated)) q.minutes = q.vague;
+  const uniq = (a) => [...new Set(a)];
+  q.areas = uniq(q.areas).filter(a => !q.noAreas.includes(a)); q.avoid = uniq(q.avoid); q.equip = uniq(q.equip).filter(e => !q.noEquip.includes(e)); q.noEquip = uniq(q.noEquip);
+  if (q.equip.includes('none') && q.equip.length > 1) q.equip = q.equip.filter(e => e !== 'none');
+  // echo back what was understood
+  const AV = { floor: 'no floor work', kneeling: 'no kneeling', overhead: 'no overhead', balance: 'no balancing' };
+  const CX = { morning: 'morning', evening: 'bedtime', desk: 'desk break', training: 'after exercise' };
+  q.understood = [
+    ...(q.areas.length === ALL_AREAS.length ? ['Full body'] : q.areas.map(a => AREA_NAME[a])),
+    ...(q.minutes ? [`${q.minutes} min`] : []),
+    ...(q.gentle ? ['gentle'] : q.level ? [LEVELS[q.level]] : []),
+    ...(q.seated ? ['seated'] : []),
+    ...q.avoid.map(a => AV[a]),
+    ...q.equip.map(e => ({ none: 'no equipment', band: 'with a band', dumbbells: 'with dumbbells' }[e])),
+    ...q.noEquip.map(e => ({ band: 'no band', dumbbells: 'no weights' }[e])),
+    ...(q.context && q.context !== 'hockey' ? [CX[q.context]] : []),
+    ...(q.hockey ? ['ice hockey'] : []),
+    ...(q.group ? [{ refs: 'referees', youth: 'young players' }[q.group]] : []),
+    ...(q.phase ? [{ pre: 'before the game', post: 'after the game', between: 'between games', recovery: 'end of the night' }[q.phase]] : []),
+  ];
+  q.any = q.understood.length > 0;
+  return q;
+}
+
+// Pure-ish: description -> up to 3 tailored library routines (same swap/trim logic as Recommended).
+function describeBuild(text) {
+  const q = parseRequest(text);
+  if (!q.any) return { q, results: [] };
+  const base = tailorPrefs();
+  const kinds = q.equip.length ? new Set(['body', ...q.equip.map(e => EQUIP_KIND[e])]) : new Set(base.kinds);
+  q.noEquip.forEach(e => kinds.delete(EQUIP_KIND[e]));
+  const p = { ...base, kinds,
+    maxLevel: q.level ? LEVEL_RANK[q.level] : base.maxLevel,
+    avoid: new Set([...base.avoid, ...q.avoid]),
+    focus: q.areas.length ? q.areas : base.focus,
+    target: q.minutes ? q.minutes * 60 : base.target,
+    support: base.support || q.gentle || q.seated };
+  const fits = (r) => (r.cat !== 'band' || p.kinds.has('band')) && (r.cat !== 'loaded' || (p.kinds.has('weight') && p.maxLevel === 2))
+    && (!r.youth || q.group === 'youth') && (q.group !== 'youth' || !q.hockey || r.youth); // kids get the youth routines, adults never do
+  // hockey routines lead when hockey is mentioned, and sit slightly lower otherwise (they are specialised)
+  const hockeyBonus = (r) => r.cat !== 'hockey' ? 0 : !q.hockey ? -1.5 : 2 + (q.group && r.group === q.group ? 4 : 0) + (!q.group && r.group === 'players' ? 2 : 0) + (q.phase && r.phase === q.phase ? 4 : 0);
+  const results = ROUTINES.filter(fits).map(r => tailor(r, p)).filter(t => t.items.length >= 3)
+    .map(t => { const kinds = new Set(t.items.map(([id]) => BY_ID[id].kind));
+      const wantsGear = (q.equip.includes('band') && kinds.has('band') ? 2 : 0) + (q.equip.includes('dumbbells') && kinds.has('weight') ? 2 : 0); // asked for equipment: use it
+      return { t, s: score(t, p) + (q.context && R(t.id).cat === q.context ? 2 : 0) + wantsGear + hockeyBonus(R(t.id)) }; })
+    .sort((a, b) => b.s - a.s).slice(0, 3)
+    .map(({ t }) => Object.assign(t, { label: 'Built from your description', why: describeWhy(q, t, p) }));
+  return { q, results };
+}
+
+// "Why this routine": echo what was understood, then what the routine changed to fit it.
+function describeWhy(q, t, p) {
+  const sts = t.items.map(([id]) => BY_ID[id]);
+  const AV = { floor: 'no floor work', kneeling: 'no kneeling', overhead: 'no overhead', balance: 'no balancing' };
+  const CX = { morning: 'for the morning', evening: 'for bedtime', desk: 'for a desk break', training: 'after exercise', hockey: 'ice hockey' };
+  const parts = [];
+  if (q.areas.length === ALL_AREAS.length) parts.push('Full body');
+  else if (q.areas.length) parts.push(q.areas.slice(0, 3).map(a => AREA_NAME[a]).join(' & '));
+  if (q.minutes) parts.push(`about ${Math.max(1, Math.round(t.total / 60))} min`);
+  if (q.gentle) parts.push('gentle'); else if (q.level) parts.push(LEVELS[q.level].toLowerCase());
+  if (q.seated) parts.push('seated');
+  q.avoid.forEach(a => parts.push(AV[a]));
+  if (sts.some(s => s.kind === 'band')) parts.push('uses your band'); else if (sts.some(s => s.kind === 'weight')) parts.push('light dumbbells');
+  if (q.context) parts.push(CX[q.context]);
+  if (q.group) parts.push({ refs: 'for referees', youth: 'for young players' }[q.group]);
+  if (q.phase) parts.push({ pre: 'before the game', post: 'after the game', between: 'between games', recovery: 'end of the night' }[q.phase]);
+  if (R(t.id).dynamic) parts.push('moving warm-up');
+  if (t.notes.supported) parts.push('chair & wall options');
+  if (p.hold) parts.push(`${p.hold} s holds`);
+  return parts.join(' · ');
+}
+
+// ---------- UI ----------
+let DESC = [];
+const DESC_EXAMPLES = ['tight hips, 10 minutes, no floor work', 'gentle back stretch before bed', 'neck and shoulders, 5 min desk break', 'hamstrings with a band, 15 minutes', 'seated, sore knees, full body'];
+$('descChips').innerHTML = DESC_EXAMPLES.map((t, i) => `<button type="button" class="chip small" data-ex="${i}">${esc(t)}</button>`).join('');
+function runDescribe(text) {
+  const { q, results } = describeBuild(text);
+  DESC = results;
+  if (!String(text || '').trim()) { $('descOut').innerHTML = ''; return; }
+  if (!q.any || !results.length) {
+    $('descOut').innerHTML = `<p class="descfail">${q.any ? 'Nothing in the library fits all of that. Try fewer limits, or a different time.' : 'I couldn’t spot a body area or a time in that. Try something like “tight hips, 10 minutes”, or tap an example.'}</p>`;
+    return;
+  }
+  $('descOut').innerHTML = `<p class="understood"><span>Understood</span>${q.understood.map(u => `<i>${esc(u)}</i>`).join('')}</p>
+    <ul class="rows">${results.map((t, i) => { const items = itemsOf(R(t.id), t.items);
+      return `<li><button class="row" data-routine="${t.id}" data-desc="${i}"><span class="thumb">${art(items[0].st)}</span>
+        <span class="label"><span class="n">${esc(R(t.id).title)}${i === 0 ? ' <em>Best match</em>' : ''}</span><span class="sub">${fmtMin(secsOf(items))} · ${items.length} stretches</span>
+        <span class="why"><span class="whylabel">Why this routine</span>${esc(t.why)}</span></span>${CHEV}</button></li>`; }).join('')}</ul>`;
+}
+$('descForm').addEventListener('submit', (e) => { e.preventDefault(); $('descInput').blur(); runDescribe($('descInput').value); });
+$('descChips').addEventListener('click', (e) => { const b = e.target.closest('[data-ex]'); if (!b) return; $('descInput').value = DESC_EXAMPLES[+b.dataset.ex]; runDescribe($('descInput').value); });
+$('descInput').addEventListener('input', () => { if (!$('descInput').value.trim()) { $('descOut').innerHTML = ''; DESC = []; } });
 
 // ---------- Setup flow ----------
 // One question per screen, Skip on every screen. Answers stay on this device (profile in look.js)
