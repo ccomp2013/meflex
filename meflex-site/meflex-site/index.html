@@ -20,6 +20,10 @@
 <style>
 /* Layout: one screen at a time, a single centered column sized to the phone; dark only, by design. */
 :root {
+  /* scale used by the polish pass: spacing 4/8/12/16/24/32, type 32/22/17/16/14/13/12, cards 16, tap targets 44 */
+  --sp1: 4px; --sp2: 8px; --sp3: 12px; --sp4: 16px; --sp5: 24px; --sp6: 32px;
+  --fs-title: 32px; --fs-h2: 22px; --fs-lead: 17px; --fs-body: 16px; --fs-small: 14px; --fs-xs: 13px; --fs-label: 12px;
+  --r-card: 16px; --r-note: 12px; --tap: 44px;
   --bg: #0E1113; --raised: #171B1E; --line: #252B2F;
   --ink: #F2EEE8; --muted: #8E979C; --accent: #C9785A;
   --ring-track: #22282C;
@@ -339,6 +343,73 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .tabbar button { flex: 1; max-width: 140px; display: grid; justify-items: center; gap: 2px; padding: 6px 0; color: var(--muted); font-size: 11px; font-weight: 600; }
 .tabbar button svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 .tabbar button[aria-current="page"] { color: var(--ink); }
+
+/* ---------- Home (simplified) ---------- */
+.homehead .lede { margin-top: var(--sp1); }
+.primary { display: grid; gap: var(--sp3); }
+.primary .card { width: 100%; display: grid; justify-items: center; gap: var(--sp2); padding: var(--sp4); background: var(--raised); border-radius: var(--r-card); text-align: center; }
+.primary .card .cover { width: clamp(120px, 22vh, 200px); height: clamp(120px, 22vh, 200px); margin: 0; }
+.primary .cardtext { display: grid; gap: 2px; justify-items: center; }
+.primary .card .n { font-size: var(--fs-h2); }
+.primary .card .why { max-width: 34ch; }
+.primary .cta { height: 56px; }
+.progstrip { width: 100%; display: flex; align-items: center; gap: var(--sp4); margin-top: var(--sp4); padding: var(--sp3) var(--sp4); min-height: 64px; background: var(--raised); border-radius: var(--r-card); text-align: left; }
+.progstrip .pgtext { flex: 1; min-width: 0; display: grid; gap: 8px; }
+.progstrip .pgtext b small { font-weight: 400; margin-left: 4px; }
+.progstrip b { font-size: var(--fs-body); font-weight: 600; }
+.progstrip small { color: var(--muted); font-size: var(--fs-xs); }
+.pgdots { display: flex; gap: 6px; }
+.pgdots i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--line); box-sizing: border-box; }
+.pgdots i.done { background: var(--accent); border-color: var(--accent); }
+.pgdots i.today { box-shadow: 0 0 0 1.5px var(--raised), 0 0 0 3px var(--ink); }
+.pgpct { display: grid; justify-items: end; text-align: right; }
+.pgpct b { font-size: var(--fs-h2); font-variant-numeric: tabular-nums; }
+.morelist { display: grid; gap: var(--sp2); }
+.card.compact { width: 100%; display: flex; align-items: center; gap: var(--sp3); padding: var(--sp3); background: var(--raised); border-radius: var(--r-card); text-align: left; }
+.card.compact .cover { width: 56px; height: 56px; margin: 0; flex: none; }
+.card.compact .cardtext { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.card.compact .n { font-size: var(--fs-body); }
+.card.compact .why { margin-top: var(--sp1); font-size: var(--fs-label); }
+.card.compact .whylabel { display: none; }
+.textlink { display: inline-flex; align-items: center; gap: var(--sp1); min-height: var(--tap); margin-top: var(--sp3); color: var(--accent); font-weight: 600; font-size: var(--fs-small); }
+.textlink .chev { stroke: var(--accent); }
+
+/* ---------- Polish pass: one scale, 44px targets, consistent cards ---------- */
+.title, #routine h1 { font-size: var(--fs-title); letter-spacing: -0.5px; }
+.q { font-size: 28px; }
+.lede, .desc { font-size: var(--fs-small); line-height: 1.5; }
+.sec { margin: 28px 0 var(--sp3); font-size: var(--fs-label); letter-spacing: .08em; }
+.row { padding: var(--sp3) 0; gap: var(--sp3); min-height: 72px; }
+.row .thumb, .list .thumb { width: 56px; height: 56px; }
+.row .n, .list .n { font-size: var(--fs-body); }
+.row .sub, .list .each, #rList .label .sub { font-size: var(--fs-xs); }
+.list li { gap: var(--sp3); }
+/* tap targets: the visible shape stays small, the touch area is 44 x 44 */
+.stepper { gap: 0; }
+.stepper button { width: var(--tap); height: var(--tap); background: radial-gradient(circle, var(--raised) 17px, transparent 17.5px); }
+.stepper button:active:not(:disabled) { background: radial-gradient(circle, var(--line) 17px, transparent 17.5px); }
+.stepper output { width: 40px; }
+.info { width: var(--tap); height: var(--tap); border: 0; position: relative; margin: 0 -8px; }
+.info::before { content: ""; position: absolute; inset: 8px; border-radius: 50%; border: 1.6px solid var(--muted); }
+.chip, .fchip { min-height: var(--tap); height: auto; border-radius: 22px; }
+.chip.small { min-height: var(--tap); padding: 0 14px; }
+.excs { gap: var(--sp2); }
+.seg span { height: var(--tap); min-width: var(--tap); text-align: center; line-height: 41px; border-radius: 22px; }
+.sw { padding: 5px; margin: -5px; }
+.swatches > div { gap: 18px; }
+.cd { width: var(--tap); height: var(--tap); }
+.reset { min-height: var(--tap); padding: 0; display: inline-flex; align-items: center; }
+.vol input[type=range] { height: var(--tap); }
+.icon { min-width: var(--tap); min-height: var(--tap); }
+/* cards and notes share two corner sizes */
+.pcard, .tile, .hockeycard, .descfail, .rwhy, .group, .stats div, .optbtn { border-radius: var(--r-card); }
+.youthnote, .reviewnote, .disclaimer, .understood i { border-radius: var(--r-note); }
+.pcard { margin-top: var(--sp4); }
+.tile { padding: var(--sp4); }
+.ghost { min-height: 48px; }
+#rList .label.link { min-height: var(--tap); align-content: center; }
+#setGoal { gap: var(--sp1); } /* 7 × 44px choices fit on one line at 375px */
+.skip { min-width: var(--tap); }
 </style>
 <style>
 /* The page fills the whole screen, under the status bar and home indicator; content keeps clear of them. */
@@ -354,14 +425,26 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 
 <section class="screen tabbed" id="home">
   <div class="scroll">
-    <h1 class="title">MeFlex</h1>
+    <header class="homehead"><h1 class="title">MeFlex</h1><p class="lede" id="homeDate"></p></header>
+    <h2 class="sec" id="recHead">Recommended</h2>
+    <div class="primary" id="recPrimary"></div>
+    <button class="progstrip" id="homeProgress" data-private></button>
+    <h2 class="sec">More for you</h2>
+    <div class="morelist" id="recMore"></div>
+    <button class="textlink" id="browseAll">Browse all routines<svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  </div>
+</section>
+
+<section class="screen tabbed" id="explore" hidden>
+  <div class="scroll">
+    <h1 class="title">Explore</h1>
     <form class="search" id="searchForm" role="search">
       <svg class="glass" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
       <input type="search" id="search" placeholder="Search routines" aria-label="Search routines" autocomplete="off" enterkeyhint="search">
       <button type="button" class="icon clear" id="searchClear" aria-label="Clear search" hidden><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button>
     </form>
     <div id="searchResults" hidden><h2 class="sec">Routines</h2><ul class="rows" id="searchList"></ul><p class="empty" id="searchEmpty" hidden></p></div>
-    <div id="homeSections">
+    <div id="exploreSections">
       <section class="describe" id="describe" data-private aria-labelledby="descHead">
         <h2 class="sec" id="descHead">Describe your routine</h2>
         <form class="descform" id="descForm" autocomplete="off">
@@ -372,7 +455,6 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
         <div id="descOut" aria-live="polite"></div>
       </section>
       <h2 class="sec">Body areas</h2><div class="chips" id="areaChips"></div>
-      <h2 class="sec" id="recHead">Recommended</h2><div class="cards" id="recList"></div>
       <h2 class="sec">Quick routines <span>4 min or less</span></h2><ul class="rows" id="quickList"></ul>
       <h2 class="sec">Ice hockey</h2>
       <button class="hockeycard" id="hockeyCard"><span class="hk" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 3l-6.5 14.5H4.5a1.5 1.5 0 0 0 0 3h5.2L18 3"/><ellipse cx="17.5" cy="18.5" rx="3" ry="1.6"/></svg></span><span><b>Warm-ups and cool-downs</b><small>For players, youth players and referees</small></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
@@ -555,6 +637,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 
 <nav class="tabbar" id="tabbar" aria-label="Main">
   <button data-tab="home" aria-current="page"><svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20h-5.5v-6h-5v6H4z"/></svg>Home</button>
+  <button data-tab="explore"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Explore</button>
   <button data-tab="library"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="3.25"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="3.25"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="3.25"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="3.25"/></svg>Library</button>
   <button data-tab="history"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>History</button>
   <button data-tab="settings"><svg viewBox="0 0 24 24"><path d="M5 7h9M18 7h1M5 17h1M10 17h9"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>Settings</button>
@@ -1223,8 +1306,8 @@ const QUICK_S = 240; // quick routine: 4 minutes or less
 const isQuick = (r) => routineSecs(r) <= QUICK_S;
 
 // ---------- Navigation ----------
-const SCREENS = ['home', 'list', 'library', 'history', 'settings', 'routine', 'player', 'info', 'done', 'setup', 'hockey'];
-const TABBED = { home: 'home', list: 'home', hockey: 'home', library: 'library', history: 'history', settings: 'settings' };
+const SCREENS = ['home', 'explore', 'list', 'library', 'history', 'settings', 'routine', 'player', 'info', 'done', 'setup', 'hockey'];
+const TABBED = { home: 'home', explore: 'explore', list: 'explore', hockey: 'explore', library: 'library', history: 'history', settings: 'settings' };
 let current = 'home';
 function show(id) {
   SCREENS.forEach(s => { $(s).hidden = s !== id; });
@@ -1237,7 +1320,7 @@ function show(id) {
 $('tabbar').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-tab]'); if (!b) return;
   const t = b.dataset.tab;
-  if (t === 'home') renderHome(); if (t === 'library') renderLibrary(); if (t === 'history') renderHistory(); if (t === 'settings') renderSettings();
+  if (t === 'home') renderHome(); if (t === 'explore') renderExplore(); if (t === 'library') renderLibrary(); if (t === 'history') renderHistory(); if (t === 'settings') renderSettings();
   show(t); const sc = $(t).querySelector('.scroll'); if (sc && b.getAttribute('aria-current') === 'page') sc.scrollTop = 0;
 });
 // Shared rows: any element with data-routine / data-stretch / data-area / data-cat is a link.
@@ -1261,15 +1344,42 @@ function stretchRow(st) {
 }
 
 // ---------- Home ----------
+// ---------- Home: one clear Start, a progress strip, a short list ----------
+// recommendations() gives three picks: the first is "today's pick" with the Start button, the other two
+// are "More for you". Everything else (search, describe, areas, categories, hockey) is on Explore.
+function recCard(x, i, compact) {
+  const items = itemsOf(x.r, x.plan ? x.plan.items : undefined);
+  return `<button class="card${compact ? ' compact' : ''}" data-routine="${x.r.id}" data-rec="${i}"><span class="cover">${art(items[0].st)}</span>
+    <span class="cardtext"><span class="n">${esc(x.r.title)}</span><span class="sub">${fmtMin(secsOf(items))} · ${items.length} stretches</span>
+    <span class="why" data-private><span class="whylabel">Why this routine</span>${esc(x.why)}</span></span>${compact ? CHEV : ''}</button>`;
+}
 function renderHome() {
   const recs = recommendations(); REC = recs.map(x => x.plan);
+  $('homeDate').textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
   $('recHead').textContent = hasRoutineAnswers() ? 'Recommended for you' : 'Recommended';
-  $('recList').innerHTML = recs.map((x, i) => {
-    const items = itemsOf(x.r, x.plan ? x.plan.items : undefined);
-    return `<button class="card" data-routine="${x.r.id}" data-rec="${i}"><span class="cover">${art(items[0].st)}</span>
-      <span class="n">${esc(x.r.title)}</span><span class="sub">${fmtMin(secsOf(items))} · ${items.length} stretches</span>
-      <span class="why" data-private><span class="whylabel">Why this routine</span>${esc(x.why)}</span></button>`;
-  }).join('');
+  $('recPrimary').innerHTML = recCard(recs[0], 0, false) + `<button class="cta" id="homeStart">Start · ${fmtMin(secsOf(itemsOf(recs[0].r, recs[0].plan ? recs[0].plan.items : undefined)))}</button>`;
+  $('homeStart').onclick = () => { openRoutine(recs[0].r.id, 'home', recs[0].plan); begin(); };
+  $('recMore').innerHTML = recs.slice(1).map((x, i) => recCard(x, i + 1, true)).join('');
+  renderHomeProgress();
+}
+// Compact progress: this week against the goal, and the 4-week consistency. Tapping it opens History.
+function renderHomeProgress() {
+  const h = store.get(HIST_KEY, []), goal = look.goal, el = $('homeProgress');
+  if (!h.length) {
+    el.innerHTML = `<span class="pgtext"><b>Your week starts with your first routine</b><small>Weekly goal: ${goal} day${goal === 1 ? '' : 's'}</small></span>${CHEV}`;
+    el.setAttribute('aria-label', 'No sessions yet. Open History'); return;
+  }
+  const s = progressStats(h, goal), w = s.week, pct = Math.round(s.meter.score * 100);
+  el.innerHTML = `<span class="pgtext"><b>${w.doneDays} of ${goal} day${goal === 1 ? '' : 's'}<small>this week</small></b>
+      <span class="pgdots">${w.days.map(d => `<i class="${d.done ? 'done' : ''}${d.today ? ' today' : ''}"></i>`).join('')}</span></span>
+    <span class="pgpct"><b>${pct}%</b><small>consistency</small></span>${CHEV}`;
+  el.setAttribute('aria-label', `${w.doneDays} of ${goal} days this week, ${pct}% consistency. Open History`);
+}
+$('homeProgress').onclick = () => { renderHistory(); show('history'); };
+$('browseAll').onclick = () => { renderExplore(); show('explore'); };
+
+// ---------- Explore: everything for finding a routine ----------
+function renderExplore() {
   $('quickList').innerHTML = ROUTINES.filter(isQuick).sort((a, b) => routineSecs(a) - routineSecs(b)).map(routineRow).join('');
   $('areaChips').innerHTML = AREAS.map(a => `<button class="chip" data-area="${a.id}">${a.name}</button>`).join('');
   $('catGrid').innerHTML = CATEGORIES.map(c => {
@@ -1283,7 +1393,7 @@ function renderHome() {
 function applySearch() {
   const q = $('search').value.trim().toLowerCase();
   $('searchClear').hidden = !q;
-  $('homeSections').hidden = !!q; $('searchResults').hidden = !q;
+  $('exploreSections').hidden = !!q; $('searchResults').hidden = !q;
   if (!q) return;
   const hits = ROUTINES.filter(r => r.title.toLowerCase().includes(q));
   $('searchList').innerHTML = hits.map(routineRow).join('');
@@ -1304,7 +1414,7 @@ function openHockey() {
     <ul class="rows">${ROUTINES.filter(r => r.group === g).map(routineRow).join('')}</ul>`).join('');
   show('hockey'); $('hockey').querySelector('.scroll').scrollTop = 0;
 }
-$('hockeyBack').onclick = () => { renderHome(); show('home'); };
+$('hockeyBack').onclick = () => { renderExplore(); show('explore'); };
 $('hockeyCard').onclick = openHockey;
 function openList(kind, id) {
   if (kind === 'cat' && id === 'hockey') return openHockey();
@@ -1324,7 +1434,7 @@ function openList(kind, id) {
   $('listStretches').innerHTML = sts.map(stretchRow).join('');
   show('list'); $('list').querySelector('.scroll').scrollTop = 0;
 }
-$('listBack').onclick = () => { renderHome(); show('home'); };
+$('listBack').onclick = () => { renderExplore(); show('explore'); };
 
 // ---------- Library ----------
 // Library: filter by equipment and difficulty; grouped by equipment.
@@ -1362,7 +1472,7 @@ function dayLabel(d) {
   return day.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric', ...(day.getFullYear() !== today.getFullYear() ? { year: 'numeric' } : {}) });
 }
 // renderHistory() lives in progress.js (week, consistency meter, calendar).
-$('histBrowse').onclick = () => { renderHome(); show('home'); };
+$('histBrowse').onclick = () => { renderExplore(); show('explore'); };
 
 // ---------- Routine screen ----------
 const MINUS = '<svg viewBox="0 0 14 14"><path d="M2.5 7h9"/></svg>', PLUS = '<svg viewBox="0 0 14 14"><path d="M2.5 7h9M7 2.5v9"/></svg>';
@@ -1410,7 +1520,8 @@ $('rList').addEventListener('click', (e) => {
 });
 $('resetTimes').onclick = () => { cur.items.forEach(it => { it.secs = it.def; }); saveTimes(); renderRoutine(); };
 $('rBack').onclick = () => {
-  if (routineFrom === 'home' || routineFrom === 'list') renderHome();
+  if (routineFrom === 'home') renderHome();
+  if (routineFrom === 'explore' || routineFrom === 'list' || routineFrom === 'hockey') renderExplore();
   if (routineFrom === 'history') renderHistory();
   show(routineFrom);
 };
