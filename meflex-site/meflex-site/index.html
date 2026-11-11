@@ -1,0 +1,1646 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E1113">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MeFlex">
+<meta name="description" content="Stretching routines with a timer, sound and progress history.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+html, body { margin: 0; }
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+</style>
+<title>MeFlex</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+<style>
+/* Layout: one screen at a time, a single centered column sized to the phone; dark only, by design. */
+:root {
+  --bg: #0E1113; --raised: #171B1E; --line: #252B2F;
+  --ink: #F2EEE8; --muted: #8E979C; --accent: #C9785A;
+  --ring-track: #22282C;
+  --font: "Inter", -apple-system, "SF Pro Text", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.45 var(--font); -webkit-font-smoothing: antialiased; overflow: hidden; }
+* { box-sizing: border-box; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.screen { height: 100%; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 4px 16px; }
+.icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; }
+.icon:active { background: var(--raised); }
+.icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.bar { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; min-height: 52px; }
+.bar .mid { text-align: center; color: var(--muted); font-size: 15px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.plate { width: 100%; height: 100%; display: block; }
+
+/* Routine screen */
+#routine .scroll { flex: 1; overflow-y: auto; min-height: 0; padding-block: 28px 120px; -webkit-overflow-scrolling: touch; }
+#routine .meta { color: var(--accent); font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; }
+#routine h1 { font-size: 34px; line-height: 1.1; letter-spacing: -0.6px; margin: 6px 0 0; text-wrap: balance; }
+#routine .desc { color: var(--muted); margin: 10px 0 22px; max-width: 40ch; }
+.list { list-style: none; margin: 0; padding: 0; }
+.list li { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid var(--line); }
+.list li:last-child { border-bottom: 1px solid var(--line); }
+.list .thumb { width: 58px; height: 58px; flex: none; }
+.list .label { flex: 1; min-width: 0; }
+.list .n { font-size: 16px; font-weight: 500; }
+.list .each { color: var(--muted); font-size: 13px; }
+.stepper { display: flex; align-items: center; gap: 2px; flex: none; }
+.stepper button { width: 34px; height: 34px; border-radius: 50%; background: var(--raised); color: var(--ink); display: grid; place-items: center; }
+.stepper button svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; fill: none; }
+.stepper button:disabled { opacity: .3; }
+.stepper button:active:not(:disabled) { background: var(--line); }
+.stepper output { width: 44px; text-align: center; font-variant-numeric: tabular-nums; font-size: 15px; }
+.reset { color: var(--muted); font-size: 14px; text-decoration: underline; text-underline-offset: 3px; margin-top: 16px; padding: 6px 0; }
+.startbar { position: absolute; left: 0; right: 0; bottom: 0; padding: 28px max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px));
+  background: linear-gradient(transparent, var(--bg) 38%); }
+.cta { height: 56px; border-radius: 28px; background: var(--accent); color: #fff; font-size: 18px; font-weight: 600; width: 100%; }
+.cta:active { filter: brightness(0.92); }
+
+/* Player */
+#player .stage-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 0; gap: 0; }
+.stage { position: relative; width: min(82vw, 46vh, 360px); aspect-ratio: 1; max-width: 100%; }
+.stage .ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.stage .ring circle { fill: none; stroke-width: 5; }
+.stage .art { position: absolute; inset: 5.5%; transition: opacity .22s ease; }
+.stage .art.swap { opacity: 0; }
+.name { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5vh; font-size: 24px; font-weight: 600; letter-spacing: -0.3px; text-align: center; }
+.info { width: 28px; height: 28px; border-radius: 50%; border: 1.6px solid var(--muted); color: var(--muted); display: grid; place-items: center; flex: none; }
+.info svg { width: 14px; height: 14px; fill: currentColor; }
+.time { font-size: clamp(60px, 19vw, 84px); font-weight: 300; letter-spacing: -2px; font-variant-numeric: tabular-nums; line-height: 1.05; margin-top: 4px; }
+.side { color: var(--muted); font-size: 15px; min-height: 22px; }
+.controls { display: flex; align-items: center; justify-content: center; gap: 48px; padding-block: 18px 22px; }
+.controls .icon { width: 56px; height: 56px; }
+.controls .icon svg { width: 28px; height: 28px; }
+.controls .icon:disabled { opacity: .3; }
+.play { width: 78px; height: 78px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; }
+.play:active { transform: scale(.96); }
+.play svg { width: 30px; height: 30px; fill: currentColor; }
+
+/* Instructions */
+#info { overflow-y: auto; }
+#info .head { display: flex; gap: 16px; align-items: center; margin: 6px 0 22px; }
+#info .head .mini { width: 72px; height: 72px; flex: none; }
+#info h2 { font-size: 26px; margin: 0; letter-spacing: -0.4px; line-height: 1.15; }
+#info .focus { color: var(--accent); font-size: 15px; font-weight: 600; margin-top: 2px; }
+#info h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 22px 0 10px; font-weight: 600; }
+#info ol { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 14px; }
+#info ol li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; gap: 10px; max-width: 60ch; }
+#info ol li::before { content: counter(s); width: 26px; height: 26px; border-radius: 50%; background: var(--raised); color: var(--muted); font-size: 13px; font-weight: 600; display: grid; place-items: center; }
+#info ul { margin: 0; padding-left: 18px; color: var(--muted); display: grid; gap: 8px; max-width: 60ch; }
+
+/* Sound sheet */
+.sheet { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; z-index: 20; }
+.sheet .panel { width: 100%; max-width: 480px; background: var(--raised); border-radius: 22px 22px 0 0; display: grid; gap: 4px;
+  padding: 10px max(20px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)); }
+.sheet .grab { width: 38px; height: 5px; border-radius: 3px; background: var(--line); justify-self: center; margin-bottom: 8px; }
+.sheet h2 { margin: 0 0 6px; font-size: 20px; }
+.opt { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid var(--line); cursor: pointer; }
+.opt small { display: block; color: var(--muted); font-size: 13px; }
+.opt input { appearance: none; -webkit-appearance: none; width: 50px; height: 30px; border-radius: 15px; background: var(--line); position: relative; flex: none; cursor: pointer; transition: background .15s; margin: 0; }
+.opt input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); transition: transform .15s; }
+.opt input:checked { background: var(--accent); }
+.opt input:checked::after { transform: translateX(20px); }
+.opt input:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.ghost { height: 48px; border-radius: 24px; border: 1.5px solid var(--line); color: var(--ink); font-weight: 600; margin: 10px 0 6px; }
+/* Done */
+#done { justify-content: center; align-items: center; text-align: center; gap: 10px; }
+#done h1 { font-size: 32px; margin: 0; letter-spacing: -0.5px; }
+#done p { color: var(--muted); margin: 0; }
+#done .saved { font-size: 14px; margin-bottom: 26px; }
+#done .cta, #done .ghost { max-width: 340px; width: 100%; }
+@media (prefers-reduced-motion: reduce) { .stage .art { transition: none; } }
+
+/* Tabbed screens */
+.screen.tabbed, #routine, #list { padding-block: 0; position: relative; }
+.scroll { flex: 1; overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.tabbed .scroll { padding-block: 22px calc(96px + env(safe-area-inset-bottom, 0px)); }
+.title { font-size: 34px; line-height: 1.1; letter-spacing: -0.6px; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); margin: 6px 0 0; }
+.sec { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin: 30px 0 12px; }
+.sec span { color: var(--line); margin-left: 4px; filter: brightness(2); }
+.rows { list-style: none; margin: 0; padding: 0; }
+.row { width: 100%; display: flex; align-items: center; gap: 14px; padding: 10px 0; text-align: left; border-top: 1px solid var(--line); }
+.rows li:first-child .row { border-top: 0; }
+.row .thumb { width: 52px; height: 52px; flex: none; }
+.row .label { flex: 1; min-width: 0; display: grid; }
+.row .n { font-size: 16px; font-weight: 500; }
+.row .sub { color: var(--muted); font-size: 13px; }
+.chev { width: 18px; height: 18px; stroke: var(--muted); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.row:disabled { cursor: default; }
+/* Tabbed screens keep the side gutter inside the scroller, so sideways rows can run to the screen edge */
+.screen.tabbed { padding-left: 0; padding-right: 0; }
+.tabbed .scroll, .tabbed > .bar { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+/* Search */
+.search { margin-top: 18px; position: relative; }
+.search input { width: 100%; height: 46px; border-radius: 23px; border: 0; background: var(--raised); color: var(--ink); font: 16px var(--font); padding: 0 44px 0 44px; outline: none; -webkit-appearance: none; appearance: none; }
+.search input::placeholder { color: var(--muted); }
+.search input:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+.search input::-webkit-search-cancel-button { display: none; }
+.search .glass { position: absolute; left: 15px; top: 13px; width: 20px; height: 20px; stroke: var(--muted); fill: none; stroke-width: 2; stroke-linecap: round; pointer-events: none; }
+.search .clear { position: absolute; right: 4px; top: 1px; }
+.empty { color: var(--muted); padding: 18px 0; }
+/* Body areas */
+.chips { display: flex; gap: 8px; overflow-x: auto; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; height: 38px; padding: 0 16px; border-radius: 19px; border: 1.5px solid var(--line); font-size: 15px; font-weight: 500; }
+.chip:active { background: var(--raised); }
+/* Recommended */
+.cards { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: max(16px, env(safe-area-inset-left, 0px)); margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); scrollbar-width: none; }
+.cards::-webkit-scrollbar { display: none; }
+.card { flex: none; width: 200px; display: grid; gap: 2px; align-content: start; text-align: left; scroll-snap-align: start; }
+.card .cover { width: 200px; height: 200px; margin-bottom: 10px; }
+.card .why { color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.35; }
+.card .whylabel, .rwhy b { display: block; color: var(--accent); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.rwhy small { display: block; color: var(--muted); font-size: 12px; margin-top: 6px; }
+.rwhy { margin: -10px 0 20px; padding: 12px 14px; border-radius: 14px; background: var(--raised); font-size: 14px; color: var(--ink); }
+.card .n { font-size: 18px; font-weight: 600; letter-spacing: -0.2px; }
+.card .sub { color: var(--muted); font-size: 13px; }
+/* Categories */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tile { background: var(--raised); border-radius: 16px; padding: 14px; display: grid; gap: 2px; text-align: left; min-height: 104px; align-content: end; }
+.tile:active { background: var(--line); }
+.tile .dots { display: flex; margin-bottom: 10px; }
+.tile .dots i { width: 22px; height: 22px; border-radius: 50%; margin-right: -6px; border: 2px solid var(--raised); }
+.tile .n { font-weight: 600; }
+.tile .sub { color: var(--muted); font-size: 13px; }
+/* History */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+.stats div { background: var(--raised); border-radius: 14px; padding: 12px; display: grid; }
+.stats b { font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.stats span { color: var(--muted); font-size: 12px; line-height: 1.3; }
+.blank { display: grid; justify-items: center; text-align: center; gap: 10px; padding: 18vh 12px 0; color: var(--muted); }
+.blank .ring0 { width: 72px; height: 72px; border-radius: 50%; border: 5px solid var(--line); }
+.blank b { color: var(--ink); font-size: 18px; }
+.blank .ghost { padding: 0 22px; margin-top: 8px; }
+/* Sub-screen header */
+.subhead { padding-top: 6px; }
+/* Routine screen extras */
+#rList .label.link { text-align: left; display: grid; }
+#rList .label .sub { color: var(--muted); font-size: 13px; }
+#info .kind { color: var(--muted); font-size: 13px; }
+/* Settings */
+.group { background: var(--raised); border-radius: 16px; padding: 2px 16px; }
+.setrow { border-top: 1px solid var(--line); padding-bottom: 12px; }
+.setrow:first-child { border-top: 0; }
+.setrow .opt { border-top: 0; }
+.setrow.off .vol { opacity: .45; }
+.vol { display: flex; align-items: center; gap: 12px; }
+.vol svg { width: 18px; height: 18px; stroke: var(--muted); fill: none; stroke-width: 2; stroke-linejoin: round; flex: none; }
+.vol output { width: 42px; text-align: right; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+.vol input[type=range] { flex: 1; min-width: 0; -webkit-appearance: none; appearance: none; height: 28px; background: transparent; margin: 0; }
+.vol input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: var(--line); }
+.vol input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--line); }
+.vol input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); margin-top: -10px; border: 0; }
+.vol input[type=range]::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: var(--ink); border: 0; }
+.vol input[type=range]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.preview { display: flex; align-items: center; gap: 18px; margin-bottom: 8px; }
+.preview .big { width: 132px; height: 132px; flex: none; }
+.preview .small { display: flex; gap: 10px; flex-wrap: wrap; }
+.preview .small div { width: 44px; height: 44px; }
+.swatches { border: 0; margin: 0; padding: 20px 0 0; min-width: 0; }
+.swatches legend { color: var(--muted); font-size: 14px; padding: 0; margin-bottom: 10px; float: left; width: 100%; } /* float lets the margin apply */
+.swatches > div { clear: both; display: flex; gap: 10px; flex-wrap: wrap; }
+.sw { position: relative; cursor: pointer; }
+.sw input, .seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.sw span { display: block; width: 34px; height: 34px; border-radius: 50%; box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--line); }
+.sw span i { display: block; width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(#C9785A 0 25%, #6F9A86 0 50%, #5A74A6 0 75%, #D8B678 0); }
+.sw input:checked + span { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--ink); }
+.sw input:focus-visible + span, .seg input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 6px; }
+.segs { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg span { display: block; height: 38px; line-height: 35px; padding: 0 11px; border-radius: 19px; border: 1.5px solid var(--line); font-size: 14px; font-weight: 500; cursor: pointer; }
+.seg input:checked + span { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.note { color: var(--muted); font-size: 13px; margin: 10px 0 0; max-width: 60ch; }
+#restoreBtn { width: 100%; margin-top: 30px; }
+#restoreBtn.armed { border-color: var(--accent); color: var(--accent); }
+.restoremsg { color: var(--muted); font-size: 14px; text-align: center; min-height: 20px; margin: 4px 0 0; }
+/* Library filters */
+.filters { display: grid; gap: 10px; margin-top: 18px; }
+.fgroup { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+.fgroup::-webkit-scrollbar { display: none; }
+.fchip { flex: none; height: 34px; padding: 0 13px; border-radius: 17px; border: 1.5px solid var(--line); font-size: 14px; font-weight: 500; color: var(--muted); }
+.fchip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.count { color: var(--muted); font-size: 13px; margin: 14px 0 0; font-variant-numeric: tabular-nums; }
+.needs { margin-top: 30px; border-top: 1px solid var(--line); padding-top: 14px; }
+.needs summary { cursor: pointer; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.needs summary::-webkit-details-marker { display: none; }
+.needs summary::after { content: "Show"; text-transform: none; letter-spacing: 0; color: var(--accent); font-weight: 600; }
+.needs[open] summary::after { content: "Hide"; }
+.needs ul { margin: 10px 0 0; padding: 0; list-style: none; columns: 2; column-gap: 16px; font-size: 14px; }
+.needs li { padding: 3px 0; break-inside: avoid; }
+.needs li span { color: var(--muted); font-size: 12px; }
+#info .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: -8px 0 6px; }
+#info .tags span { font-size: 12px; font-weight: 600; color: var(--muted); border: 1px solid var(--line); border-radius: 12px; padding: 3px 9px; }
+/* Setup */
+#setup { padding-block: 0; position: relative; }
+#setup .bar { grid-template-columns: 64px 1fr 64px; }
+#setup .scroll { padding-block: 18px 120px; }
+.skip { height: 44px; color: var(--muted); font-weight: 600; font-size: 15px; justify-self: end; padding: 0 4px; }
+.q { font-size: 30px; line-height: 1.15; letter-spacing: -0.5px; margin: 0; text-wrap: balance; }
+.qsub { color: var(--muted); margin: 8px 0 0; }
+.opts { display: grid; gap: 10px; margin-top: 26px; }
+.optbtn { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 58px; padding: 12px 18px; border-radius: 16px; background: var(--raised); text-align: left; border: 1.5px solid transparent; }
+.optbtn b { font-weight: 600; font-size: 17px; display: block; }
+.optbtn small { color: var(--muted); font-size: 13px; display: block; }
+.optbtn i { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line); flex: none; }
+.optbtn[role="checkbox"] i { border-radius: 7px; }
+.optbtn[aria-checked="true"] { border-color: var(--accent); }
+.optbtn[aria-checked="true"] i { border-color: var(--accent); background: var(--accent); box-shadow: inset 0 0 0 4px var(--raised); }
+.qnote { color: var(--accent); font-size: 14px; margin: 14px 0 0; min-height: 20px; }
+.disclaimer { margin: 28px 0 0; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); color: var(--ink); font-size: 15px; }
+.profile { margin: 0; }
+.profile div { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-top: 1px solid var(--line); }
+.profile div:first-child { border-top: 0; }
+.profile dt { color: var(--muted); }
+.profile dd { margin: 0; text-align: right; }
+/* Tab bar */
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: flex; justify-content: center; gap: 8px;
+  background: rgba(14,17,19,.94); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-top: 1px solid var(--line);
+  padding: 6px max(16px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.tabbar button { flex: 1; max-width: 140px; display: grid; justify-items: center; gap: 2px; padding: 6px 0; color: var(--muted); font-size: 11px; font-weight: 600; }
+.tabbar button svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tabbar button[aria-current="page"] { color: var(--ink); }
+</style>
+</head>
+<body>
+
+
+<section class="screen tabbed" id="home">
+  <div class="scroll">
+    <h1 class="title">MeFlex</h1>
+    <form class="search" id="searchForm" role="search">
+      <svg class="glass" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <input type="search" id="search" placeholder="Search routines" aria-label="Search routines" autocomplete="off" enterkeyhint="search">
+      <button type="button" class="icon clear" id="searchClear" aria-label="Clear search" hidden><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button>
+    </form>
+    <div id="searchResults" hidden><h2 class="sec">Routines</h2><ul class="rows" id="searchList"></ul><p class="empty" id="searchEmpty" hidden></p></div>
+    <div id="homeSections">
+      <h2 class="sec">Body areas</h2><div class="chips" id="areaChips"></div>
+      <h2 class="sec" id="recHead">Recommended</h2><div class="cards" id="recList"></div>
+      <h2 class="sec">Quick routines <span>4 min or less</span></h2><ul class="rows" id="quickList"></ul>
+      <h2 class="sec">Categories</h2><div class="grid" id="catGrid"></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen tabbed" id="list" hidden>
+  <div class="bar"><button class="icon" id="listBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
+  <div class="scroll" style="padding-top:4px">
+    <h1 class="title" id="listTitle"></h1><p class="lede" id="listSub"></p>
+    <h2 class="sec">Routines</h2><ul class="rows" id="listRoutines"></ul>
+    <h2 class="sec" id="listStretchHead">Stretches</h2><ul class="rows" id="listStretches"></ul>
+  </div>
+</section>
+
+<section class="screen tabbed" id="library" hidden>
+  <div class="scroll">
+    <h1 class="title">Library</h1><p class="lede">Every exercise in MeFlex. Tap one for how to do it.</p>
+    <div class="filters">
+      <div class="fgroup" role="group" aria-label="Equipment" id="fEquip"></div>
+      <div class="fgroup" role="group" aria-label="Difficulty" id="fLevel"></div>
+    </div>
+    <p class="count" id="libCount" aria-live="polite"></p>
+    <div id="libBody"></div>
+    <details class="needs" id="libNeeds"><summary id="libNeedsSum"></summary><p class="note">These show as plain colored circles until a side-on reference photo is traced.</p><ul id="libNeedsList"></ul></details>
+  </div>
+</section>
+
+<section class="screen tabbed" id="history" hidden>
+  <div class="scroll">
+    <h1 class="title">History</h1>
+    <div class="blank" id="histEmpty"><div class="ring0"></div><b>No sessions yet</b><span>Finish a routine and it will show up here.</span><button class="ghost" id="histBrowse">Browse routines</button></div>
+    <div id="histBody" hidden><div class="stats" id="histStats"></div><div id="histList"></div></div>
+  </div>
+</section>
+
+<section class="screen tabbed" id="settings" hidden>
+  <div class="scroll">
+    <h1 class="title">Settings</h1>
+    <h2 class="sec">Sound</h2><div class="group" id="setSound"></div>
+    <p class="note">Release a slider to hear that sound. These are the same switches as the speaker button in the player.</p>
+    <h2 class="sec">Colors</h2>
+    <div class="preview" id="setPreview" aria-label="Preview"></div>
+    <div id="setLook"></div>
+    <h2 class="sec">Default hold</h2>
+    <div class="segs" id="setHold" role="radiogroup" aria-label="Default hold"></div>
+    <p class="note">Used for every stretch, on each side. A time you set inside a routine still wins.</p>
+    <h2 class="sec">Your setup</h2>
+    <div class="group" id="setProfile" data-private><dl class="profile" id="profileRows"></dl></div>
+    <p class="note">Stored only on this device. Never sent anywhere.</p>
+    <button class="ghost" id="profileEdit" style="width:100%">Change answers</button>
+    <h2 class="sec">Privacy</h2>
+    <div class="group"><label class="opt" for="set-analytics" style="border-top:0"><span>Share anonymous usage data<small>Which routines you start, finish or stop early, plus screen recordings with all text hidden. Never your name, email or location.</small></span><input type="checkbox" id="set-analytics" role="switch"></label></div>
+    <button class="ghost" id="restoreBtn">Restore defaults</button>
+    <p class="restoremsg" id="restoreMsg" aria-live="polite"></p>
+    <p class="note" style="text-align:center;margin-inline:auto">Restores sound, colors and default hold. Your routine times, history and privacy choice stay.</p>
+  </div>
+</section>
+
+<section class="screen" id="setup" data-private hidden>
+  <div class="bar"><button class="icon" id="setupBack" aria-label="Previous question"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="mid" id="setupStep"></div><button class="skip" id="setupSkip">Skip</button></div>
+  <div class="scroll"><div id="setupBody"></div></div>
+  <div class="startbar"><button class="cta" id="setupNext">Next</button></div>
+</section>
+
+<section class="screen" id="routine" hidden>
+  <div class="bar"><button class="icon" id="rBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
+  <div class="scroll" style="padding-top:2px">
+    <div class="meta" id="rMeta"></div>
+    <h1 id="rTitle"></h1>
+    <p class="desc" id="rDesc"></p>
+    <p class="rwhy" id="rWhy" data-private hidden></p>
+    <ul class="list" id="rList"></ul>
+    <button class="reset" id="resetTimes" hidden>Reset times</button>
+  </div>
+  <div class="startbar"><button class="cta" id="startBtn">Start</button></div>
+</section>
+
+<section class="screen" id="player" hidden>
+  <div class="bar">
+    <button class="icon" id="closeBtn" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="mid" id="count">1 of 6</div>
+    <button class="icon" id="soundBtn" aria-label="Sound settings"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></button>
+  </div>
+  <div class="stage-wrap">
+    <div class="stage">
+      <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="47" stroke="var(--ring-track)"/>
+        <circle id="ringFill" cx="50" cy="50" r="47" stroke="var(--ink)" stroke-linecap="round" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="1000"/>
+      </svg>
+      <div class="art" id="art"></div>
+    </div>
+    <div class="name"><span id="name"></span><button class="info" id="infoBtn" aria-label="How to do this stretch"><svg viewBox="0 0 16 16"><circle cx="8" cy="3.4" r="1.4"/><rect x="6.9" y="6" width="2.2" height="7.6" rx="1.1"/></svg></button></div>
+    <div class="time" id="time" aria-live="off">0:45</div>
+    <div class="side" id="side"></div>
+  </div>
+  <div class="controls">
+    <button class="icon" id="prevBtn" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M18 5.5L9 12l9 6.5zM6 5v14"/></svg></button>
+    <button class="play" id="playBtn" aria-label="Pause"></button>
+    <button class="icon" id="nextBtn" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M6 5.5l9 6.5-9 6.5zM18 5v14"/></svg></button>
+  </div>
+</section>
+
+<section class="screen" id="info" hidden>
+  <div class="bar"><button class="icon" id="infoBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="mid">How to</div><span></span></div>
+  <div class="head"><div class="mini" id="infoArt"></div><div><h2 id="infoName"></h2><div class="focus" id="infoFocus"></div></div></div>
+  <div class="tags" id="infoTags"></div>
+  <h3>Steps</h3><ol id="infoSteps"></ol>
+  <h3>Tips</h3><ul id="infoTips"></ul>
+</section>
+
+<div class="sheet" id="soundSheet" hidden>
+  <div class="panel" role="dialog" aria-label="Sound">
+    <div class="grab"></div>
+    <h2>Sound</h2>
+    <label class="opt" for="opt-chime"><span>Chime<small>At the start and end of each stretch</small></span><input type="checkbox" id="opt-chime" role="switch"></label>
+    <label class="opt" for="opt-tick"><span>Countdown ticks<small>Last 3 seconds of each stretch</small></span><input type="checkbox" id="opt-tick" role="switch"></label>
+    <label class="opt" for="opt-voice"><span>Voice<small>Reads the stretch name and side</small></span><input type="checkbox" id="opt-voice" role="switch"></label>
+    <button class="ghost" id="testSound">Play test chime</button>
+    <button class="cta" id="sheetDone">Done</button>
+  </div>
+</div>
+
+<section class="screen" id="done" hidden>
+  <h1>Nice work</h1>
+  <p id="doneText"></p>
+  <p class="saved" id="doneSaved"></p>
+  <button class="cta" id="doneBtn">Done</button>
+  <button class="ghost" id="doneHistory">See history</button>
+</section>
+
+
+<nav class="tabbar" id="tabbar" aria-label="Main">
+  <button data-tab="home" aria-current="page"><svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20h-5.5v-6h-5v6H4z"/></svg>Home</button>
+  <button data-tab="library"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="3.25"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="3.25"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="3.25"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="3.25"/></svg>Library</button>
+  <button data-tab="history"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>History</button>
+  <button data-tab="settings"><svg viewBox="0 0 24 24"><path d="M5 7h9M18 7h1M5 17h1M10 17h9"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>Settings</button>
+</nav>
+
+<script>
+const PALETTE = {
+  circles: { clay: '#C9785A', sage: '#6F9A86', dusk: '#5A74A6', sand: '#D8B678', plum: '#87668F' },
+  skin: ['#F2C9A8', '#D9A07A', '#A86E4A', '#6E4330'],
+  hair: ['#3B2A22', '#2A1E18', '#1C1512', '#141010'],
+  top: '#F4EFE6', bottom: '#22303B', mat: '#1E2830',
+};
+const shade = (hex, k) => {
+  const n = parseInt(hex.slice(1), 16);
+  return '#' + [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.min(255, Math.round(v * k)).toString(16).padStart(2, '0')).join('');
+};
+// Low lunge traced from a reference photo (photo pixel coordinates, 500x750).
+// Each region is a smooth closed outline through traced points, filled flat.
+
+const r1 = (v) => Math.round(v * 10) / 10;
+function smooth(pts) {
+  const n = pts.length; let d = `M${r1(pts[0][0])} ${r1(pts[0][1])}`;
+  for (let i = 0; i < n; i++) {
+    const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += `C${r1(c1[0])} ${r1(c1[1])} ${r1(c2[0])} ${r1(c2[1])} ${r1(p2[0])} ${r1(p2[1])}`;
+  }
+  return d + 'Z';
+}
+
+const T = {
+  // head (face profile only) + neck + torso, down to just under the waistband
+  torso: [[241, 243], [245, 250], [247.5, 257.5], [246, 263], [242.5, 270], [244, 274], [248, 276.5], [251, 279.5], [252, 282], [255, 285.5], [259, 290], [263, 295.5], [271, 295.5], [282, 291],
+    [288, 305], [292, 320], [293, 332], [284, 370], [276, 420], [278, 433], [283, 448], [287, 466], [291, 480], [300, 492], [388, 494],
+    [390, 487], [377, 477], [364, 457], [355, 436], [360, 418], [363, 390], [362, 357], [359, 338], [352, 320], [341, 310], [324, 306], [314, 290], [306, 270], [292, 236], [262, 236]],
+  hair: [[290, 181], [305, 185], [314, 192], [323, 198], [332, 205], [338, 213], [341, 222], [343, 230], [345, 240], [344, 250], [341, 259], [336, 266], [329, 270], [319, 271.5], [308, 273], [301, 268],
+    [298, 256], [295, 246], [284, 240], [270, 238], [254, 239], [242, 241], [234, 237], [227, 230], [228, 221], [233, 213], [239, 206], [247, 199], [257, 193], [268, 187], [279, 183]],
+  bra: [[262, 340], [318, 372], [334, 364], [352, 354], [366, 352], [366, 426], [262, 426]],
+  // far (back) leg, extended along the mat past the photo's right edge
+  backLeg: [[392, 494], [403, 511], [417, 533], [428, 558], [442, 590], [460, 619], [478, 636], [495, 648], [510, 661], [530, 671], [560, 679], [600, 686], [603, 707], [540, 702.5], [500, 698.5], [474, 695], [446, 690], [421, 672], [396, 647], [374, 626], [349, 601], [326, 578], [330, 540], [360, 500]],
+  // top of the foot rests on the mat; heel up behind the ankle, sole facing up and back, rounded toes
+  backFoot: [[592, 686], [598, 676], [607, 670], [617, 670], [625, 675], [634, 681], [648, 686], [662, 689], [674, 692], [684, 697], [691, 702], [693, 707], [688, 711.5], [670, 711.5], [640, 710], [612, 708.5], [592, 707.5]],
+  // hips + near (front) leg: loose joggers, knee bent, shin vertical
+  frontLeg: [[289, 474], [274, 473], [249, 468], [222, 462], [196, 460], [168, 465], [152, 474], [146, 494], [144, 520], [143, 547], [142, 575], [142, 597], [144, 616], [160, 622], [179, 620],
+    [184, 600], [187, 570], [189, 547], [193, 531], [221, 541], [253, 552], [289, 565], [312, 573], [334, 578], [362, 566], [392, 550], [417, 533], [403, 511], [396, 496], [340, 492]],
+  frontFoot: [[147, 615], [140, 632], [130, 643], [114, 653], [96, 660], [80, 662], [72, 667], [76, 673], [96, 674], [116, 673], [150, 671], [173, 670], [180, 656], [179, 636], [177, 616]],
+  // near arm, hand resting on the front knee
+  arm: [[324, 306], [312, 307], [301, 314], [295, 326], [289, 342], [281, 356], [268, 372], [250, 390], [228, 412], [207, 429], [185, 436], [172, 441], [163, 447], [158, 455], [157, 467], [160, 477], [166, 483], [174, 481], [181, 472],
+    [189, 465], [200, 459], [220, 450], [238, 445], [251, 442], [263, 436], [277, 427], [294, 412], [311, 394], [324, 372], [341, 357], [352, 340], [350, 322], [340, 311]],
+};
+
+function tracedLunge(opts = {}) {
+  const skin = PALETTE.skin[opts.skin ?? 0];
+  const hair = opts.hair || '#D8B87C', top = opts.top || '#A8D2D2', pants = opts.bottom || '#C9CDD4';
+  const id = 'tb' + Math.random().toString(36).slice(2, 7);
+  const torsoD = smooth(T.torso);
+  // rotate a few degrees so the front sole and back knee sit on one level mat line,
+  // then scale photo pixels into the 200x200 plate (front sole lands on y=157)
+  return `<g transform="translate(13 -1) scale(0.235) rotate(-3.7 114 672)">
+    <defs><clipPath id="${id}"><path d="${torsoD}"/></clipPath></defs>
+    <path d="${smooth(T.backFoot)}" fill="${shade(skin, 0.86)}"/>
+    <path d="${smooth(T.backLeg)}" fill="${shade(pants, 0.86)}"/>
+    <path d="${torsoD}" fill="${shade(skin, 0.95)}"/>
+    <path d="${smooth(T.bra)}" fill="${top}" clip-path="url(#${id})"/>
+    <path d="${smooth(T.hair)}" fill="${hair}"/>
+    <path d="${smooth(T.frontFoot)}" fill="${skin}"/>
+    <path d="${smooth(T.frontLeg)}" fill="${pants}"/>
+    <path d="${smooth(T.arm)}" fill="${skin}"/>
+  </g>`;
+}
+
+function tracedPlate(opts = {}) {
+  const id = 'c' + Math.random().toString(36).slice(2, 8);
+  const circle = opts.circle || PALETTE.circles.clay;
+  return `<svg viewBox="0 0 200 200" class="plate" role="img" aria-label="${opts.label || 'Low lunge'}">
+    <defs><clipPath id="${id}"><circle cx="100" cy="100" r="96"/></clipPath></defs>
+    <circle cx="100" cy="100" r="96" fill="${circle}"/>
+    <g clip-path="url(#${id})">
+      <rect x="18" y="157" width="164" height="8" rx="4" fill="${opts.mat || PALETTE.mat}"/>
+      <rect x="0" y="165" width="200" height="40" fill="${shade(circle, 0.88)}"/>
+      ${opts.mirror ? `<g transform="translate(200 0) scale(-1 1)">${tracedLunge(opts)}</g>` : tracedLunge(opts)}
+    </g></svg>`;
+}
+
+// MeFlex library. Every stretch is defined once here; routines refer to stretches by id.
+// A stretch with `figure` shows its traced illustration everywhere it appears;
+// the rest show a plain colored circle until a reference photo is traced.
+const C = { clay: '#C9785A', sage: '#6F9A86', dusk: '#5A74A6', sand: '#D8B678', plum: '#87668F', teal: '#4F8A8B', rose: '#B9727F' };
+
+const AREAS = [
+  { id: 'neck', name: 'Neck' }, { id: 'shoulders', name: 'Shoulders' }, { id: 'chest', name: 'Chest' }, { id: 'back', name: 'Back' },
+  { id: 'hips', name: 'Hips' }, { id: 'hamstrings', name: 'Hamstrings' }, { id: 'quads', name: 'Quads' }, { id: 'calves', name: 'Calves' },
+];
+const KINDS = { body: 'No equipment', band: 'Resistance band', weight: 'Light dumbbells' };
+const LEVELS = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' };
+const POSITIONS = { standing: 'Standing', seated: 'Seated', kneeling: 'Kneeling', floor: 'Floor' };
+const LR = ['Left side', 'Right side'];
+
+// Tags on every exercise:
+//   areas     body areas it works          kind      equipment: body (none) | band | weight (light dumbbells)
+//   level     beginner | intermediate | advanced     pos       standing | seated | kneeling | floor
+//   balance   needs balance (true/false)   sides     two-sided: the side labels, or null
+//   overhead  arms go above the head (used by "positions to avoid")
+// Weighted exercises use light loads only, are all advanced, and carry a safety tip.
+const SAFETY = 'Safety: use a light dumbbell (about 1–5 kg / 2–10 lb). The weight should ease you into the stretch, never force it. Stop if you feel sharp pain, pinching or numbness.';
+const STRETCHES = [
+  // ---- Bodyweight (35) ----
+  { id: 'lunge', name: 'Low Lunge', areas: ['hips', 'quads'], kind: 'body', level: 'beginner', pos: 'kneeling', balance: false, overhead: false, sides: ['Left leg forward', 'Right leg forward'], circle: C.clay, figure: 'lunge',
+    focus: 'Hip flexors · quads',
+    steps: ['Step one foot forward and lower the back knee onto the mat.', 'Stack the front knee over the ankle, shin vertical.', 'Rest your hands on the front knee and lift your chest.', 'Shift your hips gently forward until you feel the front of the back hip open.'],
+    tips: ['Pad the back knee with a folded towel if it presses.', 'Squeeze the glute of the back leg to deepen the stretch without arching.'] },
+  { id: 'butterfly', name: 'Butterfly', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: null, circle: C.sage, focus: 'Inner thighs · groin',
+    steps: ['Sit tall and bring the soles of your feet together.', 'Hold your feet and let the knees fall out to the sides.', 'Hinge forward from the hips, keeping the back long.'],
+    tips: ['Sit on a folded blanket if your back rounds.', 'Do not press the knees down with your hands.'] },
+  { id: 'pigeon', name: 'Pigeon', areas: ['hips'], kind: 'body', level: 'intermediate', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.dusk, focus: 'Glutes · outer hip',
+    steps: ['From hands and knees, slide one knee forward behind the same wrist.', 'Angle that shin across the mat and extend the other leg straight back.', 'Square the hips and walk your hands forward to fold over the front leg.'],
+    tips: ['Place a cushion under the front hip if it lifts off the mat.', 'Keep the back toes pointed straight back.'] },
+  { id: 'figure4', name: 'Figure Four', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.sand, focus: 'Glutes · piriformis',
+    steps: ['Lie on your back with both knees bent.', 'Cross one ankle over the opposite knee.', 'Thread your hands behind the lower thigh and draw both legs toward your chest.'],
+    tips: ['Flex the crossed foot to protect the knee.', 'Keep your head and shoulders relaxed on the mat.'] },
+  { id: 'frog', name: 'Frog', areas: ['hips'], kind: 'body', level: 'intermediate', pos: 'kneeling', balance: false, overhead: false, sides: null, circle: C.plum, focus: 'Inner thighs · hips',
+    steps: ['Start on hands and knees, then widen the knees as far as is comfortable.', 'Line the ankles up with the knees, feet turned out.', 'Lower onto your forearms and ease the hips back.'],
+    tips: ['Use padding under the knees.', 'Move slowly; this one builds fast.'] },
+  { id: 'child', name: 'Child’s Pose', areas: ['back', 'hips'], kind: 'body', level: 'beginner', pos: 'kneeling', balance: false, overhead: false, sides: null, circle: C.sage, focus: 'Lower back · hips',
+    steps: ['Kneel with big toes touching and knees apart.', 'Sit the hips back toward the heels.', 'Walk the hands forward and rest your forehead on the mat.'],
+    tips: ['Breathe into the back of your ribs.', 'Put a pillow under the chest for more support.'] },
+  { id: 'catcow', name: 'Cat–Cow', areas: ['back'], kind: 'body', level: 'beginner', pos: 'kneeling', balance: false, overhead: false, sides: null, circle: C.teal, focus: 'Whole spine',
+    steps: ['Start on hands and knees, wrists under shoulders.', 'Breathe in and let the belly drop as you lift your chest and tailbone.', 'Breathe out and round your back, tucking chin and tailbone.', 'Keep flowing slowly with your breath.'],
+    tips: ['Move one vertebra at a time.', 'Keep your arms straight but not locked.'] },
+  { id: 'fold', name: 'Seated Forward Fold', areas: ['hamstrings', 'back'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: null, circle: C.dusk, focus: 'Hamstrings · lower back',
+    steps: ['Sit with both legs straight out in front of you.', 'Sit tall, then hinge forward from the hips.', 'Rest your hands on your shins and let your head relax toward your knees.'],
+    tips: ['Bend your knees slightly if your back rounds hard.', 'Lead with the chest, not the head.'] },
+  { id: 'quad', name: 'Standing Quad', areas: ['quads'], kind: 'body', level: 'beginner', pos: 'standing', balance: true, overhead: false, sides: LR, circle: C.rose, focus: 'Front of the thigh',
+    steps: ['Stand tall and hold a wall or chair for balance.', 'Bend one knee and hold that foot behind you.', 'Keep the knees together and press the hip forward.'],
+    tips: ['Tuck the tailbone slightly so the back does not arch.', 'Use a strap around the foot if you cannot reach it.'] },
+  { id: 'calf', name: 'Wall Calf', areas: ['calves'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: LR, circle: C.teal, focus: 'Calves · Achilles',
+    steps: ['Face a wall with your hands on it at chest height.', 'Step one foot back and press that heel into the floor.', 'Bend the front knee and lean in until you feel the back calf.'],
+    tips: ['Point the back toes straight ahead.', 'Bend the back knee a little to reach the lower calf.'] },
+  { id: 'necktilt', name: 'Side Neck Tilt', areas: ['neck'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.plum, focus: 'Side of the neck',
+    steps: ['Sit tall with your shoulders relaxed.', 'Tilt one ear toward the same shoulder.', 'Let the opposite shoulder sink down.'],
+    tips: ['Add light pressure with the hand on the tilting side.', 'Keep your face pointing forward.'] },
+  { id: 'levator', name: 'Levator Release', areas: ['neck', 'shoulders'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.sand, focus: 'Back of the neck · upper shoulder',
+    steps: ['Turn your head about 45 degrees to one side.', 'Drop your chin toward that armpit.', 'Place the same hand on the back of your head and let its weight deepen the stretch.'],
+    tips: ['Hold the opposite side of the seat to anchor the shoulder.', 'Do not pull; let the arm rest.'] },
+  { id: 'chintuck', name: 'Chin Tuck', areas: ['neck'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: null, circle: C.dusk, focus: 'Base of the skull · upper neck',
+    steps: ['Sit tall and look straight ahead.', 'Glide your chin straight back, making a double chin.', 'Hold, then release slowly.'],
+    tips: ['Keep your eyes level; do not nod down.', 'Good to repeat during long screen sessions.'] },
+  { id: 'crossbody', name: 'Cross-Body Shoulder', areas: ['shoulders'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: LR, circle: C.clay, focus: 'Back of the shoulder',
+    steps: ['Bring one arm straight across your chest.', 'Hold it above the elbow with the other hand.', 'Draw it closer while keeping the shoulder down.'],
+    tips: ['Do not let the shoulder hike toward your ear.', 'Works just as well sitting down.'] },
+  { id: 'doorway', name: 'Doorway Chest Opener', areas: ['chest', 'shoulders'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.rose, focus: 'Chest · front of the shoulders',
+    steps: ['Stand in a doorway with forearms on the frame, elbows at shoulder height.', 'Step one foot through.', 'Lean forward gently until the chest opens.'],
+    tips: ['Keep elbows at or below shoulder height.', 'Keep your ribs down; do not arch.'] },
+  { id: 'twist', name: 'Supine Twist', areas: ['back'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.sage, focus: 'Mid and lower back',
+    steps: ['Lie on your back and hug one knee in.', 'Guide that knee across your body toward the floor.', 'Open the other arm out to the side and look the other way.'],
+    tips: ['Keep both shoulders heavy on the mat.', 'Put a pillow under the knee if it does not reach the floor.'] },
+  { id: 'kneeschest', name: 'Knees to Chest', areas: ['back'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.plum, focus: 'Lower back',
+    steps: ['Lie on your back.', 'Hug both knees in toward your chest.', 'Rock gently side to side if it feels good.'],
+    tips: ['Hold behind the thighs if your knees are sensitive.', 'Let your lower back sink into the mat.'] },
+  { id: 'cobra', name: 'Low Cobra', areas: ['back', 'chest'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.sand, focus: 'Front of the body · spine',
+    steps: ['Lie face down with your hands under your shoulders.', 'Press lightly and lift your chest a few inches.', 'Keep your elbows bent and close to your sides.'],
+    tips: ['Lift with your back, not by pushing hard with the arms.', 'Stop before any pinch in the lower back.'] },
+  { id: 'sidebend', name: 'Standing Side Bend', areas: ['back', 'shoulders'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: true, sides: LR, circle: C.teal, focus: 'Side of the body · lats',
+    steps: ['Stand with feet hip-width apart.', 'Reach one arm overhead.', 'Lean gently to the opposite side, reaching up and over.'],
+    tips: ['Keep both hips level and facing forward.', 'Rest the other hand on your thigh for support.'] },
+  { id: 'neckturn', name: 'Neck Rotation', areas: ['neck'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.rose, focus: 'Sides and back of the neck',
+    steps: ['Sit tall with your shoulders relaxed.', 'Slowly turn your head to look over one shoulder.', 'Stop where you feel a gentle stretch, keeping the chin level.'],
+    tips: ['Move slowly and keep the turn within a comfortable range.', 'Do not force the last few degrees.'] },
+  { id: 'thread', name: 'Thread the Needle', areas: ['shoulders', 'back'], kind: 'body', level: 'beginner', pos: 'kneeling', balance: false, overhead: false, sides: LR, circle: C.sage, focus: 'Upper back · back of the shoulder',
+    steps: ['Start on hands and knees.', 'Slide one arm under your body, palm up, along the mat.', 'Lower that shoulder and the side of your head to the mat.'],
+    tips: ['Keep your hips over your knees.', 'Press lightly into the other hand to control the twist.'] },
+  { id: 'puppy', name: 'Puppy Pose', areas: ['shoulders', 'chest', 'back'], kind: 'body', level: 'intermediate', pos: 'kneeling', balance: false, overhead: true, sides: null, circle: C.clay, focus: 'Shoulders · upper back',
+    steps: ['Start on hands and knees.', 'Walk your hands forward and let your chest sink toward the mat.', 'Keep your hips above your knees and rest your forehead down.'],
+    tips: ['Put a cushion under the forehead if it does not reach.', 'Back off if your shoulders pinch.'] },
+  { id: 'downdog', name: 'Downward Dog', areas: ['hamstrings', 'calves', 'shoulders'], kind: 'body', level: 'intermediate', pos: 'floor', balance: false, overhead: true, sides: null, circle: C.dusk, focus: 'Hamstrings · calves · shoulders',
+    steps: ['From hands and knees, tuck your toes and lift your hips up and back.', 'Press the floor away and lengthen your spine.', 'Let your heels sink toward the floor.'],
+    tips: ['Bend your knees as much as you need to keep the back long.', 'Pedal the feet to ease into the calves.'] },
+  { id: 'standfold', name: 'Standing Forward Fold', areas: ['hamstrings', 'back'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.plum, focus: 'Hamstrings · lower back',
+    steps: ['Stand with feet hip-width apart, knees soft.', 'Hinge at the hips and let your upper body hang.', 'Hold your elbows and let your head relax.'],
+    tips: ['Rest your hands on a chair seat if the floor is far away.', 'Roll up slowly to finish.'] },
+  { id: 'halfsplit', name: 'Half Split', areas: ['hamstrings', 'calves'], kind: 'body', level: 'intermediate', pos: 'kneeling', balance: false, overhead: false, sides: LR, circle: C.sand, focus: 'Hamstrings · calves',
+    steps: ['From a low lunge, shift your hips back over the back knee.', 'Straighten the front leg and flex its foot.', 'Hinge forward over the front leg, hands on the floor or blocks.'],
+    tips: ['Keep the back long rather than reaching for your toes.', 'Pad the back knee.'] },
+  { id: 'lizard', name: 'Lizard Lunge', areas: ['hips'], kind: 'body', level: 'advanced', pos: 'kneeling', balance: false, overhead: false, sides: ['Left leg forward', 'Right leg forward'], circle: C.teal, focus: 'Hip flexors · inner hip',
+    steps: ['From a low lunge, place both hands inside the front foot.', 'Walk the front foot slightly out to the side.', 'Lower onto your forearms if you can, keeping the back knee down.'],
+    tips: ['Stay on your hands if forearms are too deep.', 'Let the front knee open out a little.'] },
+  { id: 'happybaby', name: 'Happy Baby', areas: ['hips', 'back'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.rose, focus: 'Inner thighs · lower back',
+    steps: ['Lie on your back and draw your knees toward your armpits.', 'Hold the outsides of your feet, soles facing the ceiling.', 'Gently pull the knees down toward the floor.'],
+    tips: ['Hold your ankles or shins if your feet are out of reach.', 'Keep your tailbone heavy.'] },
+  { id: 'lyingham', name: 'Lying Hamstring', areas: ['hamstrings'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.sage, focus: 'Back of the thigh',
+    steps: ['Lie on your back with both knees bent.', 'Lift one leg and hold behind the thigh or calf.', 'Straighten that knee until you feel the back of the thigh.'],
+    tips: ['Use a towel around the foot if you cannot reach.', 'Keep your head and shoulders on the mat.'] },
+  { id: 'sidequad', name: 'Side-Lying Quad', areas: ['quads', 'hips'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.clay, focus: 'Front of the thigh',
+    steps: ['Lie on your side with your head resting on your lower arm.', 'Bend the top knee and hold that ankle.', 'Draw the heel toward your seat and press the hip forward.'],
+    tips: ['No balance needed, so a good alternative to the standing version.', 'Use a strap if you cannot reach your ankle.'] },
+  { id: 'couch', name: 'Couch Stretch', areas: ['quads', 'hips'], kind: 'body', level: 'advanced', pos: 'kneeling', balance: false, overhead: false, sides: LR, circle: C.dusk, focus: 'Quads · hip flexors',
+    steps: ['Kneel with your back to a wall or sofa.', 'Slide one knee back so that shin rests up the wall.', 'Step the other foot forward and slowly lift your chest.'],
+    tips: ['This is intense: start with your torso leaning forward.', 'Pad the knee well.'] },
+  { id: 'seatedtwist', name: 'Seated Twist', areas: ['back'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.plum, focus: 'Mid back',
+    steps: ['Sit tall on a chair or the floor.', 'Turn your chest to one side, hand on the back of the chair or behind you.', 'Lengthen up as you breathe in; turn a little more as you breathe out.'],
+    tips: ['Turn from the middle of your back, not the neck.', 'Keep both sit bones down.'] },
+  { id: 'sphinx', name: 'Sphinx', areas: ['back', 'chest'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.sand, focus: 'Lower back · front of the body',
+    steps: ['Lie face down.', 'Prop yourself up on your forearms, elbows under shoulders.', 'Relax your lower back and let your hips stay heavy.'],
+    tips: ['Gentler than cobra; a good first back bend.', 'Slide the elbows forward if you feel any pinch.'] },
+  { id: 'chestclasp', name: 'Behind-Back Chest Clasp', areas: ['chest', 'shoulders'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.teal, focus: 'Chest · front of the shoulders',
+    steps: ['Stand tall and clasp your hands behind your back.', 'Draw your shoulder blades together.', 'Lift your hands slightly away from your back.'],
+    tips: ['Hold a towel between your hands if they do not meet.', 'Keep your chin level.'] },
+  { id: 'chairfig4', name: 'Chair Figure Four', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.rose, focus: 'Glutes · outer hip',
+    steps: ['Sit near the front of a sturdy chair, feet flat.', 'Rest one ankle on the opposite knee.', 'Sit tall, then lean forward slightly from the hips.'],
+    tips: ['A supported option that needs no getting down to the floor.', 'Press gently on the raised knee only if it feels comfortable.'] },
+  { id: 'chairham', name: 'Chair Hamstring', areas: ['hamstrings', 'calves'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.sage, focus: 'Back of the thigh',
+    steps: ['Sit near the front of a sturdy chair.', 'Straighten one leg out, heel on the floor, toes up.', 'Sit tall and hinge forward from the hips until you feel the back of the thigh.'],
+    tips: ['A supported option that needs no getting down to the floor.', 'Keep your back long; do not round down.'] },
+  // ---- Resistance band (8) ----
+  { id: 'bandham', name: 'Band Hamstring PNF', areas: ['hamstrings'], kind: 'band', level: 'intermediate', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.teal, focus: 'Hamstrings',
+    steps: ['Lie on your back with a band around the ball of one foot.', 'Raise that leg straight until you feel a stretch, and hold.', 'Push the leg into the band at about a third of your strength for 5 seconds.', 'Relax, breathe out, and use the band to draw the leg a little higher.', 'Repeat the push-and-relax cycle for the rest of the hold.'],
+    tips: ['Keep the other leg long on the floor.', 'Never push or pull to the point of pain.'] },
+  { id: 'bandadd', name: 'Band Inner Thigh', areas: ['hips', 'hamstrings'], kind: 'band', level: 'intermediate', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.rose, focus: 'Inner thigh',
+    steps: ['Lie on your back with a band around one foot, held in the same hand.', 'Straighten the leg up, then let it open out to the side.', 'Use the band to control how far it lowers.'],
+    tips: ['Keep the opposite hip on the mat.', 'Try a 5-second press back toward the middle, then relax deeper.'] },
+  { id: 'passthrough', name: 'Band Pass-Through', areas: ['shoulders', 'chest'], kind: 'band', level: 'intermediate', pos: 'standing', balance: false, overhead: true, sides: null, circle: C.dusk, focus: 'Shoulders · chest',
+    steps: ['Hold a band wide in front of your hips, arms straight.', 'Lift it overhead and behind you in one smooth arc.', 'Bring it back to the front and repeat slowly.'],
+    tips: ['Widen your grip if your elbows bend.', 'Keep the ribs down as the arms go back.'] },
+  { id: 'bandcross', name: 'Band Outer Hip', areas: ['hips'], kind: 'band', level: 'intermediate', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.sand, focus: 'Outer hip · IT band area',
+    steps: ['Lie on your back with a band around one foot, held in the opposite hand.', 'Raise the leg straight up.', 'Let it cross slowly over your body, keeping both shoulders down.'],
+    tips: ['Only go as far as your hip stays comfortable.', 'Add a gentle 5-second press against the band, then relax deeper.'] },
+  { id: 'bandquad', name: 'Band Quad', areas: ['quads', 'hips'], kind: 'band', level: 'intermediate', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.clay, focus: 'Front of the thigh',
+    steps: ['Lie face down with a band looped around one ankle.', 'Bring the band over that shoulder and hold it with both hands.', 'Use the band to draw the heel toward your seat.'],
+    tips: ['Keep both hips pressed into the mat.', 'Stop before any knee discomfort.'] },
+  { id: 'bandcalf', name: 'Band Calf', areas: ['calves'], kind: 'band', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.plum, focus: 'Calves · Achilles',
+    steps: ['Sit with one leg straight and a band around the ball of that foot.', 'Hold both ends and sit tall.', 'Draw the toes toward you with the band.'],
+    tips: ['Keep the knee straight for the upper calf.', 'A gentle option for stiff ankles.'] },
+  { id: 'bandchest', name: 'Band Chest Opener', areas: ['chest', 'shoulders'], kind: 'band', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.sage, focus: 'Chest · front of the shoulders',
+    steps: ['Hold a band behind your back with both hands, arms low.', 'Draw your shoulder blades together.', 'Let the band ease your arms back and open the chest.'],
+    tips: ['Use a light band; it should guide, not yank.', 'Keep your chin level and ribs down.'] },
+  { id: 'bandlat', name: 'Band Lat Stretch', areas: ['shoulders', 'back'], kind: 'band', level: 'intermediate', pos: 'standing', balance: false, overhead: true, sides: LR, circle: C.teal, focus: 'Lats · side of the body',
+    steps: ['Anchor a band at head height and hold it with one hand.', 'Step back and hinge forward, arm overhead.', 'Sit the hips back and let the band lengthen your side.'],
+    tips: ['Check the anchor is secure before you lean.', 'Keep the arm straight but not locked.'] },
+  // ---- Light dumbbells (7): all advanced, all with a safety tip ----
+  { id: 'goblet', name: 'Goblet Squat Hold', areas: ['hips', 'calves'], kind: 'weight', level: 'advanced', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.clay, focus: 'Hips · ankles',
+    steps: ['Hold one light dumbbell upright at your chest.', 'Sit down into a deep squat, heels down.', 'Use your elbows to ease the knees apart and stay tall.'],
+    tips: [SAFETY, 'Raise your heels on a small plate if they lift.'] },
+  { id: 'pullover', name: 'Dumbbell Pullover Stretch', areas: ['shoulders', 'chest'], kind: 'weight', level: 'advanced', pos: 'floor', balance: false, overhead: true, sides: null, circle: C.sage, focus: 'Lats · chest',
+    steps: ['Lie on the floor holding one light dumbbell with both hands over your chest.', 'Lower it slowly behind your head with soft elbows.', 'Let the weight gently lengthen your sides, then hold.'],
+    tips: [SAFETY, 'Keep your lower back in contact with the floor.'] },
+  { id: 'calfdrop', name: 'Loaded Calf Drop', areas: ['calves'], kind: 'weight', level: 'advanced', pos: 'standing', balance: true, overhead: false, sides: LR, circle: C.plum, focus: 'Calves · Achilles',
+    steps: ['Stand on a step on the ball of one foot, holding a light dumbbell on that side.', 'Hold a rail with the other hand.', 'Let the heel sink below the step and hold.'],
+    tips: [SAFETY, 'Always keep a hand on a rail; lower slowly.'] },
+  { id: 'dbfly', name: 'Dumbbell Chest Opener', areas: ['chest', 'shoulders'], kind: 'weight', level: 'advanced', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.dusk, focus: 'Chest · front of the shoulders',
+    steps: ['Lie on your back with knees bent, a light dumbbell in each hand.', 'Open your arms out to the sides, elbows slightly bent.', 'Let the weights draw the arms toward the floor and hold.'],
+    tips: [SAFETY, 'Rest the weights on the floor whenever the stretch feels too strong.'] },
+  { id: 'cossack', name: 'Weighted Cossack Hold', areas: ['hips', 'hamstrings'], kind: 'weight', level: 'advanced', pos: 'standing', balance: true, overhead: false, sides: LR, circle: C.sand, focus: 'Inner thigh · hips',
+    steps: ['Stand with feet wide, holding one light dumbbell at your chest.', 'Shift your weight to one side and bend that knee deeply.', 'Keep the other leg straight, toes up, and hold.'],
+    tips: [SAFETY, 'Only go as low as you can control.'] },
+  { id: 'suitcase', name: 'Suitcase Side Bend', areas: ['back'], kind: 'weight', level: 'advanced', pos: 'standing', balance: false, overhead: false, sides: LR, circle: C.rose, focus: 'Side of the body',
+    steps: ['Stand tall with a light dumbbell in one hand at your side.', 'Let the weight slide down your leg as you bend to that side.', 'Hold, then rise slowly using your core.'],
+    tips: [SAFETY, 'Bend straight to the side, not forward.'] },
+  { id: 'rdlhold', name: 'Romanian Hinge Hold', areas: ['hamstrings', 'back'], kind: 'weight', level: 'advanced', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.teal, focus: 'Hamstrings',
+    steps: ['Stand holding light dumbbells in front of your thighs, knees soft.', 'Push your hips back and slide the weights down your legs, back flat.', 'Stop when you feel the hamstrings and hold.'],
+    tips: [SAFETY, 'Keep your back flat; stop before it rounds.'] },
+];
+// supported: done in a chair or with a wall or door frame to lean on (preferred for ages 45+).
+const SUPPORTED = ['chairfig4', 'chairham', 'seatedtwist', 'necktilt', 'levator', 'chintuck', 'neckturn', 'calf', 'doorway', 'crossbody', 'chestclasp', 'bandchest'];
+STRETCHES.forEach(s => { s.supported = SUPPORTED.includes(s.id); });
+const BY_ID = Object.fromEntries(STRETCHES.map(s => [s.id, s]));
+
+const CATEGORIES = [
+  { id: 'morning', name: 'Morning', blurb: 'Wake the body up' },
+  { id: 'desk', name: 'Desk Breaks', blurb: 'Undo the screen slouch' },
+  { id: 'training', name: 'After Training', blurb: 'Cool down tight legs' },
+  { id: 'evening', name: 'Evening', blurb: 'Slow down before bed' },
+  { id: 'band', name: 'Band Work', blurb: 'Deeper holds with a band' },
+  { id: 'loaded', name: 'Loaded Stretch', blurb: 'Light weights, longer reach' },
+];
+
+// items: [stretch id, default seconds per side]
+const ROUTINES = [
+  { id: 'hip-opener', title: 'Hip Opener', cat: 'training', desc: 'Loosen tight hips after a day of sitting. Six gentle holds, both sides where it applies.',
+    items: [['lunge', 45], ['butterfly', 45], ['pigeon', 45], ['figure4', 40], ['frog', 45], ['child', 45]] },
+  { id: 'first-light', title: 'First Light', cat: 'morning', desc: 'An easy head-to-toe wake-up. Move the spine, open the hips, loosen the shoulders.',
+    items: [['catcow', 45], ['child', 45], ['lunge', 40], ['fold', 45], ['crossbody', 35], ['necktilt', 30]] },
+  { id: 'desk-reset', title: 'Desk Reset', cat: 'desk', desc: 'Neck, shoulders and chest after hours at a screen. Most of it works from your chair.',
+    items: [['necktilt', 25], ['levator', 25], ['crossbody', 25], ['doorway', 40], ['chintuck', 30]] },
+  { id: 'neck-unknot', title: 'Neck Unknot', cat: 'desk', desc: 'Two minutes for a stiff neck. Slow holds, no equipment.',
+    items: [['chintuck', 20], ['necktilt', 20], ['levator', 20]] },
+  { id: 'stride-reset', title: 'Stride Reset', cat: 'training', desc: 'A cool-down for runners and walkers: quads, calves, hip flexors and hamstrings.',
+    items: [['quad', 40], ['calf', 40], ['lunge', 40], ['fold', 45], ['figure4', 40]] },
+  { id: 'back-ease', title: 'Back Ease', cat: 'evening', desc: 'Gentle floor holds that take pressure off the lower back.',
+    items: [['kneeschest', 60], ['twist', 45], ['child', 60], ['cobra', 40], ['catcow', 45]] },
+  { id: 'lights-out', title: 'Lights Out', cat: 'evening', desc: 'Four long, quiet holds to settle down before sleep.',
+    items: [['butterfly', 75], ['twist', 60], ['kneeschest', 60], ['child', 75]] },
+  { id: 'quick-hips', title: 'Quick Hips', cat: 'desk', desc: 'Three hip openers for a short break.',
+    items: [['lunge', 30], ['figure4', 30], ['butterfly', 30]] },
+  { id: 'band-hamstrings', title: 'Band Hamstrings', cat: 'band', desc: 'Contract-relax (PNF) holds with a long band to gain hamstring and inner-thigh range.',
+    items: [['bandham', 60], ['bandadd', 50], ['passthrough', 40], ['fold', 45]] },
+  { id: 'loaded-hips', title: 'Loaded Hips', cat: 'loaded', desc: 'Light weights help you sink deeper into hips, calves and lats. Go easy on the load.',
+    items: [['goblet', 60], ['pullover', 45], ['calfdrop', 45], ['lunge', 45]] },
+];
+
+// ---------- Analytics config (PostHog) ----------
+// The only place the PostHog key lives. Paste your Project API key from
+// PostHog → Project settings → Project API key (it starts with "phc_").
+// It is a public, send-only key that PostHog designs to ship in client code.
+// While this still says REPLACE, analytics stays fully off and nothing is loaded.
+const ANALYTICS_CONFIG = {
+  apiKey: 'phc_REPLACE_WITH_YOUR_PROJECT_API_KEY',
+  apiHost: 'https://us.i.posthog.com', // EU cloud project: 'https://eu.i.posthog.com'
+  uiHost: 'https://us.posthog.com',    // EU cloud project: 'https://eu.posthog.com'
+  // Pinned build with session replay bundled in, so it loads no other scripts.
+  library: 'https://cdn.jsdelivr.net/npm/posthog-js@1.438.21/dist/array.full.no-external.js',
+};
+
+// ---------- Analytics (PostHog) ----------
+// Allow-list: these events, with only these properties, are the only things ever sent.
+// No names, emails, location or free text. Session replay masks every piece of text.
+const ANALYTICS_EVENTS = {
+  app_opened: [],
+  routine_started: ['routine_id'],
+  routine_completed: ['routine_id', 'duration_seconds'],
+  routine_abandoned: ['routine_id', 'step_index', 'seconds_elapsed'],
+};
+const ANALYTICS_PREF_KEY = 'meflex.analytics';
+
+const Analytics = {
+  enabled: true, loading: false, ready: false, queue: [],
+  configured() { const k = ANALYTICS_CONFIG.apiKey; return /^phc_\w+$/.test(k) && !k.includes('REPLACE'); },
+
+  init() {
+    try { const v = JSON.parse(localStorage.getItem(ANALYTICS_PREF_KEY) || 'null'); if (v && v.enabled === false) this.enabled = false; } catch (e) {}
+    if (this.enabled) this.load();
+  },
+
+  // Load the library only when analytics is on and a real key is configured.
+  load() {
+    if (this.loading || this.ready || !this.configured()) return;
+    this.loading = true;
+    const s = document.createElement('script');
+    s.src = ANALYTICS_CONFIG.library; s.async = true; s.crossOrigin = 'anonymous';
+    s.onload = () => this.start();
+    s.onerror = () => { this.loading = false; this.queue = []; };
+    document.head.appendChild(s);
+  },
+
+  start() {
+    const ph = window.posthog; if (!ph) return;
+    ph.init(ANALYTICS_CONFIG.apiKey, {
+      api_host: ANALYTICS_CONFIG.apiHost,
+      ui_host: ANALYTICS_CONFIG.uiHost,
+      persistence: 'localStorage',
+      person_profiles: 'always',       // anonymous profiles only; needed to know when a user was new
+      autocapture: false, capture_pageview: false, capture_pageleave: false,
+      capture_dead_clicks: false, capture_heatmaps: false, rageclick: false,
+      capture_performance: false, disable_surveys: true, advanced_disable_feature_flags: true,
+      session_recording: {
+        maskAllInputs: true,           // every text field
+        maskTextSelector: '*',         // and every piece of text on screen
+        // Not recorded at all (shown as blank boxes): every figure, which reveals the guide choice,
+        // and anything marked data-private: setup screens, the Settings profile, "Why this routine".
+        blockSelector: '.plate, [data-private]',
+        recordCrossOriginIframes: false,
+      },
+      before_send: (ev) => this.filter(ev),
+    });
+    ph.register({ $geoip_disable: true }); // no IP-based location lookup
+    this.loading = false; this.ready = true;
+    if (!this.enabled) { this.applyOff(); return; }
+    if (ph.has_opted_out_capturing()) { ph.opt_in_capturing({ captureEventName: false }); ph.startSessionRecording(); } // switched back on after being off
+    this.queue.splice(0).forEach(([n, p, o]) => ph.capture(n, p, o));
+  },
+
+  // Last line of defence: drop anything that is not on the allow-list.
+  filter(ev) {
+    if (!ev || !this.enabled) return null;
+    if (ev.event === '$snapshot') return ev;             // session replay data (already masked)
+    const allowed = ANALYTICS_EVENTS[ev.event]; if (!allowed) return null;
+    const props = ev.properties || {};
+    for (const k of Object.keys(props)) if (!k.startsWith('$') && !allowed.includes(k) && k !== 'token' && k !== 'distinct_id') delete props[k];
+    // No page addresses, referrers or time zone (a rough location signal).
+    for (const k of Object.keys(props)) if (/^\$(current_url|pathname|referrer|referring_domain|initial_|session_entry_|timezone)/.test(k)) delete props[k];
+    return ev;
+  },
+
+  track(name, props = {}, opts) {
+    const allowed = ANALYTICS_EVENTS[name];
+    if (!allowed || !this.enabled || !this.configured()) return;
+    const clean = {}; allowed.forEach(k => { if (props[k] !== undefined) clean[k] = props[k]; });
+    if (this.ready) window.posthog.capture(name, clean, opts); else this.queue.push([name, clean, opts]);
+  },
+
+  setEnabled(on) {
+    this.enabled = !!on;
+    try { localStorage.setItem(ANALYTICS_PREF_KEY, JSON.stringify({ enabled: this.enabled })); } catch (e) {}
+    if (!on) { this.queue = []; this.applyOff(); return; }
+    if (this.ready) { try { window.posthog.opt_in_capturing({ captureEventName: false }); window.posthog.startSessionRecording(); } catch (e) {} }
+    else this.load();
+  },
+  // Opt out first so the recorder's last buffered batch is dropped, not sent.
+  applyOff() { if (!this.ready) return; try { window.posthog.opt_out_capturing(); window.posthog.stopSessionRecording(); } catch (e) {} },
+};
+Analytics.init();
+
+// ---------- Sound ----------
+// One channel: starting any sound stops whatever is playing, and queued sounds
+// (chime -> voice) run strictly one after another, so sounds never overlap.
+const PREFS_KEY = 'meflex.sound';
+// One source of truth for sound: the Settings screen and the player's speaker sheet both read and write this.
+const SOUND_DEFAULTS = { chime: true, tick: false, voice: false, chimeVol: 0.8, tickVol: 0.8, voiceVol: 1 };
+const prefs = { ...SOUND_DEFAULTS };
+try { Object.assign(prefs, JSON.parse(localStorage.getItem(PREFS_KEY) || '{}')); } catch (e) {}
+const savePrefs = () => { try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) {} };
+
+const Sound = {
+  ctx: null, nodes: [], timers: [], log: [], busyUntil: 0,
+  // Must run inside a tap. iOS only allows audio after a user gesture.
+  unlock() {
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {} // play even with the ring/silent switch on (Safari 16.4+)
+    try {
+      if (!this.ctx) { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; this.ctx = new AC(); }
+      if (this.ctx.state !== 'running') this.ctx.resume().catch(() => {});
+      const b = this.ctx.createBuffer(1, 1, 22050), s = this.ctx.createBufferSource(); // silent kick for older iOS
+      s.buffer = b; s.connect(this.ctx.destination); s.start(0);
+    } catch (e) {}
+    if (prefs.voice && window.speechSynthesis && !this.voiceReady) { // iOS: first utterance must come from a tap
+      try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); this.voiceReady = true; } catch (e) {}
+    }
+  },
+  ready() { return this.ctx && this.ctx.state === 'running'; },
+  stopAll() {
+    this.timers.forEach(clearTimeout); this.timers = [];
+    const t = this.ctx ? this.ctx.currentTime : 0;
+    this.nodes.forEach(({ src, gain }) => { try { gain.gain.cancelScheduledValues(t); gain.gain.setValueAtTime(gain.gain.value, t); gain.gain.linearRampToValueAtTime(0, t + 0.015); src.stop(t + 0.02); } catch (e) {} });
+    this.nodes = [];
+    try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
+    this.busyUntil = 0;
+    this.log.push({ k: 'stop', t: performance.now() });
+  },
+  // tones: [freq, gain, decaySeconds]
+  tone(parts, dur, vol, kind) {
+    this.stopAll();
+    if (!this.ready()) { this.log.push({ k: kind, t: performance.now(), muted: true }); return; }
+    const c = this.ctx, t = c.currentTime + 0.005;
+    vol = Math.max(0.0001, vol);
+    const gain = c.createGain(); gain.connect(c.destination);
+    gain.gain.setValueAtTime(0, t); gain.gain.linearRampToValueAtTime(vol, t + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+    parts.forEach(([f, g]) => {
+      const o = c.createOscillator(), og = c.createGain(); o.type = 'sine'; o.frequency.value = f; og.gain.value = g;
+      o.connect(og); og.connect(gain); o.start(t); o.stop(t + dur + 0.02);
+      this.nodes.push({ src: o, gain });
+    });
+    this.busyUntil = performance.now() + dur * 1000;
+    this.log.push({ k: kind, t: performance.now(), dur: dur * 1000, vol });
+  },
+  chime(which) { // soft bell; the end chime sits a fourth lower
+    const f = which === 'end' ? 659.3 : 880;
+    this.tone([[f, 1], [f * 2, 0.22], [f * 3.01, 0.06]], 0.95, 0.4 * prefs.chimeVol, 'chime-' + which);
+  },
+  tick() { this.tone([[1320, 1], [2640, 0.15]], 0.06, 0.225 * prefs.tickVol, 'tick'); },
+  say(text) {
+    this.stopAll();
+    if (!window.speechSynthesis) return;
+    try {
+      const u = new SpeechSynthesisUtterance(text); u.rate = 1; u.lang = 'en-US'; u.volume = prefs.voiceVol;
+      speechSynthesis.speak(u); this.log.push({ k: 'voice', t: performance.now(), text, vol: prefs.voiceVol });
+    } catch (e) {}
+  },
+  after(ms, fn) { this.timers.push(setTimeout(fn, ms)); },
+};
+// Re-arm audio on any tap: covers a reopened page (back/forward cache) and iOS
+// suspending the audio context after a call, lock or app switch.
+document.addEventListener('pointerdown', () => { if (Sound.ctx && Sound.ctx.state !== 'running') Sound.unlock(); }, true);
+
+// Start of a hold: chime, then (once it has finished) the voice. End of a hold: chime.
+function cueStart(st) {
+  const words = st.side ? `${st.s.name}. ${st.side}.` : `${st.s.name}.`;
+  if (prefs.chime) { Sound.chime('start'); if (prefs.voice) Sound.after(1000, () => Sound.say(words)); }
+  else if (prefs.voice) Sound.say(words);
+  else Sound.stopAll();
+}
+
+
+// ---------- Look: figure colors, circle color, default hold ----------
+const LOOK_KEY = 'meflex.look';
+const OPTIONS = {
+  skin: [['#F2C9A8', 'Light'], ['#D9A07A', 'Medium'], ['#A86E4A', 'Tan'], ['#6E4330', 'Deep']],
+  hair: [['#D8B87C', 'Blonde'], ['#7A4E2D', 'Brown'], ['#2A1E18', 'Black'], ['#A8502E', 'Auburn']],
+  outfit: [[['#A8D2D2', '#C9CDD4'], 'Mint and grey'], [['#F4EFE6', '#2F3B47'], 'Cream and navy'], [['#E6A57E', '#3A3F47'], 'Peach and charcoal'], [['#B9B4E0', '#5A5F86'], 'Lilac and indigo']],
+  circle: [['mixed', 'Mixed'], ['#C9785A', 'Clay'], ['#6F9A86', 'Sage'], ['#5A74A6', 'Dusk'], ['#D8B678', 'Sand'], ['#87668F', 'Plum'], ['#4F8A8B', 'Teal'], ['#B9727F', 'Rose']],
+  hold: [[0, 'Suggested'], [30, '30s'], [45, '45s'], [60, '1 min'], [90, '1½ min']],
+};
+const LOOK_DEFAULTS = { skin: 0, hair: 0, outfit: 0, circle: 'mixed', hold: 0 };
+const look = { ...LOOK_DEFAULTS };
+try { const v = JSON.parse(localStorage.getItem(LOOK_KEY) || '{}');
+  for (const k of Object.keys(LOOK_DEFAULTS)) if (k in v && OPTIONS[k].some(([val], i) => (k === 'circle' || k === 'hold' ? val === v[k] : i === v[k]))) look[k] = v[k]; } catch (e) {}
+const saveLook = () => { try { localStorage.setItem(LOOK_KEY, JSON.stringify(look)); } catch (e) {} };
+
+// ---------- Setup answers (profile) ----------
+// Kept on this device only (localStorage). Never passed to analytics; the setup screens,
+// the Settings profile section and every figure are blocked from session replay.
+const PROFILE_KEY = 'meflex.profile';
+const PROFILE_BLANK = { done: false, skipped: false, guide: null, age: null, level: null, focus: [], equipment: [], minutes: null, avoid: [] };
+const profile = { ...PROFILE_BLANK };
+try { Object.assign(profile, JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')); } catch (e) {}
+const saveProfile = () => { try { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); } catch (e) {} };
+
+// ---------- Helpers ----------
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmt = (ms) => { const t = Math.max(0, Math.ceil(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
+const fmtTotal = (t) => { t = Math.round(t); const m = Math.floor(t / 60), r = t % 60; return m && r ? `${m} min ${r} sec` : m ? `${m} min` : `${r} sec`; };
+const fmtMin = (t) => `${Math.max(1, Math.round(t / 60))} min`;
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+};
+const CHEV = '<svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>';
+
+// Every picture in the app is drawn here, from the current color settings.
+function art(st, mirror) {
+  const circle = look.circle === 'mixed' ? st.circle : look.circle;
+  // Only a woman figure has been traced so far; with the man guide, figures stay plain circles.
+  if (st.figure === 'lunge' && profile.guide !== 'man') {
+    const [top, bottom] = OPTIONS.outfit[look.outfit][0];
+    return tracedPlate({ circle, mirror, label: st.name, skin: look.skin, hair: OPTIONS.hair[look.hair][0], top, bottom });
+  }
+  // No reference photo yet: plain colored circle.
+  return `<svg viewBox="0 0 200 200" class="plate" role="img" aria-label="${esc(st.name)}"><circle cx="100" cy="100" r="96" fill="${circle}"/></svg>`;
+}
+
+// ---------- Routines and their saved times ----------
+const STEP_S = 5, MIN_S = 10, MAX_S = 180;
+const R = (id) => ROUTINES.find(r => r.id === id);
+const catOf = (r) => CATEGORIES.find(c => c.id === r.cat);
+const timesKey = (r) => 'meflex.times2.' + r.id; // only times you chose for this routine
+function savedTimes(r) {
+  let saved = store.get(timesKey(r), null);
+  if (!saved) { // move Stage 4 saves across, keeping only values that differ from the suggestion
+    const old = store.get('meflex.times.' + r.id, {});
+    saved = Object.fromEntries(r.items.filter(([id, sug]) => +old[id] && +old[id] !== sug).map(([id]) => [id, +old[id]]));
+    store.set(timesKey(r), saved);
+  }
+  return saved;
+}
+function itemsOf(r, list = r.items) {
+  const saved = savedTimes(r);
+  // A time you chose in the routine wins; otherwise the default hold from Settings, else the suggested
+  // time (for a tailored routine, the age-based hold).
+  return list.map(([id, suggested]) => {
+    const def = look.hold || suggested, v = +saved[id];
+    return { st: BY_ID[id], def, secs: v >= MIN_S && v <= MAX_S ? v : def };
+  });
+}
+const secsOf = (items) => items.reduce((a, it) => a + it.secs * (it.st.sides ? 2 : 1), 0);
+const routineSecs = (r) => secsOf(itemsOf(r));
+const QUICK_S = 240; // quick routine: 4 minutes or less
+const isQuick = (r) => routineSecs(r) <= QUICK_S;
+
+// ---------- Navigation ----------
+const SCREENS = ['home', 'list', 'library', 'history', 'settings', 'routine', 'player', 'info', 'done', 'setup'];
+const TABBED = { home: 'home', list: 'home', library: 'library', history: 'history', settings: 'settings' };
+let current = 'home';
+function show(id) {
+  SCREENS.forEach(s => { $(s).hidden = s !== id; });
+  current = id;
+  $('tabbar').hidden = !TABBED[id];
+  document.querySelectorAll('#tabbar button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === TABBED[id] ? 'page' : 'false'));
+}
+$('tabbar').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-tab]'); if (!b) return;
+  const t = b.dataset.tab;
+  if (t === 'home') renderHome(); if (t === 'library') renderLibrary(); if (t === 'history') renderHistory(); if (t === 'settings') renderSettings();
+  show(t); const sc = $(t).querySelector('.scroll'); if (sc && b.getAttribute('aria-current') === 'page') sc.scrollTop = 0;
+});
+// Shared rows: any element with data-routine / data-stretch / data-area / data-cat is a link.
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-routine],[data-stretch],[data-area],[data-cat]'); if (!el) return;
+  if (el.dataset.routine) openRoutine(el.dataset.routine, current, el.dataset.rec !== undefined ? REC[+el.dataset.rec] : null);
+  else if (el.dataset.stretch) openInfo(BY_ID[el.dataset.stretch], false, current, false);
+  else if (el.dataset.area) openList('area', el.dataset.area);
+  else if (el.dataset.cat) openList('cat', el.dataset.cat);
+});
+
+function routineRow(r) {
+  const items = itemsOf(r);
+  return `<li><button class="row" data-routine="${r.id}"><span class="thumb">${art(items[0].st)}</span>
+    <span class="label"><span class="n">${esc(r.title)}</span><span class="sub">${fmtMin(secsOf(items))} · ${esc(catOf(r).name)}</span></span>${CHEV}</button></li>`;
+}
+const tagLine = (st) => [LEVELS[st.level], POSITIONS[st.pos], st.sides && 'each side', st.balance && 'balance'].filter(Boolean).join(' · ');
+function stretchRow(st) {
+  return `<li><button class="row" data-stretch="${st.id}"><span class="thumb">${art(st)}</span>
+    <span class="label"><span class="n">${esc(st.name)}</span><span class="sub">${tagLine(st)}</span></span>${CHEV}</button></li>`;
+}
+
+// ---------- Home ----------
+function renderHome() {
+  const recs = recommendations(); REC = recs.map(x => x.plan);
+  $('recHead').textContent = hasRoutineAnswers() ? 'Recommended for you' : 'Recommended';
+  $('recList').innerHTML = recs.map((x, i) => {
+    const items = itemsOf(x.r, x.plan ? x.plan.items : undefined);
+    return `<button class="card" data-routine="${x.r.id}" data-rec="${i}"><span class="cover">${art(items[0].st)}</span>
+      <span class="n">${esc(x.r.title)}</span><span class="sub">${fmtMin(secsOf(items))} · ${items.length} stretches</span>
+      <span class="why" data-private><span class="whylabel">Why this routine</span>${esc(x.why)}</span></button>`;
+  }).join('');
+  $('quickList').innerHTML = ROUTINES.filter(isQuick).sort((a, b) => routineSecs(a) - routineSecs(b)).map(routineRow).join('');
+  $('areaChips').innerHTML = AREAS.map(a => `<button class="chip" data-area="${a.id}">${a.name}</button>`).join('');
+  $('catGrid').innerHTML = CATEGORIES.map(c => {
+    const rs = ROUTINES.filter(r => r.cat === c.id);
+    const dots = [...new Set(rs.flatMap(r => r.items.map(([id]) => BY_ID[id].circle)))].slice(0, 3);
+    return `<button class="tile" data-cat="${c.id}"><span class="dots">${dots.map(d => `<i style="background:${d}"></i>`).join('')}</span>
+      <span class="n">${c.name}</span><span class="sub">${rs.length} routine${rs.length === 1 ? '' : 's'}</span></button>`;
+  }).join('');
+  applySearch();
+}
+function applySearch() {
+  const q = $('search').value.trim().toLowerCase();
+  $('searchClear').hidden = !q;
+  $('homeSections').hidden = !!q; $('searchResults').hidden = !q;
+  if (!q) return;
+  const hits = ROUTINES.filter(r => r.title.toLowerCase().includes(q));
+  $('searchList').innerHTML = hits.map(routineRow).join('');
+  $('searchEmpty').hidden = hits.length > 0;
+  $('searchEmpty').textContent = `No routines named “${$('search').value.trim()}”.`;
+}
+$('search').addEventListener('input', applySearch);
+$('searchForm').addEventListener('submit', (e) => { e.preventDefault(); $('search').blur(); });
+$('searchClear').onclick = () => { $('search').value = ''; applySearch(); $('search').focus(); };
+
+// ---------- Area / category list ----------
+function openList(kind, id) {
+  let title, sub, rs, sts = [];
+  if (kind === 'area') {
+    const a = AREAS.find(x => x.id === id); title = a.name;
+    sts = STRETCHES.filter(s => s.areas.includes(id));
+    rs = ROUTINES.filter(r => r.items.some(([sid]) => BY_ID[sid].areas.includes(id)));
+    sub = `${rs.length} routines · ${sts.length} stretches`;
+  } else {
+    const c = CATEGORIES.find(x => x.id === id); title = c.name; sub = c.blurb;
+    rs = ROUTINES.filter(r => r.cat === id);
+  }
+  $('listTitle').textContent = title; $('listSub').textContent = sub;
+  $('listRoutines').innerHTML = rs.map(routineRow).join('');
+  $('listStretchHead').hidden = !sts.length;
+  $('listStretches').innerHTML = sts.map(stretchRow).join('');
+  show('list'); $('list').querySelector('.scroll').scrollTop = 0;
+}
+$('listBack').onclick = () => { renderHome(); show('home'); };
+
+// ---------- Library ----------
+// Library: filter by equipment and difficulty; grouped by equipment.
+const libFilter = { kind: 'all', level: 'all' };
+const chips = (opts, key) => Object.entries({ all: 'All', ...opts }).map(([v, n]) => `<button class="fchip" data-f="${key}" data-v="${v}" aria-pressed="${libFilter[key] === v}">${n}</button>`).join('');
+function renderLibrary() {
+  $('fEquip').innerHTML = chips({ body: 'None', band: 'Band', weight: 'Dumbbells' }, 'kind'); $('fLevel').innerHTML = chips(LEVELS, 'level');
+  const hit = STRETCHES.filter(s => (libFilter.kind === 'all' || s.kind === libFilter.kind) && (libFilter.level === 'all' || s.level === libFilter.level));
+  $('libCount').textContent = hit.length === STRETCHES.length ? `${hit.length} exercises` : `${hit.length} of ${STRETCHES.length} exercises`;
+  $('libBody').innerHTML = hit.length ? Object.entries(KINDS).map(([k, name]) => {
+    const sts = hit.filter(s => s.kind === k);
+    return sts.length ? `<h2 class="sec">${name} <span>${sts.length}</span></h2><ul class="rows">${sts.map(stretchRow).join('')}</ul>` : '';
+  }).join('') : '<p class="empty">No exercises match both filters.</p>';
+  const needs = STRETCHES.filter(s => !s.figure);
+  $('libNeedsSum').textContent = `Need a reference photo · ${needs.length}`;
+  $('libNeedsList').innerHTML = needs.map(s => `<li>${esc(s.name)} <span>${POSITIONS[s.pos]}</span></li>`).join('');
+}
+document.querySelector('#library .filters').addEventListener('click', (e) => {
+  const b = e.target.closest('.fchip'); if (!b) return;
+  libFilter[b.dataset.f] = b.dataset.v; renderLibrary();
+});
+
+// ---------- History ----------
+const HIST_KEY = 'meflex.history';
+function recordSession(r, secs) {
+  const h = store.get(HIST_KEY, []);
+  h.unshift({ id: r.id, title: r.title, at: Date.now(), secs: Math.round(secs) });
+  store.set(HIST_KEY, h.slice(0, 1000));
+}
+function dayLabel(d) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const day = new Date(d); day.setHours(0, 0, 0, 0);
+  const diff = Math.round((today - day) / 86400000);
+  if (diff === 0) return 'Today'; if (diff === 1) return 'Yesterday';
+  return day.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric', ...(day.getFullYear() !== today.getFullYear() ? { year: 'numeric' } : {}) });
+}
+function renderHistory() {
+  const h = store.get(HIST_KEY, []);
+  $('histEmpty').hidden = h.length > 0; $('histBody').hidden = !h.length;
+  if (!h.length) return;
+  const weekAgo = Date.now() - 7 * 86400000, wk = h.filter(x => x.at >= weekAgo);
+  $('histStats').innerHTML = `<div><b>${wk.length}</b><span>sessions this week</span></div><div><b>${Math.round(wk.reduce((a, x) => a + x.secs, 0) / 60)}</b><span>minutes this week</span></div><div><b>${h.length}</b><span>sessions in all</span></div>`;
+  const groups = [];
+  h.forEach(x => { const l = dayLabel(x.at); const g = groups[groups.length - 1]; if (g && g.l === l) g.items.push(x); else groups.push({ l, items: [x] }); });
+  $('histList').innerHTML = groups.map(g => `<h2 class="sec">${g.l}</h2><ul class="rows">${g.items.map(x => {
+    const r = R(x.id), cover = r ? art(BY_ID[r.items[0][0]]) : '';
+    const tm = new Date(x.at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+    return `<li><button class="row" ${r ? `data-routine="${r.id}"` : 'disabled'}><span class="thumb">${cover}</span>
+      <span class="label"><span class="n">${esc(x.title)}</span><span class="sub">${tm} · ${fmtTotal(x.secs)}</span></span>${r ? CHEV : ''}</button></li>`;
+  }).join('')}</ul>`).join('');
+}
+$('histBrowse').onclick = () => { renderHome(); show('home'); };
+
+// ---------- Routine screen ----------
+const MINUS = '<svg viewBox="0 0 14 14"><path d="M2.5 7h9"/></svg>', PLUS = '<svg viewBox="0 0 14 14"><path d="M2.5 7h9M7 2.5v9"/></svg>';
+let cur = null, routineFrom = 'home';
+let REC = [];
+// plan: a tailored version from Recommended (same routine id), or null for the routine as designed.
+function openRoutine(id, from, plan = null) {
+  const r = R(id); if (!r) return;
+  cur = { r, plan, items: itemsOf(r, plan ? plan.items : undefined) }; if (from && from !== 'routine' && from !== 'done') routineFrom = from;
+  $('rTitle').textContent = r.title; $('rDesc').textContent = r.desc;
+  $('rWhy').hidden = !plan;
+  if (plan) { const p = tailorPrefs();
+    $('rWhy').innerHTML = `<b>Tailored to your setup</b>${esc(whyLine(plan, p))}` + (p.older && !look.hold ? '<small>Holds follow ACSM’s guidance of 30–60 seconds for older adults.</small>' : ''); }
+  const note = (st) => !plan ? '' : plan.from[st.id] === 'added' ? 'Added for your focus' : plan.from[st.id] ? `Instead of ${esc(BY_ID[plan.from[st.id]].name)}` : '';
+  $('rList').innerHTML = cur.items.map((it, i) => `<li>
+    <span class="thumb">${art(it.st, false)}</span>
+    <button class="label link" data-stretch="${it.st.id}"><span class="n">${esc(it.st.name)}</span>${it.st.sides || note(it.st) ? `<span class="sub">${[it.st.sides && 'Each side', note(it.st)].filter(Boolean).join(' · ')}</span>` : ''}</button>
+    <span class="stepper" role="group" aria-label="${esc(it.st.name)} time">
+      <button data-i="${i}" data-d="-1" aria-label="Shorter">${MINUS}</button>
+      <output id="secs-${i}" aria-live="polite"></output>
+      <button data-i="${i}" data-d="1" aria-label="Longer">${PLUS}</button>
+    </span></li>`).join('');
+  renderRoutine(); show('routine'); $('routine').querySelector('.scroll').scrollTop = 0;
+}
+function renderRoutine() {
+  $('rMeta').textContent = `${fmtTotal(secsOf(cur.items))} · ${cur.items.length} stretches`;
+  cur.items.forEach((it, i) => {
+    $('secs-' + i).textContent = fmt(it.secs * 1000);
+    $('rList').querySelector(`[data-i="${i}"][data-d="-1"]`).disabled = it.secs <= MIN_S;
+    $('rList').querySelector(`[data-i="${i}"][data-d="1"]`).disabled = it.secs >= MAX_S;
+  });
+  $('resetTimes').hidden = cur.items.every(it => it.secs === it.def);
+}
+const saveTimes = () => {
+  const saved = savedTimes(cur.r);
+  cur.items.forEach(it => { if (it.secs === it.def) delete saved[it.st.id]; else saved[it.st.id] = it.secs; });
+  store.set(timesKey(cur.r), saved);
+};
+$('rList').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-i]'); if (!b) return;
+  const it = cur.items[+b.dataset.i];
+  it.secs = Math.min(MAX_S, Math.max(MIN_S, it.secs + STEP_S * +b.dataset.d));
+  saveTimes(); renderRoutine();
+});
+$('resetTimes').onclick = () => { cur.items.forEach(it => { it.secs = it.def; }); saveTimes(); renderRoutine(); };
+$('rBack').onclick = () => {
+  if (routineFrom === 'home' || routineFrom === 'list') renderHome();
+  if (routineFrom === 'history') renderHistory();
+  show(routineFrom);
+};
+
+// ---------- Player ----------
+// The hold clock is the device clock (Date.now), not counted frames, so a hold keeps
+// its true length while the phone is locked or the page is in the background.
+let STEPS = [];
+const P = { i: 0, remaining: 0, endAt: 0, running: false, raf: 0, lastFrame: 0, lastSec: 0, active: 0, runFrom: 0 };
+const ICON_PAUSE = '<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1.3"/><rect x="14" y="5" width="4" height="14" rx="1.3"/></svg>';
+const ICON_PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5.2v13.6a1 1 0 0 0 1.5.86l11-6.8a1 1 0 0 0 0-1.72l-11-6.8A1 1 0 0 0 8 5.2z"/></svg>';
+const holdMs = (i) => STEPS[i].it.secs * 1000;
+let wakeLock = null;
+async function keepAwake(on) {
+  try {
+    if (on && !wakeLock && navigator.wakeLock && !document.hidden) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); }
+    if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; }
+  } catch (e) { wakeLock = null; }
+}
+
+function load(i, { animate = true, remaining } = {}) {
+  P.i = i; const st = STEPS[i];
+  P.remaining = remaining ?? holdMs(i);
+  P.endAt = Date.now() + P.remaining;
+  P.lastSec = Math.ceil(P.remaining / 1000);
+  const el = $('art');
+  const put = () => { el.innerHTML = art(st.s, st.mirror); el.classList.remove('swap'); };
+  if (animate && el.innerHTML && !document.hidden) { el.classList.add('swap'); setTimeout(put, 180); } else put();
+  $('name').textContent = st.s.name;
+  $('side').textContent = st.side || '';
+  $('count').textContent = `${st.si + 1} of ${cur.items.length}`;
+  $('prevBtn').disabled = i === 0;
+  render();
+}
+function render() {
+  const total = holdMs(P.i);
+  $('time').textContent = fmt(P.remaining);
+  const left = Math.min(1, Math.max(0, P.remaining / total));
+  $('ringFill').setAttribute('stroke-dashoffset', String(1000 * left)); // ring fills as time runs down
+  $('ringFill').style.visibility = left > 0.995 ? 'hidden' : 'visible';
+  $('playBtn').innerHTML = P.running ? ICON_PAUSE : ICON_PLAY;
+  $('playBtn').setAttribute('aria-label', P.running ? 'Pause' : 'Play');
+}
+function frame() {
+  if (!P.running) return;
+  const now = Date.now(), gap = now - P.lastFrame; P.lastFrame = now;
+  const live = gap < 1000 && !document.hidden; // false right after a lock / background stretch
+  P.remaining = P.endAt - now;
+  if (P.remaining <= 0) {
+    if (live) {                               // normal end of a hold
+      if (P.i + 1 < STEPS.length) { if (prefs.chime) Sound.chime('end'); load(P.i + 1); Sound.after(prefs.chime ? 1000 : 0, () => cueStart(STEPS[P.i])); }
+      else { if (prefs.chime) Sound.chime('end'); finish(true); return; }
+    } else catchUp(-P.remaining);             // came back after time passed: jump silently
+  } else {
+    const sec = Math.ceil(P.remaining / 1000);
+    if (live && prefs.tick && sec < P.lastSec && sec <= 3 && sec >= 1) Sound.tick();
+    P.lastSec = sec;
+    render();
+  }
+  if (P.running) P.raf = requestAnimationFrame(frame);
+}
+// Skip whole holds that elapsed while the page was asleep. No sounds are played.
+function catchUp(over) {
+  let i = P.i + 1;
+  while (i < STEPS.length && over >= holdMs(i)) { over -= holdMs(i); i++; }
+  Sound.stopAll();
+  if (i >= STEPS.length) { finish(false); return; }
+  load(i, { animate: false, remaining: holdMs(i) - over });
+}
+function setRunning(on, { cue = false } = {}) {
+  const now = Date.now();
+  if (P.running && !on) { P.remaining = Math.max(0, P.endAt - now); P.active += now - P.runFrom; }
+  if (!P.running && on) P.runFrom = now;
+  P.running = on; cancelAnimationFrame(P.raf);
+  if (on) { P.endAt = now + P.remaining; P.lastFrame = now; P.lastSec = Math.ceil(P.remaining / 1000); P.raf = requestAnimationFrame(frame); if (cue) cueStart(STEPS[P.i]); }
+  else Sound.stopAll();
+  keepAwake(on);
+  render();
+}
+function finish(keepEndChime) {
+  const now = Date.now();
+  if (P.running) P.active += now - P.runFrom;
+  P.running = false; cancelAnimationFrame(P.raf); keepAwake(false);
+  if (!keepEndChime) Sound.stopAll();
+  const secs = Math.min(P.active / 1000, secsOf(cur.items)); // never more than the routine's own length (e.g. phone left locked)
+  const saved = secs >= 10; // skipping straight through is not a session
+  if (saved) recordSession(cur.r, secs);
+  if (saved) Analytics.track('routine_completed', { routine_id: cur.r.id, duration_seconds: Math.round(secs) }); // same 10-second rule as history
+  $('doneText').textContent = `${cur.r.title} · ${fmtTotal(secs)}`;
+  $('doneSaved').textContent = saved ? 'Saved to your history.' : 'Under 10 seconds, so not saved to history.';
+  show('done');
+}
+function begin() {
+  Sound.unlock();
+  STEPS = cur.items.flatMap((it, si) => (it.st.sides || [null]).map((side, k) => ({ s: it.st, it, si, side, mirror: k === 1 })));
+  P.active = 0; P.running = false;
+  Analytics.track('routine_started', { routine_id: cur.r.id });
+  show('player'); load(0, { animate: false }); setRunning(true, { cue: true });
+}
+// Leaving a routine before its finish screen counts as abandoned. step_index is the
+// stretch's position in the routine, from 0 (the "1 of 6" counter minus one).
+const elapsedSecs = () => Math.round((P.active + (P.running ? Date.now() - P.runFrom : 0)) / 1000);
+const trackAbandon = (opts) => Analytics.track('routine_abandoned', { routine_id: cur.r.id, step_index: STEPS[P.i].si, seconds_elapsed: elapsedSecs() }, opts);
+function close() { trackAbandon(); Sound.stopAll(); setRunning(false); show('routine'); renderRoutine(); }
+function jump(i) {
+  Sound.stopAll();
+  const was = P.running;
+  if (i >= STEPS.length) { finish(false); return; }
+  load(i); setRunning(was, { cue: was });
+}
+
+$('startBtn').onclick = begin;
+$('closeBtn').onclick = close;
+$('doneBtn').onclick = () => { Sound.stopAll(); openRoutine(cur.r.id, undefined, cur.plan); };
+$('doneHistory').onclick = () => { Sound.stopAll(); renderHistory(); show('history'); };
+$('playBtn').onclick = () => {
+  if (P.running) setRunning(false);
+  else setRunning(true, { cue: P.remaining >= holdMs(P.i) - 50 }); // chime only if the hold hasn't begun yet
+};
+$('nextBtn').onclick = () => jump(P.i + 1);
+$('prevBtn').onclick = () => { if (P.i > 0) jump(P.i - 1); };
+
+// ---------- Instructions (its own screen) ----------
+let infoFrom = 'player', resumeAfterInfo = false;
+function openInfo(st, mirror, from, fromPlayer) {
+  infoFrom = from; resumeAfterInfo = fromPlayer && P.running;
+  if (fromPlayer) setRunning(false); // the hold pauses while you read
+  $('infoArt').innerHTML = art(st, mirror);
+  $('infoName').textContent = st.name;
+  $('infoFocus').textContent = st.focus;
+  $('infoTags').innerHTML = [KINDS[st.kind], LEVELS[st.level], POSITIONS[st.pos], st.sides && 'Each side', st.balance && 'Needs balance', st.overhead && 'Arms overhead'].filter(Boolean).map(t => `<span>${t}</span>`).join('');
+  $('infoSteps').innerHTML = st.steps.map(t => `<li><span>${esc(t)}</span></li>`).join('');
+  $('infoTips').innerHTML = st.tips.map(t => `<li>${esc(t)}</li>`).join('');
+  show('info'); $('info').scrollTop = 0;
+}
+$('infoBtn').onclick = () => { const s = STEPS[P.i]; openInfo(s.s, s.mirror, 'player', true); };
+$('infoBack').onclick = () => { show(infoFrom); if (infoFrom === 'player' && resumeAfterInfo) setRunning(true); };
+
+// ---------- Sound sheet ----------
+const sheet = $('soundSheet');
+function syncSheet() { ['chime', 'tick', 'voice'].forEach(k => { $('opt-' + k).checked = !!prefs[k]; }); }
+$('soundBtn').onclick = () => { syncSheet(); sheet.hidden = false; };
+$('sheetDone').onclick = () => { sheet.hidden = true; };
+sheet.addEventListener('click', (e) => { if (e.target === sheet) sheet.hidden = true; });
+['chime', 'tick', 'voice'].forEach(k => $('opt-' + k).addEventListener('change', (e) => {
+  prefs[k] = e.target.checked; savePrefs();
+  if (!prefs[k]) Sound.stopAll();
+  if (k === 'voice' && prefs.voice) Sound.unlock();
+}));
+$('testSound').onclick = () => { Sound.unlock(); Sound.chime('start'); if (prefs.voice) Sound.after(1000, () => Sound.say('Voice is on.')); };
+
+document.addEventListener('keydown', (e) => {
+  if ($('player').hidden || !sheet.hidden) return;
+  if (e.key === ' ') { e.preventDefault(); $('playBtn').click(); }
+  else if (e.key === 'ArrowRight') $('nextBtn').click();
+  else if (e.key === 'ArrowLeft') $('prevBtn').click();
+  else if (e.key === 'Escape') close();
+});
+// Going to the background: silence everything and drop anything queued, so nothing
+// fires in a burst on return. Coming back: the next frame catches the clock up silently.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { Sound.stopAll(); return; }
+  if (Sound.ctx && Sound.ctx.state !== 'running') Sound.ctx.resume().catch(() => {});
+  if (P.running) { keepAwake(true); P.lastFrame = 0; cancelAnimationFrame(P.raf); P.raf = requestAnimationFrame(frame); }
+});
+window.addEventListener('pagehide', () => Sound.stopAll());
+// Closing the page mid-routine counts as abandoned. Listen in the capture phase on both
+// events so this runs before PostHog's own unload handling, and send it only once.
+let leftMidRoutine = false;
+const onLeave = () => {
+  if (leftMidRoutine || !(current === 'player' || (current === 'info' && infoFrom === 'player'))) return;
+  leftMidRoutine = true; trackAbandon({ transport: 'sendBeacon', send_instantly: true });
+};
+window.addEventListener('beforeunload', onLeave, true);
+window.addEventListener('pagehide', onLeave, true);
+window.addEventListener('pageshow', () => { leftMidRoutine = false; }); // back/forward cache: the routine is live again
+
+Analytics.track('app_opened');
+// The first screen (setup on first open, otherwise Home) is chosen at the end of setup.js.
+
+// ---------- Settings ----------
+// Sound rows read and write `prefs` (shared with the player's speaker sheet);
+// color and hold rows read and write `look`. Every change saves and applies at once.
+const SOUND_ROWS = [
+  ['chime', 'Chime', 'At the start and end of each stretch', 'chimeVol'],
+  ['tick', 'Countdown ticks', 'Last 3 seconds of each stretch', 'tickVol'],
+  ['voice', 'Voice', 'Reads the stretch name and side', 'voiceVol'],
+];
+$('setSound').innerHTML = SOUND_ROWS.map(([k, name, help, vk]) => `
+  <div class="setrow">
+    <label class="opt" for="set-${k}"><span>${name}<small>${help}</small></span><input type="checkbox" id="set-${k}" role="switch"></label>
+    <div class="vol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/></svg>
+      <input type="range" id="vol-${k}" min="0" max="100" step="5" aria-label="${name} volume"><output id="volv-${k}"></output></div>
+  </div>`).join('');
+const swatchGroup = (key, label, fill) => `<fieldset class="swatches"><legend>${label}</legend><div>${OPTIONS[key].map(([val, name], i) =>
+  `<label class="sw" title="${name}"><input type="radio" name="${key}" id="${key}-${i}" value="${i}" aria-label="${name}"><span style="${fill(val)}">${val === 'mixed' ? '<i></i>' : ''}</span></label>`).join('')}</div></fieldset>`;
+$('setLook').innerHTML =
+  swatchGroup('skin', 'Skin tone', v => `background:${v}`) +
+  swatchGroup('hair', 'Hair', v => `background:${v}`) +
+  swatchGroup('outfit', 'Outfit', ([t, b]) => `background:linear-gradient(135deg, ${t} 50%, ${b} 50%)`) +
+  swatchGroup('circle', 'Background circle', v => v === 'mixed' ? '' : `background:${v}`);
+$('setHold').innerHTML = OPTIONS.hold.map(([v, name], i) => `<label class="seg"><input type="radio" name="hold" id="hold-${i}" value="${i}"><span>${name}</span></label>`).join('');
+
+function renderPreview() {
+  const sample = ['lunge', 'butterfly', 'pigeon', 'necktilt'].map(id => BY_ID[id]);
+  $('setPreview').innerHTML = `<div class="big">${art(sample[0])}</div><div class="small">${sample.slice(1).map(s => `<div>${art(s)}</div>`).join('')}</div>`;
+}
+function renderSettings() {
+  SOUND_ROWS.forEach(([k, , , vk]) => {
+    $('set-' + k).checked = !!prefs[k];
+    $('vol-' + k).value = Math.round(prefs[vk] * 100);
+    $('volv-' + k).textContent = Math.round(prefs[vk] * 100) + '%';
+    $('vol-' + k).closest('.setrow').classList.toggle('off', !prefs[k]);
+  });
+  ['skin', 'hair', 'outfit'].forEach(k => { $(`${k}-${look[k]}`).checked = true; });
+  $(`circle-${OPTIONS.circle.findIndex(([v]) => v === look.circle)}`).checked = true;
+  $(`hold-${OPTIONS.hold.findIndex(([v]) => v === look.hold)}`).checked = true;
+  renderPreview();
+  renderProfileSummary();
+}
+
+// Sound: switches and volumes
+SOUND_ROWS.forEach(([k, name, , vk]) => {
+  $('set-' + k).addEventListener('change', (e) => {
+    prefs[k] = e.target.checked; savePrefs(); renderSettings();
+    if (!prefs[k]) Sound.stopAll();
+    if (k === 'voice' && prefs.voice) Sound.unlock();
+  });
+  const sl = $('vol-' + k);
+  sl.addEventListener('pointerdown', () => Sound.unlock());   // a touch is a user gesture: arm audio
+  sl.addEventListener('input', () => { prefs[vk] = sl.value / 100; $('volv-' + k).textContent = sl.value + '%'; savePrefs(); });
+  sl.addEventListener('change', () => {                      // released: play a sample of this sound, one at a time
+    Sound.unlock();
+    if (k === 'chime') Sound.chime('start'); else if (k === 'tick') Sound.tick(); else Sound.say('Low Lunge. Left leg forward.');
+  });
+});
+// Colors and hold: apply at once
+$('setLook').addEventListener('change', (e) => {
+  const { name, value } = e.target; const i = +value;
+  look[name] = name === 'circle' ? OPTIONS.circle[i][0] : i; saveLook(); renderPreview();
+});
+$('setHold').addEventListener('change', (e) => { look.hold = OPTIONS.hold[+e.target.value][0]; saveLook(); });
+
+// Restore defaults: an in-page two-tap confirm
+let restoreArmed = 0;
+$('restoreBtn').onclick = () => {
+  if (!restoreArmed) {
+    $('restoreBtn').textContent = 'Tap again to restore'; $('restoreBtn').classList.add('armed');
+    restoreArmed = setTimeout(() => { restoreArmed = 0; $('restoreBtn').textContent = 'Restore defaults'; $('restoreBtn').classList.remove('armed'); }, 4000);
+    return;
+  }
+  clearTimeout(restoreArmed); restoreArmed = 0;
+  Sound.stopAll();
+  Object.assign(prefs, SOUND_DEFAULTS); savePrefs();
+  Object.assign(look, LOOK_DEFAULTS); saveLook();
+  $('restoreBtn').textContent = 'Restore defaults'; $('restoreBtn').classList.remove('armed');
+  $('restoreMsg').textContent = 'Defaults restored.';
+  setTimeout(() => { $('restoreMsg').textContent = ''; }, 3000);
+  renderSettings();
+};
+
+// Privacy: analytics switch (default on). Restore defaults leaves this choice alone.
+$('set-analytics').checked = Analytics.enabled;
+$('set-analytics').addEventListener('change', (e) => Analytics.setEnabled(e.target.checked));
+
+// ---------- Tailored recommendations ----------
+// Recommended routines are library routines adapted to the setup answers. A tailored routine
+// keeps its library routine's own id, so analytics only ever sees ids like "hip-opener".
+//
+// Hold times by age follow ACSM's Guidelines for Exercise Testing and Prescription (11th ed., 2021):
+// hold a static stretch 10–30 s for most adults; older adults may benefit more from 30–60 s.
+// Under 45 uses 30 s (top of the adult range); 45–59 uses 45 s and 60+ uses 60 s (within the
+// older-adult range). A default hold chosen in Settings, or a time set in a routine, still wins.
+const AGE_HOLD = { under30: 30, '30-44': 30, '45-59': 45, '60+': 60 };
+const LEVEL_RANK = { beginner: 0, intermediate: 1, advanced: 2 };
+const EQUIP_KIND = { none: 'body', band: 'band', dumbbells: 'weight' };
+const AVOID_POS = { kneeling: 'kneeling', floor: 'floor' };
+const AREA_NAME = Object.fromEntries(AREAS.map(a => [a.id, a.name]));
+
+// Any answer that affects routines (the guide only changes the figure).
+const hasRoutineAnswers = () => !!(profile.age || profile.level || profile.focus.length || profile.equipment.length || profile.minutes || profile.avoid.length);
+
+function tailorPrefs() {
+  return {
+    kinds: new Set(['body', ...profile.equipment.map(e => EQUIP_KIND[e])]), // no answer: bodyweight only
+    maxLevel: LEVEL_RANK[profile.level || 'beginner'],                       // no answer: beginner (safest)
+    avoid: new Set(profile.avoid), focus: profile.focus,
+    target: profile.minutes ? profile.minutes * 60 : null,
+    older: profile.age === '45-59' || profile.age === '60+',
+    hold: AGE_HOLD[profile.age] || null,
+  };
+}
+const allowed = (st, p) => p.kinds.has(st.kind) && LEVEL_RANK[st.level] <= p.maxLevel
+  && !Object.keys(AVOID_POS).some(a => p.avoid.has(a) && st.pos === AVOID_POS[a])
+  && !(p.avoid.has('balance') && st.balance) && !(p.avoid.has('overhead') && st.overhead);
+const lowDown = (st) => st.pos === 'floor' || st.pos === 'kneeling';
+const sideCount = (st) => st.sides ? 2 : 1;
+
+// Best replacement for a stretch: works the same areas, is allowed, and (45+) is supported.
+function alternative(st, p, used) {
+  let best = null, bestScore = -Infinity;
+  for (const c of STRETCHES) {
+    if (used.has(c.id) || !allowed(c, p)) continue;
+    const overlap = c.areas.filter(a => st.areas.includes(a)).length; if (!overlap) continue;
+    const score = overlap * 2 + c.areas.filter(a => p.focus.includes(a)).length
+      + (p.older ? (c.supported ? 3 : 0) - (lowDown(c) ? 2 : 0) : 0) + (c.kind === st.kind ? 0.5 : 0);
+    if (score > bestScore) { best = c; bestScore = score; }
+  }
+  return best;
+}
+
+function tailor(r, p) {
+  const used = new Set(), items = [], notes = { avoided: new Set(), supported: 0, added: 0, dropped: 0, swaps: 0 };
+  for (const [id, suggested] of r.items) {
+    const st = BY_ID[id], ok = allowed(st, p), wantSupport = p.older && !st.supported && lowDown(st);
+    if (ok && !wantSupport && !used.has(id)) { items.push({ id, secs: p.hold || suggested, from: null }); used.add(id); continue; }
+    const alt = alternative(st, p, used);
+    if (alt && (!ok || alt.supported)) {
+      items.push({ id: alt.id, secs: p.hold || suggested, from: id }); used.add(alt.id); notes.swaps++;
+      if (!ok) [...p.avoid].forEach(a => { if ((AVOID_POS[a] && st.pos === AVOID_POS[a]) || (a === 'balance' && st.balance) || (a === 'overhead' && st.overhead)) notes.avoided.add(a); });
+      if (wantSupport && alt.supported) notes.supported++;
+    } else if (ok && !used.has(id)) { items.push({ id, secs: p.hold || suggested, from: null }); used.add(id); }
+    else notes.dropped++;
+  }
+  // Fit the chosen session length by adding stretches for the focus areas, or trimming.
+  const total = () => items.reduce((a, it) => a + it.secs * sideCount(BY_ID[it.id]), 0);
+  if (p.target) {
+    // Pad from the focus areas first, then the routine's own areas, then anything allowed.
+    const own = [...new Set(r.items.flatMap(([id]) => BY_ID[id].areas))];
+    const tiers = [p.focus, own, AREAS.map(a => a.id)].filter(t => t.length);
+    for (const areas of tiers) {
+      while (total() < p.target * 0.9) {
+        const pool = STRETCHES.filter(c => !used.has(c.id) && allowed(c, p) && c.areas.some(a => areas.includes(a)))
+          .sort((a, b) => (p.older ? (b.supported ? 1 : 0) - (a.supported ? 1 : 0) : 0) || b.areas.filter(x => p.focus.includes(x)).length - a.areas.filter(x => p.focus.includes(x)).length);
+        const c = pool.find(x => total() + (p.hold || 30) * sideCount(x) <= p.target * 1.1) || null; if (!c) break;
+        items.push({ id: c.id, secs: p.hold || 30, from: 'added' }); used.add(c.id); notes.added++;
+      }
+    }
+    while (total() > p.target * 1.1 && items.length > 3) {
+      const k = items.map((it, i) => [i, BY_ID[it.id].areas.filter(a => p.focus.includes(a)).length]).sort((a, b) => a[1] - b[1] || b[0] - a[0])[0][0];
+      items.splice(k, 1);
+    }
+  }
+  return { id: r.id, items: items.map(it => [it.id, it.secs]), from: Object.fromEntries(items.map(it => [it.id, it.from])), notes, total: total() };
+}
+
+// Rank on the routine's own stretches (not padding): how much of it works the chosen areas, how many of
+// the chosen areas it covers, how close it lands to the session length, and how little had to change.
+function score(t, p) {
+  const core = t.items.filter(([id]) => t.from[id] !== 'added').map(([id]) => BY_ID[id]);
+  const share = p.focus.length ? core.filter(s => s.areas.some(a => p.focus.includes(a))).length / Math.max(1, core.length) : 0;
+  const cover = p.focus.length ? p.focus.filter(a => core.some(s => s.areas.includes(a))).length / p.focus.length : 0;
+  return share * 6 + cover * 4 - (p.target ? Math.abs(t.total - p.target) / 60 : 0)
+    - t.notes.added * 0.4 - t.notes.swaps * 0.3 - t.notes.dropped;
+}
+
+function whyLine(t, p) {
+  const sts = t.items.map(([id]) => BY_ID[id]), parts = [];
+  const hit = p.focus.filter(a => sts.some(s => s.areas.includes(a)));
+  parts.push(hit.length ? hit.slice(0, 2).map(a => AREA_NAME[a]).join(' & ') : catOf(R(t.id)).blurb);
+  if (sts.some(s => s.kind === 'band')) parts.push('uses your band'); else if (sts.some(s => s.kind === 'weight')) parts.push('light dumbbells');
+  if (p.target) parts.push(`about ${Math.max(1, Math.round(t.total / 60))} min`);
+  if (t.notes.avoided.size) parts.push('no ' + [...t.notes.avoided].map(a => ({ kneeling: 'kneeling', floor: 'floor work', overhead: 'overhead', balance: 'balancing' }[a])).join(' or '));
+  if (t.notes.supported) parts.push('chair & wall options');
+  if (p.hold) parts.push(`${p.hold} s holds`);
+  return parts.slice(0, 4).join(' · ');
+}
+
+// The Recommended section: 3 tailored routines, or the standing defaults when setup was skipped.
+function recommendations() {
+  if (!hasRoutineAnswers()) {
+    const h = new Date().getHours();
+    const [pick, why] = h < 11 ? ['first-light', 'Good for mornings'] : h < 17 ? ['desk-reset', 'A midday reset'] : ['lights-out', 'Winds you down for bed'];
+    return [pick, 'hip-opener', 'back-ease', 'stride-reset'].filter((v, i, a) => a.indexOf(v) === i).slice(0, 3)
+      .map((id, i) => ({ plan: null, r: R(id), why: i === 0 ? why : catOf(R(id)).blurb }));
+  }
+  const p = tailorPrefs();
+  // Equipment routines only for people who have that equipment (and, for weights, the level).
+  const fits = (r) => (r.cat !== 'band' || p.kinds.has('band')) && (r.cat !== 'loaded' || (p.kinds.has('weight') && p.maxLevel === 2));
+  return ROUTINES.filter(fits).map(r => tailor(r, p)).filter(t => t.items.length >= 3)
+    .map(t => ({ t, s: score(t, p) })).sort((a, b) => b.s - a.s).slice(0, 3)
+    .map(({ t }) => ({ plan: t, r: R(t.id), why: whyLine(t, p) }));
+}
+
+// ---------- Setup flow ----------
+// One question per screen, Skip on every screen. Answers stay on this device (profile in look.js)
+// and are never sent to analytics. The whole screen is data-private, so replay never records it.
+const SETUP_QS = [
+  { key: 'guide', type: 'one', title: 'Who should guide you?', sub: 'This only changes which figure shows the stretches.',
+    options: [['woman', 'Woman'], ['man', 'Man']],
+    note: (v) => v === 'man' ? 'A man figure isn’t drawn yet, so stretches show as plain circles for now.' : '' },
+  { key: 'age', type: 'one', title: 'What’s your age range?', sub: 'Used to suggest suitable holds.',
+    options: [['under30', 'Under 30'], ['30-44', '30–44'], ['45-59', '45–59'], ['60+', '60+']] },
+  { key: 'level', type: 'one', title: 'How flexible are you today?',
+    options: [['beginner', 'Beginner', 'Tight; touching your toes is hard'], ['intermediate', 'Intermediate', 'You stretch now and then'], ['advanced', 'Advanced', 'You stretch often and go deep']] },
+  { key: 'focus', type: 'many', title: 'Which areas do you want to work on?', sub: 'Choose any.',
+    options: [['neck', 'Neck'], ['shoulders', 'Shoulders'], ['back', 'Back'], ['hips', 'Hips'], ['hamstrings', 'Hamstrings'], ['quads', 'Quads'], ['calves', 'Calves']] },
+  { key: 'equipment', type: 'many', title: 'What equipment do you have?', sub: 'Choose any.', exclusive: 'none',
+    options: [['none', 'None'], ['band', 'Resistance band'], ['dumbbells', 'Dumbbells']] },
+  { key: 'minutes', type: 'one', title: 'How long per session?',
+    options: [[5, '5 minutes'], [10, '10 minutes'], [15, '15 minutes']] },
+  { key: 'avoid', type: 'many', title: 'Any positions to avoid?', sub: 'Optional. Leave blank if none.',
+    options: [['kneeling', 'Kneeling'], ['floor', 'Lying on the floor'], ['overhead', 'Arms overhead'], ['balance', 'One-leg balance']] },
+];
+const SETUP_LABELS = Object.fromEntries(SETUP_QS.map(q => [q.key, Object.fromEntries(q.options.map(([v, n]) => [v, n]))]));
+const SETUP = { i: 0, from: 'first', draft: null };
+
+function openSetup(from) {
+  SETUP.from = from; SETUP.i = 0;
+  SETUP.draft = JSON.parse(JSON.stringify(profile)); // edit a copy; saved on Skip or finish
+  renderSetup(); show('setup');
+}
+const answered = (q, v) => q.type === 'many' ? v.length > 0 : v !== null && v !== undefined;
+function renderSetup() {
+  const end = SETUP.i >= SETUP_QS.length, q = SETUP_QS[SETUP.i];
+  $('setupBack').style.visibility = SETUP.i === 0 ? 'hidden' : 'visible';
+  $('setupStep').textContent = end ? '' : `${SETUP.i + 1} of ${SETUP_QS.length}`;
+  $('setupSkip').hidden = end;
+  if (end) {
+    $('setupBody').innerHTML = `<h1 class="q" id="setupQ">You’re all set</h1>
+      <p class="qsub">You can change these answers anytime in Settings.</p>
+      <p class="disclaimer">MeFlex is general stretching guidance, not medical advice.</p>`;
+    $('setupNext').textContent = SETUP.from === 'first' ? 'Start stretching' : 'Save';
+    return;
+  }
+  const v = SETUP.draft[q.key];
+  const on = (val) => q.type === 'many' ? v.includes(val) : v === val;
+  $('setupBody').innerHTML = `<h1 class="q" id="setupQ">${q.title}</h1>${q.sub ? `<p class="qsub">${q.sub}</p>` : ''}
+    <div class="opts" role="${q.type === 'one' ? 'radiogroup' : 'group'}" aria-labelledby="setupQ">${q.options.map(([val, name, help], k) =>
+      `<button class="optbtn" role="${q.type === 'one' ? 'radio' : 'checkbox'}" aria-checked="${on(val)}" data-k="${k}">
+        <span><b>${name}</b>${help ? `<small>${help}</small>` : ''}</span><i aria-hidden="true"></i></button>`).join('')}</div>
+    <p class="qnote" id="setupNote" aria-live="polite">${q.note ? q.note(v) : ''}</p>`;
+  $('setupNext').textContent = answered(q, v) ? 'Next' : (q.key === 'avoid' ? 'Nothing to avoid' : 'Skip this question');
+}
+$('setupBody').addEventListener('click', (e) => {
+  const b = e.target.closest('.optbtn'); if (!b) return;
+  const q = SETUP_QS[SETUP.i], val = q.options[+b.dataset.k][0], d = SETUP.draft;
+  if (q.type === 'one') d[q.key] = d[q.key] === val ? null : val;
+  else {
+    let list = d[q.key].includes(val) ? d[q.key].filter(x => x !== val) : [...d[q.key], val];
+    if (q.exclusive) list = val === q.exclusive ? list.filter(x => x === q.exclusive) : list.filter(x => x !== q.exclusive); // "None" excludes the rest
+    const order = q.options.map(([o]) => o);
+    d[q.key] = list.sort((x, y) => order.indexOf(x) - order.indexOf(y)); // keep on-screen order
+  }
+  renderSetup();
+});
+function leaveSetup(finished) {
+  // skipped = the first-run setup was not finished; re-running from Settings keeps the earlier state unless finished.
+  const skipped = finished ? false : (SETUP.from === 'first' ? true : profile.skipped);
+  Object.assign(profile, SETUP.draft, { done: true, skipped });
+  saveProfile();
+  if (SETUP.from === 'settings') { renderSettings(); show('settings'); } else { renderHome(); show('home'); }
+}
+$('setupNext').onclick = () => { if (SETUP.i >= SETUP_QS.length) return leaveSetup(true); SETUP.i++; renderSetup(); $('setup').querySelector('.scroll').scrollTop = 0; };
+$('setupBack').onclick = () => { if (SETUP.i > 0) { SETUP.i--; renderSetup(); } };
+$('setupSkip').onclick = () => leaveSetup(false); // keeps any answers already given
+
+// Settings: a summary of the answers, and a way to run setup again.
+function renderProfileSummary() {
+  const show1 = (k) => profile[k] === null || profile[k] === undefined ? 'Not set' : SETUP_LABELS[k][profile[k]];
+  const showMany = (k, empty) => profile[k].length ? profile[k].map(v => SETUP_LABELS[k][v]).join(', ') : empty;
+  const rows = [['Guide', show1('guide')], ['Age', show1('age')], ['Flexibility', show1('level')], ['Focus', showMany('focus', 'Not set')],
+    ['Equipment', showMany('equipment', 'Not set')], ['Session', show1('minutes')], ['Avoid', showMany('avoid', 'Nothing')]];
+  $('profileRows').innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('');
+}
+$('profileEdit').onclick = () => openSetup('settings');
+
+// First screen: setup on first open, Home afterwards.
+if (!profile.done) openSetup('first'); else { renderHome(); show('home'); }
+
+</script>
+
+</body>
+</html>
