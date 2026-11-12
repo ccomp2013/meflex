@@ -347,7 +347,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .homehead .lede { margin-top: var(--sp1); }
 .primary { display: grid; gap: var(--sp3); }
 .primary .card { width: 100%; display: grid; justify-items: center; gap: var(--sp2); padding: var(--sp4); background: var(--raised); border-radius: var(--r-card); text-align: center; }
-.primary .card .cover { width: clamp(120px, 22vh, 200px); height: clamp(120px, 22vh, 200px); margin: 0; }
+.primary .card .cover { width: clamp(100px, calc(33vh - 108px), 200px); height: clamp(100px, calc(33vh - 108px), 200px); margin: 0; } /* Stage 18: smaller on short screens so Start stays above the tab bar with the header's week dots */
 .primary .cardtext { display: grid; gap: 2px; justify-items: center; }
 .primary .card .n { font-size: var(--fs-h2); }
 .primary .card .why { max-width: 34ch; }
@@ -426,6 +426,148 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .upnext { position: absolute; top: 1%; right: 0; transform: translateX(30%); width: 66px; padding: 6px 6px 5px; border-radius: var(--r-note); background: var(--raised); border: 1px solid var(--line); display: grid; justify-items: center; gap: 3px; pointer-events: none; box-shadow: 0 4px 14px rgba(0,0,0,.35); }
 .upnext .fig { width: 44px; height: 44px; }
 .upnext b { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); white-space: nowrap; }
+/* ---------- Routine and stretch pages (Stage 17) ---------- */
+#info .isec h3 { margin-top: var(--sp5); }
+#info .isub { font-size: var(--fs-small); font-weight: 600; color: var(--ink); margin: var(--sp3) 0 var(--sp2); }
+#info .isec > h3 + .isub { margin-top: 0; }
+#info ul.caution { color: var(--ink); }
+#info ul.caution li::marker { color: var(--accent); }
+.pnote { margin: 0 0 var(--sp3); padding: 10px 14px; border-radius: var(--r-note); background: var(--raised); color: var(--ink); font-size: var(--fs-small); }
+#rList .swapbtn { flex: none; margin-left: -6px; color: var(--muted); }
+#rList .swapbtn svg { width: 20px; height: 20px; }
+#rList .swapbtn:focus-visible { outline-offset: -3px; } /* keep the focus ring inside the screen edge */
+#rList li { gap: var(--sp2); }
+#rList .stepper output { width: 36px; }
+.swappanel { max-height: 88vh; max-height: 88dvh; overflow-y: auto; }
+.swappanel .rows .row { min-height: 64px; }
+.swappanel .row .sub { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.swappanel .same { flex: none; font-size: var(--fs-label); font-weight: 600; color: var(--accent); }
+.ghost:disabled { opacity: .4; cursor: default; }
+.sheet .panel.slide { animation: sheetUp .22s ease-out; }
+@keyframes sheetUp { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sheet .panel.slide { animation: none; } }
+/* ---------- Streaks and finish screen (Stage 18) ---------- */
+.homehead .hrow { display: flex; align-items: center; gap: var(--sp1); }
+.homehead .hrow .title { flex: 1; min-width: 0; }
+.streakchip { display: inline-flex; align-items: center; gap: 4px; min-height: var(--tap); min-width: var(--tap); padding: 0 12px; border-radius: 22px; background: var(--raised); font-weight: 700; font-size: var(--fs-body); font-variant-numeric: tabular-nums; color: var(--muted); }
+.flame { width: 20px; height: 20px; fill: none; stroke: var(--muted); stroke-width: 1.8; stroke-linejoin: round; flex: none; }
+.lit .flame, .flame.lit { fill: var(--accent); stroke: var(--accent); }
+.streakchip.lit { color: var(--ink); }
+.wdots { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: var(--sp3); }
+.wdot { display: grid; justify-items: center; gap: 4px; }
+.wdot i { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--line); box-sizing: border-box; }
+.wdot.done i { background: var(--accent); border-color: var(--accent); }
+.wdot.today i { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--ink); }
+.wdot.future i { opacity: .5; }
+.wdot small { color: var(--muted); font-size: 10px; font-weight: 600; }
+.donecard .wdot.today i { box-shadow: 0 0 0 2px var(--raised), 0 0 0 3.5px var(--ink); }
+#done { overflow-y: auto; justify-content: flex-start; }
+.donewrap { margin: auto 0; width: 100%; max-width: 360px; align-self: center; display: flex; flex-direction: column; align-items: center; gap: 10px; padding-block: var(--sp4); }
+.donecard { width: 100%; background: var(--raised); border-radius: var(--r-card); padding: var(--sp4); display: grid; gap: var(--sp3); text-align: left; margin-top: var(--sp2); }
+.donestats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp3); }
+.donestats div { display: grid; }
+.donestats b { font-size: var(--fs-h2); font-variant-numeric: tabular-nums; color: var(--ink); }
+.donestats span { color: var(--muted); font-size: var(--fs-xs); }
+.streakrow { display: flex; gap: var(--sp3); align-items: center; border-top: 1px solid var(--line); padding-top: var(--sp3); }
+.streakrow .flame { width: 28px; height: 28px; }
+#done .streaktitle { color: var(--ink); font-weight: 600; font-size: var(--fs-body); }
+#done .streaktitle b { font-size: var(--fs-h2); }
+#done .streaksub { font-size: var(--fs-xs); line-height: 1.4; }
+.donecard .wdots { margin-top: 0; }
+#done .addweek { display: inline-flex; align-items: center; justify-content: center; gap: 8px; color: var(--accent); border-color: var(--accent); }
+#done .addweek svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+#done .addmsg { font-size: var(--fs-xs); min-height: 0; }
+#done .addmsg:empty { display: none; }
+/* ---------- Stats and history (Stage 19) ---------- */
+.tiles { list-style: none; margin: var(--sp4) 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp2); }
+.tile2 { background: var(--raised); border-radius: var(--r-card); padding: var(--sp3) var(--sp4); display: grid; gap: 2px; align-content: start; min-height: 84px; }
+.tile2 .tl { color: var(--muted); font-size: var(--fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.tile2 .tv { font-size: var(--fs-h2); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink); line-height: 1.2; }
+.tile2 .tv.small { font-size: var(--fs-body); }
+.tile2 .ts { color: var(--muted); font-size: var(--fs-xs); line-height: 1.35; }
+.tile2.zero .tv { color: var(--muted); }
+.tile2 .tv .flame { width: 18px; height: 18px; vertical-align: -2px; margin-right: 4px; }
+.histfilled .blank { padding-top: 8vh; }
+.flame.lit-static { fill: var(--accent); stroke: var(--accent); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } /* text for screen readers only */
+.alllist { list-style: none; margin: 0; padding: 0; }
+.alllist li button { width: 100%; min-height: 56px; display: flex; align-items: center; gap: var(--sp3); padding: var(--sp2) 0; text-align: left; border-top: 1px solid var(--line); }
+.alllist li:first-child button { border-top: 0; }
+.alllist .al { flex: 1; min-width: 0; display: grid; }
+.alllist .an { font-size: var(--fs-body); font-weight: 500; }
+.alllist .ad { color: var(--muted); font-size: var(--fs-xs); }
+.alllist .at { color: var(--muted); font-size: var(--fs-small); font-variant-numeric: tabular-nums; flex: none; }
+/* ---------- Navigation and Saved (Stage 20) ---------- */
+.tabbar { left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(8px + env(safe-area-inset-bottom, 0px)); max-width: 456px; margin: 0 auto;
+  border-radius: 24px; border: 1px solid var(--line); padding: 4px; gap: 2px; background: rgba(23,27,30,.94); box-shadow: 0 8px 24px rgba(0,0,0,.45); }
+.tabbar button { min-height: 52px; border-radius: 20px; padding: 5px 0 4px; }
+.tabbar button[aria-current="page"] { color: var(--ink); background: var(--line); }
+.tabbed .scroll { padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px)); } /* the floating bar never covers the last item */
+.savebtn svg { fill: none; }
+.savebtn.on svg { fill: var(--accent); stroke: var(--accent); }
+.bmbig svg { width: 44px; height: 44px; stroke: var(--line); fill: none; stroke-width: 2; stroke-linejoin: round; filter: brightness(1.6); }
+#saved .blank { padding-top: 12vh; }
+/* ---------- Create your own routine (Stage 21) ---------- */
+.createbtn { display: flex; align-items: center; justify-content: center; gap: var(--sp2); margin-top: var(--sp4); height: 52px; font-size: var(--fs-body); }
+.createbtn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; }
+.libmsg { color: var(--accent); font-size: var(--fs-small); margin: var(--sp2) 0 0; }
+.libmsg:empty { display: none; }
+#builder { padding-block: var(--sat) 0; }
+#builder .bar { grid-template-columns: 44px 1fr 64px; }
+#builder .scroll { padding-block: 8px calc(40px + var(--sab)); }
+.textbtn { min-height: var(--tap); min-width: var(--tap); padding: 0 6px; color: var(--accent); font-weight: 600; font-size: var(--fs-body); justify-self: end; }
+.textbtn.notready { color: var(--muted); }
+.blabel { display: block; color: var(--muted); font-size: var(--fs-small); margin: var(--sp2) 0 var(--sp2); }
+.bname { width: 100%; height: 48px; border-radius: var(--r-note); border: 1.5px solid var(--line); background: var(--raised); color: var(--ink); font: 17px var(--font); padding: 0 14px; outline: none; -webkit-appearance: none; appearance: none; }
+.bname:focus-visible { border-color: var(--accent); }
+.bcount { color: var(--muted); font-size: var(--fs-xs); text-align: right; margin: 4px 0 0; font-variant-numeric: tabular-nums; }
+.bmsg { color: var(--accent); font-size: var(--fs-small); margin: 4px 0 0; min-height: 0; }
+.bmsg:empty { display: none; }
+.btotal { color: var(--ink); font-weight: 600; margin: 0 0 var(--sp2); font-variant-numeric: tabular-nums; }
+.blist li { gap: var(--sp3); }
+.blist .label { display: grid; } .blist .sub { color: var(--muted); font-size: var(--fs-xs); }
+.blist .thumb, .brow .thumb { width: 44px; height: 44px; }
+.brem, .badd { flex: none; color: var(--muted); border: 1.5px solid var(--line); }
+.badd { color: var(--accent); border-color: var(--accent); }
+.badd.on { color: var(--muted); border-color: var(--line); }
+.badd[data-full] { opacity: .4; }
+.brem svg, .badd svg { width: 20px; height: 20px; }
+.brow { display: flex; align-items: center; gap: var(--sp3); padding: var(--sp2) 0; border-top: 1px solid var(--line); }
+#bResults li:first-child .brow { border-top: 0; }
+.brow .label { flex: 1; min-width: 0; display: grid; }
+.brow .n { font-size: var(--fs-body); font-weight: 500; } .brow .sub { color: var(--muted); font-size: var(--fs-xs); }
+.bareas { margin: var(--sp3) calc(-1 * max(16px, env(safe-area-inset-left, 0px))) var(--sp2); }
+/* ---------- Edit and save (Stage 22) ---------- */
+#builder .bar { grid-template-columns: 76px 1fr 76px; }
+.textbtn.left { justify-self: start; color: var(--ink); font-weight: 500; }
+.blist.editing li { gap: var(--sp1); }
+.blist.editing .thumb { width: 36px; height: 36px; margin-right: var(--sp1); }
+.bmove { flex: none; color: var(--ink); }
+.bmove svg, .brem svg { width: 20px; height: 20px; }
+.bmove[data-edge] { opacity: .3; }
+#bDelete { width: 100%; margin-top: var(--sp6); }
+.libnote { display: flex; align-items: center; justify-content: space-between; gap: var(--sp2); }
+.libnote:has(#libMsg:empty) { display: none; }
+.editbtn { display: inline-flex; align-items: center; gap: var(--sp2); height: auto; min-height: var(--tap); padding: 0 18px; margin: 0 0 var(--sp4); }
+.editbtn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linejoin: round; }
+.descsave { width: 100%; margin-top: var(--sp3); }
+.descsavenote { margin-top: 2px; }
+.sheet.top { align-items: flex-start; }
+.sheet.top .panel { border-radius: 0 0 22px 22px; padding-top: calc(16px + var(--sat)); }
+.sabtns { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp2); margin-top: var(--sp2); }
+.sabtns .ghost, .sabtns .cta { margin: 0; height: 52px; }
+.sanote { font-size: var(--fs-small); margin: var(--sp3) 0 0; } /* below the buttons, so the keyboard never hides Save */
+/* ---------- Categories and carousels (Stage 23) ---------- */
+.carousel { display: flex; gap: var(--sp2); overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+  margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); scroll-padding-inline: max(16px, env(safe-area-inset-left, 0px)); padding-block: 2px; }
+.carousel::-webkit-scrollbar { display: none; }
+.carousel > button, .carousel > li { flex: 0 0 82%; max-width: 340px; scroll-snap-align: start; }
+.carousel > li { list-style: none; }
+.carousel > li .row { height: 100%; border-top: 0; background: var(--raised); border-radius: var(--r-card); padding: var(--sp3); }
+@media (prefers-reduced-motion: no-preference) { .carousel { scroll-behavior: smooth; } }
+.flame.lit { animation: flicker 1.6s ease-in-out 2; transform-origin: 50% 90%; }
+@keyframes flicker { 50% { transform: scale(1.08) rotate(-2deg); } }
+@media (prefers-reduced-motion: reduce) { .flame.lit { animation: none; } }
 .controls .icon.finish svg { stroke: var(--ink); fill: none; stroke-width: 2.4; }
 @media (prefers-reduced-motion: reduce) { .stage .art { transition: none; } }
 .skip { min-width: var(--tap); }
@@ -444,12 +586,18 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 
 <section class="screen tabbed" id="home">
   <div class="scroll">
-    <header class="homehead"><h1 class="title">MeFlex</h1><p class="lede" id="homeDate"></p></header>
+    <header class="homehead">
+      <div class="hrow"><h1 class="title">MeFlex</h1>
+        <button class="streakchip" id="homeStreak" data-private><svg class="flame" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5c-3.7 0-6.5-2.6-6.5-6.2 0-2.6 1.4-4.4 2.8-5.9.3 1.5 1 2.5 2.1 2.9C10.2 8.6 11.6 5.3 14.2 2.5c.3 3.3 4.3 5.9 4.3 11.5 0 4.6-2.9 7.5-6.5 7.5z"/></svg><span id="homeStreakN">0</span></button>
+        <button class="icon" id="homeProfile" aria-label="Profile and settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c.8-3.6 3.7-5.6 7.2-5.6s6.4 2 7.2 5.6"/></svg></button></div>
+      <p class="lede" id="homeDate"></p>
+      <div class="wdots home" id="homeDots" role="img" data-private></div>
+    </header>
     <h2 class="sec" id="recHead">Recommended</h2>
     <div class="primary" id="recPrimary"></div>
     <button class="progstrip" id="homeProgress" data-private></button>
     <h2 class="sec">More for you</h2>
-    <div class="morelist" id="recMore"></div>
+    <span class="sr" id="recMoreLabel">Recommended routines, swipe sideways</span><div class="morelist carousel" id="recMore" role="region" aria-labelledby="recMoreLabel"></div>
     <button class="textlink" id="browseAll">Browse all routines<svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
   </div>
 </section>
@@ -474,7 +622,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
         <div id="descOut" aria-live="polite"></div>
       </section>
       <h2 class="sec">Body areas</h2><div class="chips" id="areaChips"></div>
-      <h2 class="sec">Quick routines <span>4 min or less</span></h2><ul class="rows" id="quickList"></ul>
+      <h2 class="sec">Quick routines <span>4 min or less</span></h2><span class="sr" id="quickLabel">Quick routines, 4 minutes or less, swipe sideways</span><ul class="rows carousel" id="quickList" aria-labelledby="quickLabel"></ul>
       <h2 class="sec">Ice hockey</h2>
       <button class="hockeycard" id="hockeyCard"><span class="hk" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 3l-6.5 14.5H4.5a1.5 1.5 0 0 0 0 3h5.2L18 3"/><ellipse cx="17.5" cy="18.5" rx="3" ry="1.6"/></svg></span><span><b>Warm-ups and cool-downs</b><small>For players, youth players and referees</small></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <h2 class="sec">Categories</h2><div class="grid" id="catGrid"></div>
@@ -503,6 +651,9 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 <section class="screen tabbed" id="library" hidden>
   <div class="scroll">
     <h1 class="title">Library</h1><p class="lede">Every exercise in MeFlex. Tap one for how to do it.</p>
+    <button class="cta createbtn" id="libCreate"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Create your own routine</button>
+    <div class="libnote" data-private><p class="libmsg" id="libMsg" role="status" aria-live="polite"></p><button class="textbtn" id="libUndo" hidden>Undo</button></div>
+    <h2 class="sec" id="mineHead" hidden>My routines</h2><ul class="rows" id="mineList" data-private aria-labelledby="mineHead"></ul>
     <div class="filters">
       <div class="fgroup" role="group" aria-label="Equipment" id="fEquip"></div>
       <div class="fgroup" role="group" aria-label="Difficulty" id="fLevel"></div>
@@ -516,6 +667,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 <section class="screen tabbed" id="history" hidden>
   <div class="scroll">
     <h1 class="title">History</h1>
+    <ul class="tiles" id="histTiles" data-private aria-label="Your stats"></ul>
     <div class="blank" id="histEmpty"><div class="ring0"></div><b>Your progress starts here</b><span>Finish any routine and your week, calendar and consistency appear here.</span><span class="mini" id="histEmptyGoal"></span><button class="ghost" id="histBrowse">Browse routines</button></div>
     <div id="histBody" data-private hidden>
       <div class="pcard">
@@ -537,12 +689,45 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
         <div class="calgrid" id="calGrid"></div>
       </div>
       <h2 class="sec" id="dayHead"></h2><ul class="rows" id="dayList"></ul><p class="empty" id="dayEmpty">No sessions on this day.</p>
+      <h2 class="sec" id="allHead">All sessions</h2><ul class="alllist" id="allList" aria-labelledby="allHead"></ul>
     </div>
   </div>
 </section>
 
-<section class="screen tabbed" id="settings" hidden>
+<section class="screen" id="builder" data-private hidden>
+  <div class="bar"><button class="icon" id="bBack" aria-label="Back to Library (your draft is kept)"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="mid" id="bTitle">New routine</div><button class="textbtn notready" id="bSave">Save</button></div>
   <div class="scroll">
+    <label class="blabel" for="bName">Routine name</label>
+    <input class="bname" id="bName" type="text" maxlength="40" autocomplete="off" spellcheck="true" placeholder="For example: Evening hips" enterkeyhint="done" aria-describedby="bCount bMsg">
+    <p class="bcount" id="bCount">0 / 40</p>
+    <p class="bmsg" id="bMsg" role="status" aria-live="polite"></p>
+    <h2 class="sec" id="bListHead">Your stretches</h2>
+    <p class="btotal" id="bTotal" aria-live="polite"></p>
+    <ol class="list blist" id="bList" aria-labelledby="bListHead"></ol>
+    <p class="empty" id="bEmpty">No stretches yet. Add some from the list below.</p>
+    <h2 class="sec">Add stretches</h2>
+    <form class="search" id="bSearchForm" role="search">
+      <svg class="glass" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <input type="search" id="bSearch" placeholder="Search stretches" aria-label="Search stretches" autocomplete="off" enterkeyhint="search">
+    </form>
+    <div class="fgroup bareas" id="bAreas" role="group" aria-label="Body area"></div>
+    <ul class="rows" id="bResults" aria-label="Stretches to add"></ul>
+    <button class="ghost danger" id="bDelete" hidden>Delete routine</button>
+  </div>
+</section>
+
+<section class="screen tabbed" id="saved" hidden>
+  <div class="scroll">
+    <h1 class="title">Saved</h1>
+    <p class="lede" id="savedSub" hidden>Routines you saved, newest first.</p>
+    <ul class="rows" id="savedList" data-private aria-label="Saved routines"></ul>
+    <div class="blank" id="savedEmpty"><span class="bmbig"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg></span><b>Nothing saved yet</b><span>Tap the bookmark at the top of any routine to keep it here.</span><button class="ghost" id="savedBrowse">Explore routines</button></div>
+  </div>
+</section>
+
+<section class="screen tabbed" id="settings" hidden>
+  <div class="bar"><button class="icon" id="setBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
+  <div class="scroll" style="padding-top:4px">
     <h1 class="title">Settings</h1>
     <h2 class="sec">Sound</h2><div class="group" id="setSound"></div>
     <p class="note">Release a slider to hear that sound. These are the same switches as the speaker button in the player.</p>
@@ -582,15 +767,18 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 </section>
 
 <section class="screen" id="routine" hidden>
-  <div class="bar"><button class="icon" id="rBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
+  <div class="bar"><button class="icon" id="rBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><button class="icon savebtn" id="rSave" aria-label="Save routine"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg></button></div>
+  <p class="sr" id="rSaveMsg" aria-live="polite"></p>
   <div class="scroll" style="padding-top:2px">
     <div class="meta" id="rMeta"></div>
-    <h1 id="rTitle"></h1>
+    <h1 id="rTitle" data-private></h1>
     <p class="desc" id="rDesc"></p>
+    <button class="ghost editbtn" id="rEdit" aria-label="Edit this routine" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-4-4L4 16v4z"/></svg>Edit</button>
     <p class="rwhy" id="rWhy" data-private hidden></p>
     <p class="youthnote" id="rYouth" hidden>Stop if anything hurts. Ask a coach or doctor.</p>
     <ul class="list" id="rList"></ul>
     <button class="reset" id="resetTimes" hidden>Reset times</button>
+    <p class="note" id="rEdited" hidden>Changed for this visit only. Leave the routine to go back to the original.</p>
   </div>
   <div class="startbar"><button class="cta" id="startBtn">Start</button></div>
 </section>
@@ -629,8 +817,13 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
   <div class="head"><div class="mini" id="infoArt"></div><div><h2 id="infoName"></h2><div class="focus" id="infoFocus"></div></div></div>
   <div class="tags" id="infoTags"></div>
   <p class="youthnote" id="infoYouth" hidden>Stop if anything hurts. Ask a coach or doctor.</p>
-  <h3>Steps</h3><ol id="infoSteps"></ol>
-  <h3>Tips</h3><ul id="infoTips"></ul>
+  <p class="pnote" id="infoPersonal" data-private hidden></p>
+  <section class="isec" id="sec-instructions" aria-labelledby="h-instructions"><h3 id="h-instructions">Instructions</h3>
+    <h4 class="isub">Steps</h4><ol id="infoSteps"></ol>
+    <h4 class="isub" id="tipsHead">Tips</h4><ul id="infoTips"></ul></section>
+  <section class="isec" id="sec-caution" aria-labelledby="h-caution" hidden><h3 id="h-caution">Caution</h3><ul class="caution" id="info-caution"></ul></section>
+  <section class="isec" id="sec-modifications" aria-labelledby="h-modifications" hidden><h3 id="h-modifications">Modifications</h3><ul id="info-modifications"></ul></section>
+  <section class="isec" id="sec-benefits" aria-labelledby="h-benefits" hidden><h3 id="h-benefits">Benefits</h3><ul id="info-benefits"></ul></section>
 </section>
 
 <div class="sheet" id="soundSheet" hidden>
@@ -645,6 +838,47 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
   </div>
 </div>
 
+<div class="sheet" id="swapSheet" hidden>
+  <div class="panel slide swappanel" role="dialog" aria-modal="true" aria-labelledby="swapTitle">
+    <div class="grab"></div>
+    <h2 id="swapTitle">Swap</h2>
+    <p class="mini">Stretches for the same area come first. Changes last for this visit only.</p>
+    <ul class="rows" id="swapList" data-private></ul>
+    <button class="ghost danger" id="swapRemove">Remove from routine</button>
+    <p class="note" id="swapRemoveNote" hidden>A routine needs at least one stretch.</p>
+    <button class="ghost" id="swapCancel">Cancel</button>
+  </div>
+</div>
+
+<div class="sheet" id="discardSheet" data-private hidden>
+  <div class="panel slide" role="alertdialog" aria-modal="true" aria-labelledby="discardTitle" aria-describedby="discardText">
+    <div class="grab"></div><h2 id="discardTitle">Discard your changes?</h2>
+    <p class="resettext" id="discardText">Your routine stays as it was before you started editing.</p>
+    <button class="cta dangercta" id="discardGo">Discard changes</button>
+    <button class="ghost" id="discardKeep">Keep editing</button>
+  </div>
+</div>
+
+<div class="sheet" id="delSheet" data-private hidden>
+  <div class="panel slide" role="alertdialog" aria-modal="true" aria-labelledby="delTitle" aria-describedby="delText">
+    <div class="grab"></div><h2 id="delTitle">Delete this routine?</h2>
+    <p class="resettext" id="delText">Your past sessions stay in History.</p>
+    <button class="cta dangercta" id="delGo">Delete</button>
+    <button class="ghost" id="delKeep">Keep it</button>
+  </div>
+</div>
+
+<div class="sheet top" id="nameSheet" data-private hidden>
+  <div class="panel slide" role="dialog" aria-modal="true" aria-labelledby="saTitle" aria-describedby="saNote">
+    <h2 id="saTitle">Save as my routine</h2>
+    <label class="blabel" for="saName">Routine name</label>
+    <input class="bname" id="saName" type="text" maxlength="40" autocomplete="off" enterkeyhint="done" aria-describedby="saMsg">
+    <p class="bmsg" id="saMsg" role="status" aria-live="polite"></p>
+    <div class="sabtns"><button class="ghost" id="saCancel">Cancel</button><button class="cta" id="saSave">Save</button></div>
+    <p class="resettext sanote" id="saNote"></p>
+  </div>
+</div>
+
 <div class="sheet" id="resetSheet" hidden>
   <div class="panel" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle" aria-describedby="resetText">
     <div class="grab"></div>
@@ -655,11 +889,21 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
   </div>
 </div>
 <section class="screen" id="done" hidden>
+  <div class="donewrap">
   <h1>Nice work</h1>
-  <p id="doneText"></p>
+  <p id="doneText" data-private></p>
+  <div class="donecard" data-private>
+    <div class="donestats"><div><b id="doneCount"></b><span>stretches done</span></div><div><b id="doneWeek"></b><span>days this week</span></div></div>
+    <div class="streakrow"><svg class="flame" id="doneFlame" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5c-3.7 0-6.5-2.6-6.5-6.2 0-2.6 1.4-4.4 2.8-5.9.3 1.5 1 2.5 2.1 2.9C10.2 8.6 11.6 5.3 14.2 2.5c.3 3.3 4.3 5.9 4.3 11.5 0 4.6-2.9 7.5-6.5 7.5z"/></svg>
+      <div><p class="streaktitle" id="doneStreak"></p><p class="streaksub" id="doneStreakSub"></p></div></div>
+    <div class="wdots" id="doneDots" role="img"></div>
+  </div>
   <p class="saved" id="doneSaved"></p>
+  <button class="ghost addweek" id="doneAdd" aria-describedby="doneAddMsg" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 7"/></svg>Added to your week</button>
+  <p class="addmsg" id="doneAddMsg" aria-live="polite"></p>
   <button class="cta" id="doneBtn">Done</button>
   <button class="ghost" id="doneHistory">See history</button>
+  </div>
 </section>
 
 
@@ -668,7 +912,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
   <button data-tab="explore"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Explore</button>
   <button data-tab="library"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="3.25"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="3.25"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="3.25"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="3.25"/></svg>Library</button>
   <button data-tab="history"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>History</button>
-  <button data-tab="settings"><svg viewBox="0 0 24 24"><path d="M5 7h9M18 7h1M5 17h1M10 17h9"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>Settings</button>
+  <button data-tab="saved"><svg viewBox="0 0 24 24"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg>Saved</button>
 </nav>
 
 <script>
@@ -1012,6 +1256,10 @@ const CATEGORIES = [
   { id: 'band', name: 'Band Work', blurb: 'Deeper holds with a band' },
   { id: 'loaded', name: 'Loaded Stretch', blurb: 'Light weights, longer reach' },
   { id: 'hockey', name: 'Ice Hockey', blurb: 'Warm-ups and cool-downs for the rink' },
+  // Stage 23 (built only from stretches already in the library; to be reviewed by a trainer or physical therapist before publishing)
+  { id: 'running', name: 'Running', blurb: 'Calves, hips and legs, before and after a run' },
+  { id: 'splits', name: 'Splits', blurb: 'Hip flexors, hamstrings and inner thighs' },
+  { id: 'posture', name: 'Posture', blurb: 'Neck, chest, upper back and hips' },
 ];
 
 // items: [stretch id, default seconds per side]
@@ -1062,6 +1310,36 @@ const ROUTINES = [
   { id: 'ref-recovery', title: 'Referee Post-night Recovery', cat: 'hockey', group: 'refs', phase: 'recovery',
     desc: 'Longer, gentle floor holds at the end of a multi-game night.',
     items: [['kneeschest', 45], ['figure4', 45], ['lyingham', 45], ['butterfly', 45], ['twist', 40], ['hiplunge', 40], ['calf', 40], ['child', 60]] },
+
+  // ---- Stage 23: Running, Splits, Posture. Existing stretches only; plain, factual descriptions and Why lines (what each
+  // works, never what it cures or fixes; no timeframes). Each lists its own `why`. Review before publishing. ----
+  { id: 'run-warmup', title: 'Run Warm-up', cat: 'running', dynamic: true, why: 'Hips, hamstrings, quads and ankles, moving',
+    desc: 'A moving warm-up before a run for the hips, hamstrings, quads and ankles.',
+    items: [['legswing', 30], ['sideswing', 30], ['highknees', 30], ['buttkicks', 30], ['anklerock', 30]] },
+  { id: 'run-cooldown', title: 'Run Cool-down', cat: 'running', why: 'Calves, quads, hamstrings and glutes',
+    desc: 'Short holds after a run for the calves, quads, hamstrings and glutes.',
+    items: [['calf', 30], ['quad', 30], ['standfold', 30], ['figure4', 30]] },
+  { id: 'run-recovery', title: 'Long Run Cool-down', cat: 'running', why: 'Calves, ankles, hip flexors, hamstrings and glutes',
+    desc: 'Longer holds after a long run for the calves, ankles, hip flexors, hamstrings and glutes, finishing on the floor.',
+    items: [['calf', 45], ['ankledf', 30], ['lunge', 45], ['lyingham', 45], ['figure4', 45], ['child', 45]] },
+  { id: 'splits-short', title: 'Splits Prep: Short', cat: 'splits', why: 'Hip flexors, hamstrings and inner thighs',
+    desc: 'Beginner holds for the hip flexors, hamstrings and inner thighs.',
+    items: [['lunge', 30], ['standfold', 30], ['butterfly', 30], ['lyingham', 30]] },
+  { id: 'splits-medium', title: 'Splits Prep: Medium', cat: 'splits', why: 'Hip flexors, hamstrings and inner thighs',
+    desc: 'Longer holds for the hip flexors, hamstrings and inner thighs, including the half split.',
+    items: [['lunge', 45], ['halfsplit', 45], ['butterfly', 45], ['groinhold', 30], ['frog', 45]] },
+  { id: 'splits-longer', title: 'Splits Prep: Longer', cat: 'splits', why: 'Hip flexors, hamstrings, inner thighs and glutes',
+    desc: 'The longest of the three: hip flexors, hamstrings, inner thighs and glutes, with more holds on the floor.',
+    items: [['lunge', 45], ['halfsplit', 45], ['lizard', 45], ['pigeon', 45], ['frog', 60], ['happybaby', 45]] },
+  { id: 'posture-short', title: 'Posture Break', cat: 'posture', why: 'Neck, chest and upper back',
+    desc: 'Seated and standing holds for the neck, chest and upper back. No floor needed.',
+    items: [['chintuck', 30], ['necktilt', 30], ['levator', 30], ['doorway', 30], ['postwall', 30]] },
+  { id: 'posture-medium', title: 'Posture Reset', cat: 'posture', why: 'Chest, upper back, spine and hip flexors',
+    desc: 'Standing and kneeling holds for the chest, upper back, spine and hip flexors.',
+    items: [['postwall', 30], ['chestclasp', 30], ['doorway', 45], ['thread', 30], ['catcow', 45], ['lunge', 30]] },
+  { id: 'posture-longer', title: 'Posture Reset: Longer', cat: 'posture', why: 'Neck, chest, upper back, spine and hip flexors',
+    desc: 'Longer holds for the neck, chest, upper back, spine and hip flexors, including some on the floor.',
+    items: [['chintuck', 30], ['neckturn', 30], ['doorway', 45], ['sphinx', 45], ['thread', 45], ['puppy', 45], ['lunge', 45], ['child', 45]] },
 ];
 
 // ---------- Analytics config (PostHog) ----------
@@ -1153,6 +1431,8 @@ const Analytics = {
     const allowed = ANALYTICS_EVENTS[name];
     if (!allowed || !this.enabled || !this.configured()) return;
     const clean = {}; allowed.forEach(k => { if (props[k] !== undefined) clean[k] = props[k]; });
+    // Stage 23 guard: routine_id may only ever be a library routine's own id (built-in routines); anything else is dropped.
+    if ('routine_id' in clean && !ROUTINES.some(r => r.id === clean.routine_id)) return;
     if (this.ready) window.posthog.capture(name, clean, opts); else this.queue.push([name, clean, opts]);
   },
 
@@ -1324,8 +1604,10 @@ function art(st, mirror) {
 
 // ---------- Routines and their saved times ----------
 const STEP_S = 5, MIN_S = 10, MAX_S = 180;
-const R = (id) => ROUTINES.find(r => r.id === id);
-const catOf = (r) => CATEGORIES.find(c => c.id === r.cat);
+// Built-in routines, then the person's own (Stage 21: ids "my-…", which no built-in id uses).
+const R = (id) => ROUTINES.find(r => r.id === id) || myRoutine(id);
+const MINE_CAT = { id: 'mine', name: 'My routine', blurb: 'Made by you' };
+const catOf = (r) => CATEGORIES.find(c => c.id === r.cat) || MINE_CAT;
 const timesKey = (r) => 'meflex.times2.' + r.id; // only times you chose for this routine
 function savedTimes(r) {
   let saved = store.get(timesKey(r), null);
@@ -1351,21 +1633,24 @@ const QUICK_S = 240; // quick routine: 4 minutes or less
 const isQuick = (r) => routineSecs(r) <= QUICK_S;
 
 // ---------- Navigation ----------
-const SCREENS = ['home', 'explore', 'list', 'library', 'history', 'settings', 'routine', 'player', 'info', 'done', 'setup', 'hockey'];
-const TABBED = { home: 'home', explore: 'explore', list: 'explore', hockey: 'explore', library: 'library', history: 'history', settings: 'settings' };
+const SCREENS = ['home', 'explore', 'list', 'library', 'history', 'saved', 'settings', 'routine', 'player', 'info', 'done', 'setup', 'hockey', 'builder'];
+// Stage 20: tabs are Home, Explore, Library, History, Saved. Settings is not a tab: it opens from the profile icon on Home,
+// has its own Back control, and keeps the tab bar with the tab it was opened from marked current (as iPhone apps do).
+const tabOf = (id) => id === 'settings' ? TABBED[settingsFrom] || 'home' : TABBED[id];
+const TABBED = { home: 'home', explore: 'explore', list: 'explore', hockey: 'explore', library: 'library', history: 'history', saved: 'saved' };
 let current = 'home';
 function show(id) {
   SCREENS.forEach(s => { $(s).hidden = s !== id; });
   current = id;
-  $('tabbar').hidden = !TABBED[id];
+  $('tabbar').hidden = !tabOf(id);
   // Youth routines send nothing: replay pauses while one is open (routine, player, its instructions, finish screen).
   Analytics.quiet(!!(cur && cur.r.youth && (['routine', 'player', 'done'].includes(id) || (id === 'info' && ['routine', 'player'].includes(infoFrom)))));
-  document.querySelectorAll('#tabbar button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === TABBED[id] ? 'page' : 'false'));
+  document.querySelectorAll('#tabbar button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === tabOf(id) ? 'page' : 'false'));
 }
 $('tabbar').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-tab]'); if (!b) return;
   const t = b.dataset.tab;
-  if (t === 'home') renderHome(); if (t === 'explore') renderExplore(); if (t === 'library') renderLibrary(); if (t === 'history') renderHistory(); if (t === 'settings') renderSettings();
+  if (t === 'home') renderHome(); if (t === 'explore') renderExplore(); if (t === 'library') renderLibrary(); if (t === 'history') renderHistory(); if (t === 'saved') renderSaved();
   show(t); const sc = $(t).querySelector('.scroll'); if (sc && b.getAttribute('aria-current') === 'page') sc.scrollTop = 0;
 });
 // Shared rows: any element with data-routine / data-stretch / data-area / data-cat is a link.
@@ -1394,7 +1679,8 @@ function stretchRow(st) {
 // are "More for you". Everything else (search, describe, areas, categories, hockey) is on Explore.
 function recCard(x, i, compact) {
   const items = itemsOf(x.r, x.plan ? x.plan.items : undefined);
-  return `<button class="card${compact ? ' compact' : ''}" data-routine="${x.r.id}" data-rec="${i}"><span class="cover">${art(items[0].st)}</span>
+  // data-private: replay records each personalised card only as an empty box (its routine id is not recorded either)
+  return `<button class="card${compact ? ' compact' : ''}" data-routine="${x.r.id}" data-rec="${i}" data-private><span class="cover">${art(items[0].st)}</span>
     <span class="cardtext"><span class="n">${esc(x.r.title)}</span><span class="sub">${fmtMin(secsOf(items))} · ${items.length} stretches</span>
     <span class="why" data-private><span class="whylabel">Why this routine</span>${esc(x.why)}</span></span>${compact ? CHEV : ''}</button>`;
 }
@@ -1404,9 +1690,22 @@ function renderHome() {
   $('recHead').textContent = hasRoutineAnswers() ? 'Recommended for you' : 'Recommended';
   $('recPrimary').innerHTML = recCard(recs[0], 0, false) + `<button class="cta" id="homeStart">Start · ${fmtMin(secsOf(itemsOf(recs[0].r, recs[0].plan ? recs[0].plan.items : undefined)))}</button>`;
   $('homeStart').onclick = () => { openRoutine(recs[0].r.id, 'home', recs[0].plan); begin(); };
-  $('recMore').innerHTML = recs.slice(1).map((x, i) => recCard(x, i + 1, true)).join('');
-  renderHomeProgress();
+  $('recMore').innerHTML = recs.slice(1).map((x, i) => recCard(x, i + 1, true)).join(''); wireCarousel($('recMore'));
+  renderHomeProgress(); renderHomeHeader();
 }
+// Home header (Stage 18): weekly streak (flame) and the week dots; the profile icon opens Settings for now.
+function renderHomeHeader() {
+  const h = store.get(HIST_KEY, []), goal = look.goal, s = weeklyStreak(h, goal), days = progressStats(h, goal).week.days;
+  $('homeStreakN').textContent = s.current; $('homeStreak').classList.toggle('lit', s.current > 0);
+  $('homeStreak').setAttribute('aria-label', s.current > 0 ? `Weekly streak: ${s.current} week${s.current === 1 ? '' : 's'}. Open History` : `No weekly streak yet. ${streakMessage(s, goal)} Open History`);
+  $('homeDots').innerHTML = weekDotsHTML(days); $('homeDots').setAttribute('aria-label', weekDotsLabel(days));
+}
+$('homeStreak').onclick = () => { renderHistory(); show('history'); };
+let settingsFrom = 'home';
+function openSettings(from = current) { if (from !== 'settings' && from !== 'setup') settingsFrom = from; renderSettings(); show('settings'); $('settings').querySelector('.scroll').scrollTop = 0; }
+$('homeProfile').onclick = () => openSettings('home');
+$('setBack').onclick = () => { const to = SCREENS.includes(settingsFrom) ? settingsFrom : 'home';
+  ({ home: renderHome, explore: renderExplore, library: renderLibrary, history: renderHistory, saved: renderSaved })[to]?.(); show(to); };
 // Compact progress: this week against the goal, and the 4-week consistency. Tapping it opens History.
 function renderHomeProgress() {
   const h = store.get(HIST_KEY, []), goal = look.goal, el = $('homeProgress');
@@ -1416,16 +1715,32 @@ function renderHomeProgress() {
   }
   const s = progressStats(h, goal), w = s.week, pct = Math.round(s.meter.score * 100);
   el.innerHTML = `<span class="pgtext"><b>${w.doneDays} of ${goal} day${goal === 1 ? '' : 's'}<small>this week</small></b>
-      <span class="pgdots">${w.days.map(d => `<i class="${d.done ? 'done' : ''}${d.today ? ' today' : ''}"></i>`).join('')}</span></span>
+      </span>
     <span class="pgpct"><b>${pct}%</b><small>consistency</small></span>${CHEV}`;
   el.setAttribute('aria-label', `${w.doneDays} of ${goal} days this week, ${pct}% consistency. Open History`);
 }
 $('homeProgress').onclick = () => { renderHistory(); show('history'); };
 $('browseAll').onclick = () => { renderExplore(); show('explore'); };
 
+// ---------- Carousels (Stage 23): "More for you" (Home) and "Quick routines" (Explore) ----------
+// Same cards, same order; they scroll sideways with snap points and the next card peeks in. Keyboard: Tab moves through
+// the cards and leaves the row after the last (no trap); Left/Right arrows move between cards. With Reduce Motion the
+// row jumps instead of scrolling smoothly.
+function wireCarousel(row) {
+  if (row.dataset.wired) return; row.dataset.wired = '1';
+  row.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const items = [...row.querySelectorAll(':scope > button, :scope > li > button')], i = items.indexOf(document.activeElement); if (i < 0) return;
+    const j = i + (e.key === 'ArrowRight' ? 1 : -1); if (j < 0 || j >= items.length) return;
+    e.preventDefault(); items[j].focus({ preventScroll: true });
+    items[j].scrollIntoView({ block: 'nearest', inline: 'start', behavior: reduceMotion() ? 'auto' : 'smooth' });
+  });
+}
+
 // ---------- Explore: everything for finding a routine ----------
 function renderExplore() {
   $('quickList').innerHTML = ROUTINES.filter(isQuick).sort((a, b) => routineSecs(a) - routineSecs(b)).map(routineRow).join('');
+  wireCarousel($('quickList'));
   $('areaChips').innerHTML = AREAS.map(a => `<button class="chip" data-area="${a.id}">${a.name}</button>`).join('');
   $('catGrid').innerHTML = CATEGORIES.map(c => {
     const rs = ROUTINES.filter(r => r.cat === c.id);
@@ -1486,6 +1801,7 @@ $('listBack').onclick = () => { renderExplore(); show('explore'); };
 const libFilter = { kind: 'all', level: 'all' };
 const chips = (opts, key) => Object.entries({ all: 'All', ...opts }).map(([v, n]) => `<button class="fchip" data-f="${key}" data-v="${v}" aria-pressed="${libFilter[key] === v}">${n}</button>`).join('');
 function renderLibrary() {
+  const mine = myRoutines(); $('mineHead').hidden = !mine.length; $('mineList').innerHTML = mine.map(routineRow).join('');
   $('fEquip').innerHTML = chips({ body: 'None', band: 'Band', weight: 'Dumbbells' }, 'kind'); $('fLevel').innerHTML = chips(LEVELS, 'level');
   const hit = STRETCHES.filter(s => (libFilter.kind === 'all' || s.kind === libFilter.kind) && (libFilter.level === 'all' || s.level === libFilter.level));
   $('libCount').textContent = hit.length === STRETCHES.length ? `${hit.length} exercises` : `${hit.length} of ${STRETCHES.length} exercises`;
@@ -1532,16 +1848,25 @@ function openRoutine(id, from, plan = null) {
   $('rYouth').hidden = !r.youth;
   if (plan) { const p = tailorPrefs();
     $('rWhy').innerHTML = `<b>${plan.label || 'Tailored to your setup'}</b>${esc(plan.why || whyLine(plan, p))}` + (p.older && !look.hold ? '<small>Holds follow ACSM’s guidance of 30–60 seconds for older adults.</small>' : ''); }
-  const note = (st) => !plan ? '' : plan.from[st.id] === 'added' ? 'Added for your focus' : plan.from[st.id] ? `Instead of ${esc(BY_ID[plan.from[st.id]].name)}` : '';
+  renderSaveBtn(); $('rSaveMsg').textContent = '';
+  $('rEdit').hidden = !r.custom;
+  cur.edited = false; // Stage 17: swaps and removals last for this visit only (saving comes in Stage 22)
+  renderRoutineList(); renderRoutine(); show('routine'); $('routine').querySelector('.scroll').scrollTop = 0;
+}
+const SWAP_ICON = '<svg viewBox="0 0 24 24"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/></svg>';
+function renderRoutineList() {
+  const plan = cur.plan;
+  const note = (it) => it.swappedFrom ? `Instead of ${esc(it.swappedFrom.name)}` : !plan ? '' : plan.from[it.st.id] === 'added' ? 'Added for your focus' : plan.from[it.st.id] ? `Instead of ${esc(BY_ID[plan.from[it.st.id]].name)}` : '';
   $('rList').innerHTML = cur.items.map((it, i) => `<li>
     <span class="thumb">${art(it.st, false)}</span>
-    <button class="label link" data-stretch="${it.st.id}"><span class="n">${esc(it.st.name)}</span>${it.st.sides || note(it.st) ? `<span class="sub">${[it.st.sides && 'Each side', note(it.st)].filter(Boolean).join(' · ')}</span>` : ''}</button>
+    <button class="label link" data-stretch="${it.st.id}"><span class="n">${esc(it.st.name)}</span>${it.st.sides || note(it) ? `<span class="sub">${[it.st.sides && 'Each side', note(it)].filter(Boolean).join(' · ')}</span>` : ''}</button>
     <span class="stepper" role="group" aria-label="${esc(it.st.name)} time">
       <button data-i="${i}" data-d="-1" aria-label="Shorter">${MINUS}</button>
       <output id="secs-${i}" aria-live="polite"></output>
       <button data-i="${i}" data-d="1" aria-label="Longer">${PLUS}</button>
-    </span></li>`).join('');
-  renderRoutine(); show('routine'); $('routine').querySelector('.scroll').scrollTop = 0;
+    </span>
+    <button class="icon swapbtn" data-swap="${i}" aria-label="Swap stretch, ${esc(it.st.name)}" aria-haspopup="dialog">${SWAP_ICON}</button></li>`).join('');
+  $('rEdited').hidden = !cur.edited;
 }
 function renderRoutine() {
   $('rMeta').textContent = `${fmtTotal(secsOf(cur.items))} · ${cur.items.length} stretches`;
@@ -1553,8 +1878,9 @@ function renderRoutine() {
   $('resetTimes').hidden = cur.items.every(it => it.secs === it.def);
 }
 const saveTimes = () => {
-  const saved = savedTimes(cur.r);
-  cur.items.forEach(it => { if (it.secs === it.def) delete saved[it.st.id]; else saved[it.st.id] = it.secs; });
+  const saved = savedTimes(cur.r), own = new Set(cur.r.items.map(([id]) => id));
+  // Only the routine's own stretches are saved; a time set on a swapped-in stretch lasts for this visit only.
+  cur.items.forEach(it => { if (!own.has(it.st.id) || it.swappedFrom) return; if (it.secs === it.def) delete saved[it.st.id]; else saved[it.st.id] = it.secs; });
   store.set(timesKey(cur.r), saved);
 };
 $('rList').addEventListener('click', (e) => {
@@ -1563,13 +1889,255 @@ $('rList').addEventListener('click', (e) => {
   it.secs = Math.min(MAX_S, Math.max(MIN_S, it.secs + STEP_S * +b.dataset.d));
   saveTimes(); renderRoutine();
 });
+// ---------- Swap or remove a stretch (Stage 17; this visit only) ----------
+// Alternatives: same body area first (most shared areas first), never a stretch already in the routine, moves swap for
+// moves and holds for holds (as in tailoring), simple-language stretches only in youth routines, no positions the person
+// chose to avoid, only equipment the person has or the routine already uses, and no harder level than both the stretch
+// and the person's level allow.
+const SWAP_LIST_MAX = 6;
+function swapOptions(i) {
+  const old = cur.items[i].st, inRoutine = new Set(cur.items.map(it => it.st.id)), p = tailorPrefs();
+  const kinds = new Set([...p.kinds, old.kind]), maxLevel = Math.max(p.maxLevel, LEVEL_RANK[old.level]);
+  const ok = (c) => !inRoutine.has(c.id) && !!c.dynamic === !!old.dynamic && (!cur.r.youth || c.kidSteps) && kinds.has(c.kind) && LEVEL_RANK[c.level] <= maxLevel
+    && !Object.keys(AVOID_POS).some(a => p.avoid.has(a) && c.pos === AVOID_POS[a]) && !(p.avoid.has('balance') && c.balance) && !(p.avoid.has('overhead') && c.overhead);
+  return STRETCHES.map((c, k) => ({ c, k, shared: c.areas.filter(a => old.areas.includes(a)).length })).filter(x => ok(x.c))
+    .sort((a, b) => (b.shared > 0) - (a.shared > 0) || b.shared - a.shared || (b.c.kind === old.kind) - (a.c.kind === old.kind) || a.k - b.k)
+    .slice(0, SWAP_LIST_MAX).map(x => ({ st: x.c, shared: x.shared }));
+}
+let swapIndex = -1;
+function openSwap(i) {
+  swapIndex = i; const it = cur.items[i];
+  $('swapTitle').textContent = 'Swap ' + it.st.name;
+  const opts = swapOptions(i);
+  $('swapList').innerHTML = opts.length ? opts.map(o => `<li><button class="row" data-swapto="${o.st.id}" aria-label="Swap in ${esc(o.st.name)}"><span class="thumb">${art(o.st)}</span>
+    <span class="label"><span class="n">${esc(o.st.name)}</span><span class="sub">${esc(o.st.focus)}</span></span>${o.shared ? '<span class="same">Same area</span>' : ''}</button></li>`).join('') : '<li class="empty">No other stretches fit here.</li>';
+  const last = cur.items.length <= 1;
+  $('swapRemove').disabled = last; $('swapRemove').setAttribute('aria-label', 'Remove stretch, ' + it.st.name); $('swapRemoveNote').hidden = !last;
+  $('swapSheet').hidden = false; $('swapSheet').querySelector('.panel').scrollTop = 0; $('swapCancel').focus();
+}
+const closeSwap = () => { $('swapSheet').hidden = true; const b = $('rList').querySelector(`[data-swap="${swapIndex}"]`); if (b) b.focus(); swapIndex = -1; };
+$('rList').addEventListener('click', (e) => { const b = e.target.closest('[data-swap]'); if (b) openSwap(+b.dataset.swap); });
+$('swapList').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-swapto]'); if (!b || swapIndex < 0) return;
+  const old = cur.items[swapIndex], st = BY_ID[b.dataset.swapto];
+  cur.items[swapIndex] = { st, def: old.def, secs: old.def, swappedFrom: old.swappedFrom || old.st }; // same suggested time as the stretch it replaces
+  cur.edited = true; const i = swapIndex; closeSwap(); renderRoutineList(); renderRoutine();
+  const nb = $('rList').querySelector(`[data-swap="${i}"]`); if (nb) nb.focus();
+});
+$('swapRemove').onclick = () => {
+  if (swapIndex < 0 || cur.items.length <= 1) return; // a routine keeps at least one stretch
+  cur.items.splice(swapIndex, 1); cur.edited = true; $('swapSheet').hidden = true; swapIndex = -1; renderRoutineList(); renderRoutine();
+  const nb = $('rList').querySelector('[data-swap]'); if (nb) nb.focus();
+};
+$('swapCancel').onclick = closeSwap;
+$('swapSheet').addEventListener('click', (e) => { if (e.target === $('swapSheet')) closeSwap(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('swapSheet').hidden) closeSwap(); });
 $('resetTimes').onclick = () => { cur.items.forEach(it => { it.secs = it.def; }); saveTimes(); renderRoutine(); };
 $('rBack').onclick = () => {
   if (routineFrom === 'home') renderHome();
   if (routineFrom === 'explore' || routineFrom === 'list' || routineFrom === 'hockey') renderExplore();
   if (routineFrom === 'history') renderHistory();
+  if (routineFrom === 'saved') renderSaved();
+  if (routineFrom === 'library') renderLibrary();
   show(routineFrom);
 };
+
+// ---------- Your own routines (Stage 21) ----------
+// Kept on this device only, in localStorage 'meflex.mine': a list of { id, name, items: [stretch ids in order], created },
+// newest first. Ids are "my-" + base-36 time + random letters, so they can never match a built-in id. The name is the
+// person's own text: the builder, the name on the routine page and finish screen, and My routines are hidden from replay,
+// and these routines send no analytics events at all (routine_id may only ever be a library routine's id).
+// Reset app clears it (a meflex.* key). A stretch id that no longer exists is skipped; a routine left with none is hidden.
+const MINE_KEY = 'meflex.mine', MINE_MAX = 20, NAME_MAX = 40, MINE_FALLBACK_HOLD = 30;
+let MINE = null;
+// Suggested hold for a stretch: the hold most often used for it in the built-in routines, else 30 s. The person's default
+// hold from Settings wins over it (itemsOf: look.hold || suggested), exactly as for built-in routines.
+// Stage 23 routines are left out so own routines keep the default holds they had (see DECISIONS.md).
+const STAGE23_CATS = new Set(['running', 'splits', 'posture']);
+const SUGGESTED = (() => { const c = {}; ROUTINES.filter(r => !STAGE23_CATS.has(r.cat)).forEach(r => r.items.forEach(([id, s]) => { (c[id] = c[id] || {})[s] = (c[id][s] || 0) + 1; }));
+  return Object.fromEntries(Object.entries(c).map(([id, m]) => [id, +Object.entries(m).sort((a, b) => b[1] - a[1] || a[0] - b[0])[0][0]])); })();
+const suggestedHold = (id) => SUGGESTED[id] || MINE_FALLBACK_HOLD;
+function mineRaw() { const v = store.get(MINE_KEY, []); return Array.isArray(v) ? v : []; }
+function myRoutines() {
+  if (MINE) return MINE;
+  MINE = mineRaw().filter(x => x && typeof x.id === 'string' && /^my-[a-z0-9]+$/.test(x.id) && typeof x.name === 'string' && Array.isArray(x.items)).map(x => {
+    const ids = [...new Set(x.items.filter(i => typeof i === 'string' && BY_ID[i]))].slice(0, MINE_MAX);
+    return ids.length ? { id: x.id, title: x.name.trim().slice(0, NAME_MAX) || 'My routine', cat: 'mine', custom: true, created: +x.created || 0, desc: 'Your own routine.', items: ids.map(i => [i, suggestedHold(i)]) } : null;
+  }).filter(Boolean);
+  return MINE;
+}
+function myRoutine(id) { return typeof id === 'string' && id.startsWith('my-') ? myRoutines().find(r => r.id === id) : undefined; }
+function newMineId() { let id; do { id = 'my-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6).replace(/[^a-z0-9]/g, 'x'); } while (R(id)); return id; }
+// Writes that may fail (storage full or blocked): report it instead of failing silently, so nothing on screen is lost.
+function storeTry(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+const STORE_FAIL = 'Couldn’t save on this device just now; its storage may be full. Your changes are still here. Try again.';
+function saveMine(name, ids) { const id = newMineId(); if (!storeTry(MINE_KEY, [{ id, name, items: ids, created: Date.now() }, ...mineRaw()])) return null; MINE = null; LAST_DEL = null; return id; }
+// Stage 22: update in place (same id, so Saved bookmarks and History links keep working).
+function updateMine(id, name, ids) { const list = mineRaw(), k = list.findIndex(x => x && x.id === id); if (k < 0) return false;
+  list[k] = { ...list[k], name, items: ids, edited: Date.now() }; if (!storeTry(MINE_KEY, list)) return false; MINE = null; LAST_DEL = null; return true; }
+// Delete: removed from My routines and Saved; History rows keep their stored name and no longer open. One-step undo.
+let LAST_DEL = null;
+function deleteMine(id) {
+  const list = mineRaw(), k = list.findIndex(x => x && x.id === id); if (k < 0) return false;
+  const saved = savedEntries(), sk = saved.findIndex(x => x.id === id), entry = list[k], sEntry = sk >= 0 ? saved[sk] : null;
+  list.splice(k, 1); if (!storeTry(MINE_KEY, list)) return false;
+  if (sk >= 0) { saved.splice(sk, 1); storeTry(SAVED_KEY, saved); }
+  MINE = null; LAST_DEL = { entry, k, sEntry, sk }; return true;
+}
+function undoDelete() {
+  if (!LAST_DEL) return false; const { entry, k, sEntry, sk } = LAST_DEL, list = mineRaw(); list.splice(Math.min(k, list.length), 0, entry);
+  if (!storeTry(MINE_KEY, list)) return false;
+  if (sEntry) { const saved = savedEntries(); saved.splice(Math.min(sk, saved.length), 0, sEntry); storeTry(SAVED_KEY, saved); }
+  MINE = null; LAST_DEL = null; return entry;
+}
+
+// Builder: name (required, up to 40 characters), stretches from the library (once each, 1 to 20), running total.
+// New: the draft is kept while the app is open (Back to Library loses nothing); it is not stored.
+// Edit (Stage 22): the same screen with Cancel/Save, Up/Down/Remove and Delete; a new-routine draft is set aside and
+// given back afterwards.
+const B = { mode: 'new', editId: null, orig: null, name: '', ids: [], area: 'all', q: '' };
+let STASH = null;
+const holdFor = (id) => look.hold || suggestedHold(id);
+const bSecs = () => B.ids.reduce((a, id) => a + holdFor(id) * (BY_ID[id].sides ? 2 : 1), 0);
+const bDirty = () => B.mode === 'edit' && JSON.stringify([B.name.trim(), B.ids]) !== B.orig;
+function bMsg(t) { $('bMsg').textContent = t; }
+const BACK_ICON = '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
+function leaveEdit() { if (B.mode !== 'edit') return; Object.assign(B, STASH || { name: '', ids: [], area: 'all', q: '' }, { mode: 'new', editId: null, orig: null }); STASH = null; }
+function openBuilder() { leaveEdit(); bMsg(''); renderBuilder(); show('builder'); $('builder').querySelector('.scroll').scrollTop = 0; }
+function openEditor(id) {
+  const r = R(id); if (!r || !r.custom) return;
+  if (B.mode !== 'edit') STASH = { name: B.name, ids: B.ids.slice(), area: B.area, q: B.q };
+  const ids = r.items.map(x => x[0]);
+  Object.assign(B, { mode: 'edit', editId: id, name: r.title, ids, area: 'all', q: '', orig: JSON.stringify([r.title.trim(), ids]) });
+  $('bSearch').value = ''; bMsg(''); renderBuilder(); show('builder'); $('builder').querySelector('.scroll').scrollTop = 0;
+}
+function renderBuilder() {
+  const edit = B.mode === 'edit';
+  $('bTitle').textContent = edit ? 'Edit routine' : 'New routine';
+  $('bBack').className = edit ? 'textbtn left' : 'icon'; $('bBack').innerHTML = edit ? 'Cancel' : BACK_ICON;
+  $('bBack').setAttribute('aria-label', edit ? 'Cancel editing' : 'Back to Library (your draft is kept)');
+  $('bDelete').hidden = !edit;
+  $('bName').value = B.name; $('bCount').textContent = `${B.name.length} / ${NAME_MAX}`;
+  const n = B.ids.length;
+  $('bTotal').textContent = n ? `Total ${fmtTotal(bSecs())} · ${n} stretch${n === 1 ? '' : 'es'}` : 'Total 0 min · no stretches yet';
+  $('bList').classList.toggle('editing', edit);
+  $('bList').innerHTML = B.ids.map((id, i) => { const st = BY_ID[id], h = holdFor(id), nm = esc(st.name);
+    const moves = edit ? `<button class="icon bmove" data-bup="${i}" aria-label="Move ${nm} up"${i === 0 ? ' data-edge' : ''}><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+      <button class="icon bmove" data-bdown="${i}" aria-label="Move ${nm} down"${i === n - 1 ? ' data-edge' : ''}><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>` : '';
+    return `<li><span class="thumb">${art(st)}</span><span class="label"><span class="n">${nm}</span><span class="sub">${fmtTotal(h)}${st.sides ? ' each side' : ''}</span></span>
+      ${moves}<button class="icon brem" data-brem="${i}" aria-label="Remove ${nm}"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button></li>`; }).join('');
+  $('bEmpty').hidden = n > 0;
+  const ok = B.name.trim() && n; $('bSave').classList.toggle('notready', !ok); // still a normal button: tapping it says what is missing
+  renderBuilderResults();
+}
+function renderBuilderResults() {
+  $('bAreas').innerHTML = [['all', 'All'], ...AREAS.map(a => [a.id, a.name])].map(([v, name]) => `<button class="fchip" data-barea="${v}" aria-pressed="${B.area === v}">${name}</button>`).join('');
+  const q = B.q.trim().toLowerCase(), full = B.ids.length >= MINE_MAX;
+  const hits = STRETCHES.filter(s => (B.area === 'all' || s.areas.includes(B.area)) && (!q || [s.name, s.focus, ...s.areas.map(a => (AREAS.find(x => x.id === a) || {}).name || a)].join(' ').toLowerCase().includes(q)));
+  $('bResults').innerHTML = hits.length ? hits.map(s => { const added = B.ids.includes(s.id);
+    return `<li><div class="row brow"><span class="thumb">${art(s)}</span><span class="label"><span class="n">${esc(s.name)}</span><span class="sub">${esc(s.focus)}</span></span>
+      <button class="icon badd${added ? ' on' : ''}" data-badd="${s.id}" aria-label="${added ? esc(s.name) + ' added' : 'Add ' + esc(s.name)}"${full && !added ? ' data-full' : ''}>${added ? '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>' : '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>'}</button></div></li>`; }).join('')
+    : '<li class="empty">No stretches match. Try another word or area.</li>';
+}
+$('bName').addEventListener('input', () => { B.name = $('bName').value.slice(0, NAME_MAX); $('bCount').textContent = `${B.name.length} / ${NAME_MAX}`;
+  bMsg(B.name.length >= NAME_MAX ? 'Names can be up to 40 characters.' : ''); $('bSave').classList.toggle('notready', !(B.name.trim() && B.ids.length)); });
+$('bName').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('bName').blur(); } });
+$('bSearch').addEventListener('input', () => { B.q = $('bSearch').value; renderBuilderResults(); });
+$('bSearchForm').addEventListener('submit', (e) => { e.preventDefault(); $('bSearch').blur(); });
+$('bAreas').addEventListener('click', (e) => { const b = e.target.closest('[data-barea]'); if (!b) return; B.area = b.dataset.barea; renderBuilderResults(); });
+$('bResults').addEventListener('click', (e) => { const b = e.target.closest('[data-badd]'); if (!b) return; const id = b.dataset.badd;
+  if (B.ids.includes(id)) { bMsg(`${BY_ID[id].name} is already in your routine.`); return; }
+  if (B.ids.length >= MINE_MAX) { bMsg(`That's ${MINE_MAX} stretches, the most one routine can hold.`); return; }
+  B.ids.push(id); bMsg(`Added ${BY_ID[id].name}.`); renderBuilder(); });
+$('bList').addEventListener('click', (e) => {
+  const up = e.target.closest('[data-bup]'), down = e.target.closest('[data-bdown]'), rem = e.target.closest('[data-brem]');
+  if (up || down) { // Stage 22 reorder: Up/Down buttons (no drag), announced for screen readers
+    const i = +(up ? up.dataset.bup : down.dataset.bdown), j = up ? i - 1 : i + 1, st = BY_ID[B.ids[i]];
+    if (j < 0) { bMsg(`${st.name} is already first.`); return; }
+    if (j >= B.ids.length) { bMsg(`${st.name} is already last.`); return; }
+    [B.ids[i], B.ids[j]] = [B.ids[j], B.ids[i]]; renderBuilder(); bMsg(`Moved ${st.name} to position ${j + 1} of ${B.ids.length}.`);
+    $('bList').querySelector(up ? `[data-bup="${j}"]` : `[data-bdown="${j}"]`).focus(); return;
+  }
+  if (!rem) return; const st = BY_ID[B.ids[+rem.dataset.brem]];
+  B.ids.splice(+rem.dataset.brem, 1); bMsg(`Removed ${st.name}.`); renderBuilder(); const nb = $('bList').querySelector('[data-brem]'); (nb || $('bSearch')).focus(); });
+$('bSave').onclick = () => {
+  const name = B.name.trim();
+  if (!name) { bMsg('Give your routine a name to save it.'); $('bName').focus(); return; }
+  if (!B.ids.length) { bMsg('Add at least one stretch to save it.'); $('bSearch').focus(); return; }
+  if (B.mode === 'edit') {
+    const id = B.editId;
+    if (!updateMine(id, name.slice(0, NAME_MAX), B.ids.slice(0, MINE_MAX))) { bMsg(R(id) ? STORE_FAIL : 'This routine is no longer on this device.'); return; }
+    leaveEdit(); bMsg(''); openRoutine(id); $('rSaveMsg').textContent = 'Changes saved.'; return;
+  }
+  if (!saveMine(name.slice(0, NAME_MAX), B.ids.slice(0, MINE_MAX))) { bMsg(STORE_FAIL); return; }
+  B.name = ''; B.ids = []; B.q = ''; B.area = 'all'; bMsg('');
+  renderLibrary(); show('library'); $('library').querySelector('.scroll').scrollTop = 0; libNote(`Saved “${name}” to My routines.`);
+};
+function exitEdit() { const id = B.editId; leaveEdit(); bMsg(''); if (R(id)) openRoutine(id); else { renderLibrary(); show('library'); } }
+$('bBack').onclick = () => {
+  if (B.mode === 'edit') { if (bDirty()) { $('discardSheet').hidden = false; $('discardKeep').focus(); } else exitEdit(); return; }
+  renderLibrary(); show('library');
+};
+$('discardKeep').onclick = () => { $('discardSheet').hidden = true; $('bBack').focus(); };
+$('discardGo').onclick = () => { $('discardSheet').hidden = true; exitEdit(); };
+$('bDelete').onclick = () => { $('delTitle').textContent = `Delete “${R(B.editId).title}”?`; $('delSheet').hidden = false; $('delKeep').focus(); };
+$('delKeep').onclick = () => { $('delSheet').hidden = true; $('bDelete').focus(); };
+$('delGo').onclick = () => {
+  const r = R(B.editId), name = r ? r.title : '';
+  if (!deleteMine(B.editId)) { $('delSheet').hidden = true; bMsg(STORE_FAIL); return; }
+  $('delSheet').hidden = true; leaveEdit(); bMsg(''); renderLibrary(); show('library'); $('library').querySelector('.scroll').scrollTop = 0; libNote(`Deleted “${name}”.`, true);
+};
+['discardSheet', 'delSheet', 'nameSheet'].forEach(id => $(id).addEventListener('click', (e) => { if (e.target === $(id)) $(id).hidden = true; }));
+function libNote(t, undo = false) { $('libMsg').textContent = t; $('libUndo').hidden = !undo; }
+$('libUndo').onclick = () => { const e = undoDelete(); if (!e) { libNote(STORE_FAIL); return; } renderLibrary(); libNote(`Restored “${e.name}”.`); };
+$('libCreate').onclick = () => { libNote(''); openBuilder(); };
+$('rEdit').onclick = () => openEditor(cur.r.id);
+
+// Stage 22: save a Describe result as your own routine. Uses the best match's stretches in its order; they take the
+// default hold (look.hold or each stretch's suggested hold), not the result's tailored times. The typed description
+// is never stored or sent: only the name and the stretch ids are saved.
+function openSaveAs() {
+  const t = DESC[0]; if (!t) return;
+  const ids = [...new Set(t.items.map(x => x[0]).filter(id => BY_ID[id]))].slice(0, MINE_MAX);
+  $('nameSheet').dataset.ids = ids.join(','); $('saName').value = 'My routine'; $('saMsg').textContent = '';
+  $('saNote').textContent = `${ids.length} stretch${ids.length === 1 ? '' : 'es'} from “${R(t.id).title}”, in the same order. They use your default hold, so the length can differ from this result.`;
+  $('nameSheet').hidden = false; $('saName').focus(); $('saName').select();
+}
+$('saCancel').onclick = () => { $('nameSheet').hidden = true; const b = $('descSave'); if (b) b.focus(); };
+$('saName').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('saSave').click(); } });
+$('saSave').onclick = () => {
+  const name = $('saName').value.trim().slice(0, NAME_MAX), ids = ($('nameSheet').dataset.ids || '').split(',').filter(id => BY_ID[id]);
+  if (!name) { $('saMsg').textContent = 'Give your routine a name to save it.'; $('saName').focus(); return; }
+  if (!ids.length) { $('saMsg').textContent = 'There are no stretches to save.'; return; }
+  const id = saveMine(name, ids); if (!id) { $('saMsg').textContent = STORE_FAIL; return; }
+  $('nameSheet').hidden = true; routineFrom = 'library'; openRoutine(id, 'library'); $('rSaveMsg').textContent = `Saved to My routines.`;
+};
+
+// ---------- Saved routines (Stage 20) ----------
+// Kept on this device only, in localStorage 'meflex.saved': a list of { id, at } (routine id, time saved), newest first.
+// Nothing is sent; the Saved list is hidden from replay; Reset app clears it (it is a meflex.* key); Restore defaults
+// leaves it alone. Ids are looked up through routineById, so routines a person creates (Stages 21-22) can be saved the
+// same way once that lookup knows them. An id whose routine no longer exists is ignored (and dropped on the next save).
+const SAVED_KEY = 'meflex.saved';
+const routineById = (id) => R(id);
+function savedEntries() { const v = store.get(SAVED_KEY, []); return Array.isArray(v) ? v.filter(x => x && typeof x.id === 'string') : []; }
+const isSaved = (id) => savedEntries().some(x => x.id === id);
+function setSaved(id, on) {
+  const list = savedEntries().filter(x => x.id !== id && routineById(x.id));
+  if (on) list.unshift({ id, at: Date.now() });
+  store.set(SAVED_KEY, list);
+}
+function renderSaved() {
+  const rs = savedEntries().map(x => routineById(x.id)).filter(Boolean);
+  $('savedList').innerHTML = rs.map(routineRow).join('');
+  $('savedEmpty').hidden = rs.length > 0; $('savedSub').hidden = !rs.length;
+}
+$('savedBrowse').onclick = () => { renderExplore(); show('explore'); };
+function renderSaveBtn() {
+  const on = !!cur && isSaved(cur.r.id), b = $('rSave');
+  b.classList.toggle('on', on); b.setAttribute('aria-label', on ? 'Remove from saved' : 'Save routine');
+}
+$('rSave').onclick = () => { const on = !isSaved(cur.r.id); setSaved(cur.r.id, on); renderSaveBtn(); $('rSaveMsg').textContent = on ? 'Saved' : 'Removed from saved'; };
 
 // ---------- Player ----------
 // The clock is the device clock (Date.now), not counted frames, so holds keep their true length
@@ -1590,7 +2158,7 @@ function nextPhase(i, phase) {
   if (look.gap) return { i: i + 1, phase: 'gap' };              // a new stretch: the chosen pause, if any
   return { i: i + 1, phase: 'hold' };
 }
-const P = { i: 0, phase: 'hold', remaining: 0, swLeft: 0, endAt: 0, running: false, raf: 0, lastFrame: 0, lastSec: 0, active: 0, runFrom: 0 };
+const P = { i: 0, phase: 'hold', remaining: 0, swLeft: 0, endAt: 0, running: false, raf: 0, lastFrame: 0, lastSec: 0, active: 0, runFrom: 0, held: new Set(), recorded: false };
 const ICON_PAUSE = '<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1.3"/><rect x="14" y="5" width="4" height="14" rx="1.3"/></svg>';
 const ICON_PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5.2v13.6a1 1 0 0 0 1.5.86l11-6.8a1 1 0 0 0 0-1.72l-11-6.8A1 1 0 0 0 8 5.2z"/></svg>';
 const holdMs = (i) => STEPS[i].it.secs * 1000;
@@ -1695,7 +2263,7 @@ function frame() {
     P.phase = 'hold'; P.remaining = holdMs(P.i); P.endAt = now + P.remaining; P.runFrom = now; P.lastSec = Math.ceil(P.remaining / 1000);
     cueStart(STEPS[P.i]); render();
   } else {                                     // a hold ended
-    P.active += P.endAt - P.runFrom;
+    P.active += P.endAt - P.runFrom; heldStep(P.i, P.endAt - P.runFrom);
     const n = nextPhase(P.i, 'hold');
     if (!n) { if (prefs.chime) Sound.chime('end'); P.phase = 'end'; finish(true); return; }
     if (n.phase === 'switch') { switchCue(); beginSwitch(n.i, now); }
@@ -1708,7 +2276,7 @@ function frame() {
 // while the page was asleep. No sounds. Time away inside a hold counts toward it; the waits never do.
 function catchUp(now) {
   let t = P.endAt, i = P.i, phase = P.phase;
-  if (phase === 'hold') P.active += t - P.runFrom;
+  if (phase === 'hold') { P.active += t - P.runFrom; heldStep(i, t - P.runFrom); }
   Sound.stopAll();
   for (;;) {
     const n = nextPhase(i, phase);
@@ -1719,14 +2287,14 @@ function catchUp(now) {
       else beginWait(n.i, n.phase, now, end - now, false);
       return;
     }
-    if (n.phase === 'hold') P.active += end - t;
+    if (n.phase === 'hold') { P.active += end - t; heldStep(n.i, end - t); }
     t = end; i = n.i; phase = n.phase;
   }
 }
 function setRunning(on, { cue = false } = {}) {
   const now = Date.now();
   if (P.running && !on) {
-    if (P.phase === 'hold') { P.remaining = Math.max(0, P.endAt - now); P.active += now - P.runFrom; }
+    if (P.phase === 'hold') { P.remaining = Math.max(0, P.endAt - now); P.active += now - P.runFrom; heldStep(P.i, now - P.runFrom); }
     else P.swLeft = Math.max(0, P.endAt - now);
   }
   const wasRunning = P.running;
@@ -1743,22 +2311,25 @@ function setRunning(on, { cue = false } = {}) {
 }
 function finish(keepEndChime) {
   const now = Date.now();
-  if (P.running && P.phase === 'hold') P.active += now - P.runFrom;
+  if (P.running && P.phase === 'hold') { P.active += now - P.runFrom; heldStep(P.i, now - P.runFrom); }
   P.running = false; cancelAnimationFrame(P.raf); keepAwake(false);
   if (!keepEndChime) Sound.stopAll();
   const secs = Math.min(P.active / 1000, secsOf(cur.items)); // never more than the routine's own length (e.g. phone left locked)
-  const saved = secs >= 10; // skipping straight through is not a session
-  if (saved) recordSession(cur.r, secs);
-  if (saved && !cur.r.youth) Analytics.track('routine_completed', { routine_id: cur.r.id, duration_seconds: Math.round(secs) }); // same 10-second rule as history; youth routines send nothing
+  const saved = secs >= 10 && !P.recorded; // skipping straight through is not a session; one play is recorded at most once
+  if (saved) { P.recorded = true; recordSession(cur.r, secs); }
+  if (saved && !cur.r.youth && !cur.r.custom) Analytics.track('routine_completed', { routine_id: cur.r.id, duration_seconds: Math.round(secs) }); // same 10-second rule as history; youth routines send nothing
   $('doneText').textContent = `${cur.r.title} · ${fmtTotal(secs)}`;
   $('doneSaved').textContent = saved ? 'Saved to your history.' : 'Under 10 seconds, so not saved to history.';
+  renderDone(saved, P.held.size, cur.items.length);
   show('done');
 }
+// Stretches done: stretches held for at least 1 second in this play (one skipped straight past with Next is not done).
+function heldStep(i, ms) { if (ms >= 1000 && STEPS[i]) P.held.add(STEPS[i].si); } // at least 1 s of holding
 function begin() {
   Sound.unlock();
   STEPS = cur.items.flatMap((it, si) => (it.st.sides || [null]).map((side, k) => ({ s: it.st, it, si, side, mirror: k === 1 })));
-  P.active = 0; P.running = false; P.phase = 'hold';
-  if (!cur.r.youth) Analytics.track('routine_started', { routine_id: cur.r.id }); // youth routines send nothing
+  P.active = 0; P.running = false; P.phase = 'hold'; P.held = new Set(); P.recorded = false;
+  if (!cur.r.youth && !cur.r.custom) Analytics.track('routine_started', { routine_id: cur.r.id }); // youth and the person's own routines send nothing
   upNextKey = ''; nextIconKey = '';
   show('player');
   if (look.countdown) { beginWait(0, 'count', Date.now(), COUNT_MS, false); setRunning(true); if (prefs.tick) Sound.tick(); } // 3 (then 2, 1 from frame)
@@ -1767,7 +2338,7 @@ function begin() {
 // Leaving a routine before its finish screen counts as abandoned. step_index is the
 // stretch's position in the routine, from 0 (the "1 of 6" counter minus one).
 const elapsedSecs = () => Math.round((P.active + (P.running && P.phase === 'hold' ? Date.now() - P.runFrom : 0)) / 1000);
-const trackAbandon = (opts) => cur.r.youth ? null : Analytics.track('routine_abandoned', { routine_id: cur.r.id, step_index: STEPS[P.i].si, seconds_elapsed: elapsedSecs() }, opts);
+const trackAbandon = (opts) => cur.r.youth || cur.r.custom ? null : Analytics.track('routine_abandoned', { routine_id: cur.r.id, step_index: STEPS[P.i].si, seconds_elapsed: elapsedSecs() }, opts);
 function close() { trackAbandon(); Sound.stopAll(); setRunning(false); show('routine'); renderRoutine(); }
 function jump(i) {
   Sound.stopAll();
@@ -1780,6 +2351,19 @@ function jump(i) {
 
 $('startBtn').onclick = begin;
 $('closeBtn').onclick = close;
+// ---------- Finish screen (Stage 18) ----------
+// Sessions are recorded automatically when a routine finishes (10-second rule). "Added to your week" is therefore a
+// confirmation, not a second write: tapping it never records anything.
+function renderDone(saved, done, total) {
+  const h = store.get(HIST_KEY, []), goal = look.goal, w = progressStats(h, goal).week, s = weeklyStreak(h, goal);
+  $('doneCount').textContent = `${done} of ${total}`;
+  $('doneWeek').textContent = `${w.doneDays} of ${goal}`;
+  $('doneDots').innerHTML = weekDotsHTML(w.days); $('doneDots').setAttribute('aria-label', weekDotsLabel(w.days));
+  $('doneStreak').innerHTML = streakTitle(s); $('doneStreakSub').textContent = streakMessage(s, goal);
+  $('doneFlame').classList.toggle('lit', s.current > 0);
+  $('doneAdd').hidden = !saved; $('doneAddMsg').textContent = '';
+}
+$('doneAdd').onclick = () => { $('doneAddMsg').textContent = 'Already counted. Each finished routine is added once, automatically.'; };
 $('doneBtn').onclick = () => { Sound.stopAll(); openRoutine(cur.r.id, undefined, cur.plan); };
 $('doneHistory').onclick = () => { Sound.stopAll(); renderHistory(); show('history'); };
 $('playBtn').onclick = () => {
@@ -1789,6 +2373,31 @@ $('playBtn').onclick = () => {
 // Next during the countdown or a between-stretch pause ends the wait at once and starts that stretch.
 $('nextBtn').onclick = () => jump(P.phase === 'count' || P.phase === 'gap' ? P.i : P.i + 1);
 $('prevBtn').onclick = () => { if (P.i > 0) jump(P.i - 1); };
+
+// ---------- Stretch sheet sections (Stage 17) ----------
+// Caution comes only from facts the app already holds: the position flags that setup lets people avoid (named with the
+// app's existing wording) and the existing dumbbell safety note. No new medical wording.
+const CAUTION_POS = [['kneeling', st => st.pos === 'kneeling', 'Kneeling'], ['floor', st => st.pos === 'floor', 'Floor work'],
+  ['overhead', st => st.overhead, 'Arms overhead'], ['balance', st => st.balance, 'One-leg balance']];
+const cautionFlags = (st) => CAUTION_POS.filter(([, has]) => has(st));
+function cautionItems(st) {
+  const out = [], pos = cautionFlags(st).map(([, , label]) => label);
+  if (pos.length) out.push('Positions: ' + pos.join(' · '));
+  if (st.tips.includes(SAFETY)) out.push(SAFETY);
+  return out;
+}
+const INFO_SECTIONS = [['caution', cautionItems], ['modifications', st => st.modifications || []], ['benefits', st => st.benefits || []]];
+// Personal caution note: ON (wording approved by the product owner, 2026-11-12). Uses only the setup answer
+// "Any positions to avoid?" (kept on this device; the note is blocked from replay; nothing is sent). Shown only when at
+// least one avoided position matches the stretch. Template, exactly as approved:
+//   'Heads-up: this stretch involves {list}, which you said you'd rather skip.'  ({list}: plain words, "a", "a and b", "a, b and c")
+const PERSONAL_NOTE_ON = true;
+const joinAnd = (xs) => xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1];
+function personalNote(st, on = PERSONAL_NOTE_ON) {
+  if (!on || !profile.avoid || !profile.avoid.length) return '';
+  const hit = cautionFlags(st).filter(([key]) => profile.avoid.includes(key)).map(([, , label]) => label.toLowerCase());
+  return hit.length ? `Heads-up: this stretch involves ${joinAnd(hit)}, which you said you'd rather skip.` : '';
+}
 
 // ---------- Instructions (its own screen) ----------
 let infoFrom = 'player', resumeAfterInfo = false;
@@ -1801,8 +2410,13 @@ function openInfo(st, mirror, from, fromPlayer) {
   const kid = cur && cur.r.youth && ['routine', 'player'].includes(from) && st.kidSteps; // simple steps inside a youth routine
   $('infoTags').innerHTML = [KINDS[st.kind], LEVELS[st.level], POSITIONS[st.pos], st.dynamic && 'Keep moving', st.sides && 'Each side', st.balance && 'Needs balance', st.overhead && 'Arms overhead'].filter(Boolean).map(t => `<span>${t}</span>`).join('');
   $('infoSteps').innerHTML = (kid || st.steps).map(t => `<li><span>${esc(t)}</span></li>`).join('');
-  $('infoTips').innerHTML = kid ? `<li>${YOUTH_NOTE}</li>` : st.tips.map(t => `<li>${esc(t)}</li>`).join('');
+  const tips = kid ? [YOUTH_NOTE] : st.tips.filter(t => t !== SAFETY); // the dumbbell safety note moves to Caution
+  $('infoTips').innerHTML = tips.map(t => `<li>${esc(t)}</li>`).join(''); $('tipsHead').hidden = !tips.length;
   $('infoYouth').hidden = !kid;
+  // Sections after Instructions: shown only when there is content. Modifications and Benefits have none yet (they wait
+  // for review by a trainer or physical therapist); adding st.modifications / st.benefits lists shows them, no redesign.
+  INFO_SECTIONS.forEach(([key, get]) => { const items = get(st); $('sec-' + key).hidden = !items.length; $('info-' + key).innerHTML = items.map(t => `<li>${esc(t)}</li>`).join(''); });
+  const pn = personalNote(st); $('infoPersonal').hidden = !pn; $('infoPersonal').textContent = pn;
   show('info'); $('info').scrollTop = 0;
 }
 $('infoBtn').onclick = () => { const s = STEPS[P.i]; openInfo(s.s, s.mirror, 'player', true); };
@@ -1995,6 +2609,79 @@ function progressStats(hist, goal, now = new Date()) {
   return { byDay, week, meter, total: hist.length };
 }
 
+// ---------- Weekly streak (Stage 18) ----------
+// Pure. A week (Monday to Sunday, local time) is met when its days with a recorded session reach the weekly goal as it
+// is set now (no goal history is stored). The streak counts met weeks in a row. Grace: one missed week inside a run is
+// forgiven (it neither adds nor resets); a second missed week in a row resets the run to 0. The current week is in
+// progress: it adds 1 once met and never breaks the streak before it ends. Nothing new is stored.
+function weeklyStreak(hist, goal, now = new Date()) {
+  const ws = startOfWeek(now), out = { current: 0, longest: 0, thisWeekDays: 0, thisWeekMet: false, grace: false, weeks: [] };
+  const past = hist.filter(x => x.at < addDays(ws, 7).getTime()); if (!past.length) return out;
+  const days = new Map(); // week start key -> set of day keys with a session
+  for (const x of past) { const d = new Date(x.at), k = dayKey(startOfWeek(d)); if (!days.has(k)) days.set(k, new Set()); days.get(k).add(dayKey(d)); }
+  let run = 0, misses = 0, longest = 0;
+  for (let w = startOfWeek(new Date(Math.min(...past.map(x => x.at)))); w < ws; w = addDays(w, 7)) {
+    const n = (days.get(dayKey(w)) || new Set()).size, met = n >= goal;
+    if (met) { run++; misses = 0; } else { misses++; if (misses >= 2) run = 0; }
+    longest = Math.max(longest, run); out.weeks.push({ start: dayKey(w), days: n, met, run });
+  }
+  out.thisWeekDays = (days.get(dayKey(ws)) || new Set()).size; out.thisWeekMet = out.thisWeekDays >= goal;
+  out.current = run + (out.thisWeekMet ? 1 : 0); out.longest = Math.max(longest, out.current);
+  out.grace = !out.thisWeekMet && misses === 1 && run > 0; // last week was missed once; this week keeps the run going
+  return out;
+}
+// Gentle wording: never "lost" or "broken"; zero gets a starting message.
+const weeksWord = (n) => `${n} week${n === 1 ? '' : 's'}`;
+function streakTitle(s) { return s.current > 0 ? `<b>${s.current}</b>-week streak` : 'Start a weekly streak'; }
+// Stage 19 Part A: when this week's goal is not yet met, say how many MORE days are needed (never the full goal).
+function streakMessage(s, goal) {
+  if (s.thisWeekMet) return `Goal met this week: ${weeksWord(s.current)}.${s.longest > s.current ? ' Longest: ' + weeksWord(s.longest) + '.' : ''}`;
+  const more = Math.max(1, goal - s.thisWeekDays), m = more === 1 ? 'One more day' : `${more} more days`;
+  if (s.current > 0) return `${s.grace ? 'One quiet week is fine. ' : ''}${m} this week to make it ${weeksWord(s.current + 1)}.`;
+  return `${m} this week to start a streak.${s.longest > 0 ? ' Longest so far: ' + weeksWord(s.longest) + '.' : ''}`;
+}
+// Week dots (Monday to Sunday): filled for days with a recorded session, today ringed; with a text equivalent.
+function weekDotsHTML(days) { return days.map((d, i) => `<span class="wdot${d.done ? ' done' : ''}${d.today ? ' today' : ''}${d.future ? ' future' : ''}"><i></i><small>${'MTWTFSS'[i]}</small></span>`).join(''); }
+function weekDotsLabel(days) {
+  const done = days.filter(d => d.done).map(d => d.date.toLocaleDateString('en-US', { weekday: 'long' }));
+  return done.length ? `This week: practised ${joinAnd(done)}` : 'This week: no practice yet';
+}
+
+// ---------- Stats tiles and the full list (Stage 19) ----------
+// Pure. Active and Longest come from weeklyStreak (the same numbers as the Home flame); Days completed counts different
+// days with a recorded session; Last stretch is the newest recorded session. Nothing new is stored.
+function relDay(at, now = new Date()) {
+  const diff = Math.round((startOfDay(now) - startOfDay(new Date(at))) / 86400000);
+  if (diff <= 0) return 'today'; if (diff === 1) return 'yesterday'; if (diff < 7) return `${diff} days ago`;
+  const d = new Date(at); return d.toLocaleDateString(undefined, { month: 'long', day: 'numeric', ...(d.getFullYear() !== now.getFullYear() ? { year: 'numeric' } : {}) });
+}
+function historyStats(hist, goal, now = new Date()) {
+  const s = weeklyStreak(hist, goal, now), days = new Set(hist.map(x => dayKey(new Date(x.at))));
+  const last = hist.length ? hist.reduce((a, x) => (x.at > a.at ? x : a)) : null;
+  return { active: s.current, longest: s.longest, days: days.size, last: last ? { title: last.title, when: relDay(last.at, now), at: last.at } : null, streak: s };
+}
+function renderTiles() {
+  const h = store.get(HIST_KEY, []), t = historyStats(h, look.goal);
+  const tile = (key, label, value, sub, zero, aria) => `<li class="tile2${zero ? ' zero' : ''}" id="tile-${key}"><span class="sr">${esc(aria)}</span><span class="tl" aria-hidden="true">${label}</span><span class="tv${key === 'last' ? ' small' : ''}" aria-hidden="true">${value}</span><span class="ts" aria-hidden="true">${sub}</span></li>`;
+  const flame = (lit) => `<svg class="flame${lit ? ' lit-static' : ''}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5c-3.7 0-6.5-2.6-6.5-6.2 0-2.6 1.4-4.4 2.8-5.9.3 1.5 1 2.5 2.1 2.9C10.2 8.6 11.6 5.3 14.2 2.5c.3 3.3 4.3 5.9 4.3 11.5 0 4.6-2.9 7.5-6.5 7.5z"/></svg>`;
+  $('histTiles').innerHTML =
+    tile('active', 'Active streak', flame(t.active > 0) + weeksWord(t.active), t.active ? 'in a row at your goal' : 'Starts when you meet your weekly goal', !t.active,
+      t.active ? `Active streak: ${weeksWord(t.active)} in a row at your goal` : 'Active streak: none yet. It starts when you meet your weekly goal') +
+    tile('longest', 'Longest streak', t.longest ? weeksWord(t.longest) : '–', t.longest ? 'your best run so far' : 'Your best run will show here', !t.longest,
+      t.longest ? `Longest streak: ${weeksWord(t.longest)}` : 'Longest streak: none yet') +
+    tile('days', 'Days completed', String(t.days), t.days === 1 ? 'day with a session' : 'days with a session', !t.days, `Days completed: ${t.days}`) +
+    tile('last', 'Last stretch', t.last ? esc(t.last.title) : 'None yet', t.last ? t.last.when : 'Your first routine will show here', !t.last,
+      t.last ? `Last stretch: ${t.last.title}, ${t.last.when}` : 'Last stretch: none yet');
+}
+// Every recorded session, newest first: light rows (no pictures) so several hundred render quickly.
+function renderAllList(h) {
+  const list = [...h].sort((a, b) => b.at - a.at);
+  $('allHead').textContent = `All sessions · ${list.length}`;
+  $('allList').innerHTML = list.map(x => { const d = new Date(x.at), r = R(x.id);
+    const date = d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', ...(d.getFullYear() !== new Date().getFullYear() ? { year: 'numeric' } : {}) }) + ' · ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+    return `<li><button ${r ? `data-routine="${r.id}"` : 'disabled'} aria-label="${esc(x.title)}, ${esc(date)}, ${fmtTotal(x.secs)} stretched"><span class="al"><span class="an">${esc(x.title)}</span><span class="ad">${date}</span></span><span class="at">${fmtTotal(x.secs)}</span></button></li>`; }).join('');
+}
+
 // ---------- Rendering ----------
 const CAL = { y: null, m: null, sel: null };
 function histRow(x) {
@@ -2012,6 +2699,7 @@ function renderHistory() {
   const h = store.get(HIST_KEY, []), goal = look.goal;
   const P_ = progressStats(h, goal);
   $('histEmpty').hidden = h.length > 0; $('histBody').hidden = !h.length;
+  renderTiles();
   $('histEmptyGoal').textContent = `Your weekly goal is ${goal} day${goal === 1 ? '' : 's'}. You can change it in Settings.`;
   if (!h.length) return;
   // This week (Monday to Sunday)
@@ -2034,6 +2722,7 @@ function renderHistory() {
   const now = new Date();
   if (CAL.y === null) { CAL.y = now.getFullYear(); CAL.m = now.getMonth(); CAL.sel = dayKey(now); }
   renderCalendar(P_, h);
+  renderAllList(h);
 }
 function renderCalendar(P_, h) {
   const now = new Date(), first = new Date(CAL.y, CAL.m, 1), days = new Date(CAL.y, CAL.m + 1, 0).getDate();
@@ -2155,7 +2844,7 @@ function score(t, p) {
 function whyLine(t, p) {
   const sts = t.items.map(([id]) => BY_ID[id]), parts = [];
   const hit = p.focus.filter(a => sts.some(s => s.areas.includes(a)));
-  parts.push(hit.length ? hit.slice(0, 2).map(a => AREA_NAME[a]).join(' & ') : catOf(R(t.id)).blurb);
+  parts.push(hit.length ? hit.slice(0, 2).map(a => AREA_NAME[a]).join(' & ') : (R(t.id).why || catOf(R(t.id)).blurb));
   if (sts.some(s => s.kind === 'band')) parts.push('uses your band'); else if (sts.some(s => s.kind === 'weight')) parts.push('light dumbbells');
   if (p.target) parts.push(`about ${Math.max(1, Math.round(t.total / 60))} min`);
   if (t.notes.avoided.size) parts.push('no ' + [...t.notes.avoided].map(a => ({ kneeling: 'kneeling', floor: 'floor work', overhead: 'overhead', balance: 'balancing' }[a])).join(' or '));
@@ -2170,7 +2859,7 @@ function recommendations() {
     const h = new Date().getHours();
     const [pick, why] = h < 11 ? ['first-light', 'Good for mornings'] : h < 17 ? ['desk-reset', 'A midday reset'] : ['lights-out', 'Winds you down for bed'];
     return [pick, 'hip-opener', 'back-ease', 'stride-reset'].filter((v, i, a) => a.indexOf(v) === i).slice(0, 3)
-      .map((id, i) => ({ plan: null, r: R(id), why: i === 0 ? why : catOf(R(id)).blurb }));
+      .map((id, i) => ({ plan: null, r: R(id), why: i === 0 ? why : (R(id).why || catOf(R(id)).blurb) }));
   }
   const p = tailorPrefs();
   // Equipment routines only for people who have that equipment (and, for weights, the level).
@@ -2178,7 +2867,7 @@ function recommendations() {
   return ROUTINES.filter(fits).filter(r => !r.youth).map(r => tailor(r, p)) // youth routines only via the Hockey screen or a description that mentions kids.filter(t => t.items.length >= 3)
     // hockey routines are specialised: they can be recommended, but rank a little lower; moving warm-ups can't be
     // swapped to chair/wall options, so they rank lower for anyone who prefers supported stretches (45+)
-    .map(t => ({ t, s: score(t, p) - (R(t.id).cat === 'hockey' ? 1.5 : 0) - (p.support && R(t.id).dynamic ? 2 : 0) })).sort((a, b) => b.s - a.s).slice(0, 3)
+    .map(t => ({ t, s: score(t, p) - (R(t.id).cat === 'hockey' || STAGE23_CATS.has(R(t.id).cat) ? 1.5 : 0) /* specialist categories rank a little lower, as hockey does */ - (p.support && R(t.id).dynamic ? 2 : 0) })).sort((a, b) => b.s - a.s).slice(0, 3)
     .map(({ t }) => ({ plan: t, r: R(t.id), why: whyLine(t, p) }));
 }
 
@@ -2323,6 +3012,8 @@ function parseRequest(text) {
     ...(q.phase ? [{ pre: 'before the game', post: 'after the game', between: 'between games', recovery: 'end of the night' }[q.phase]] : []),
   ];
   q.any = q.understood.length > 0;
+  // Stage 23: a description that names running, splits or posture lifts that category (and it is not ranked lower)
+  q.named = new Set([['running', ['run', 'runs', 'running', 'runner', 'runners', 'jog', 'jogging']], ['splits', ['split', 'splits']], ['posture', ['posture']]].filter(([, list]) => words.some(w => list.includes(w))).map(([c]) => c));
   return q;
 }
 
@@ -2346,7 +3037,7 @@ function describeBuild(text) {
   const results = ROUTINES.filter(fits).map(r => tailor(r, p)).filter(t => t.items.length >= 3)
     .map(t => { const kinds = new Set(t.items.map(([id]) => BY_ID[id].kind));
       const wantsGear = (q.equip.includes('band') && kinds.has('band') ? 2 : 0) + (q.equip.includes('dumbbells') && kinds.has('weight') ? 2 : 0); // asked for equipment: use it
-      return { t, s: score(t, p) + (q.context && R(t.id).cat === q.context ? 2 : 0) + wantsGear + hockeyBonus(R(t.id)) }; })
+      return { t, s: score(t, p) + (q.context && R(t.id).cat === q.context ? 2 : 0) + wantsGear + hockeyBonus(R(t.id)) + (!STAGE23_CATS.has(R(t.id).cat) ? 0 : q.named.has(R(t.id).cat) ? 2 : -1.5) }; }) // Stage 23 categories rank a little lower unless named, like hockey
     .sort((a, b) => b.s - a.s).slice(0, 3)
     .map(({ t }) => Object.assign(t, { label: 'Built from your description', why: describeWhy(q, t, p) }));
   return { q, results };
@@ -2390,7 +3081,10 @@ function runDescribe(text) {
     <ul class="rows">${results.map((t, i) => { const items = itemsOf(R(t.id), t.items);
       return `<li><button class="row" data-routine="${t.id}" data-desc="${i}"><span class="thumb">${art(items[0].st)}</span>
         <span class="label"><span class="n">${esc(R(t.id).title)}${i === 0 ? ' <em>Best match</em>' : ''}</span><span class="sub">${fmtMin(secsOf(items))} · ${items.length} stretches</span>
-        <span class="why"><span class="whylabel">Why this routine</span>${esc(t.why)}</span></span>${CHEV}</button></li>`; }).join('')}</ul>`;
+        <span class="why"><span class="whylabel">Why this routine</span>${esc(t.why)}</span></span>${CHEV}</button></li>`; }).join('')}</ul>
+    <button type="button" class="ghost descsave" id="descSave" aria-haspopup="dialog">Save as my routine</button>
+    <p class="mini descsavenote">Saves the best match’s stretches, in order, to My routines.</p>`;
+  $('descSave').onclick = openSaveAs;
 }
 $('descForm').addEventListener('submit', (e) => { e.preventDefault(); $('descInput').blur(); runDescribe($('descInput').value); });
 $('descChips').addEventListener('click', (e) => { const b = e.target.closest('[data-ex]'); if (!b) return; $('descInput').value = DESC_EXAMPLES[+b.dataset.ex]; runDescribe($('descInput').value); });
