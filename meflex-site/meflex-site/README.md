@@ -17,4 +17,5 @@ MeFlex then opens full-screen with its own icon.
 ## Notes
 - **Analytics stays off** until a PostHog key is added. The key lives in the project's `app/analytics.config.js`; this folder keeps the placeholder.
 - **The site is public:** a GitHub Pages address can be opened by anyone who has the link.
+- **Works offline:** after MeFlex has opened once with a signal, it opens without one (the `sw.js` file keeps a copy of the app's own files). When updating the site, always upload `index.html` and `sw.js` together.
 - **Your data stays on the phone:** routine times, history, settings and setup answers are stored only in that phone's browser.

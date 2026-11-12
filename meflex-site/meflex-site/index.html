@@ -12,6 +12,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
+<meta name="meflex-sw" content="sw.js">
+<meta name="meflex-version" content="3dface37b4b6">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -329,6 +331,15 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .hockeycard .hk svg { width: 24px; height: 24px; fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .hockeycard b { display: block; font-size: 16px; } .hockeycard small { color: var(--muted); font-size: 13px; }
 .hockeycard > span:nth-child(2) { flex: 1; min-width: 0; }
+/* Stage 24: ladders (cards reuse the hockey card; steps reuse the list rows) */
+.ladders { display: grid; gap: 10px; list-style: none; padding: 0; margin: 0; }
+.laddercard .lprog { color: var(--accent); font-weight: 600; }
+.ladderprog { margin: 4px 0 2px; padding: 12px 14px; border-radius: var(--r-card); background: var(--raised); font-weight: 600; font-size: 15px; line-height: 1.35; }
+#ladderSteps { list-style: none; padding: 0; }
+.lstep .lnum { display: grid; place-items: center; background: var(--line); color: var(--ink); font-weight: 700; font-size: 17px; }
+.lstep .why { display: block; color: var(--muted); font-size: 12.5px; margin-top: 4px; line-height: 1.35; }
+.lmark { font-size: 13px; font-weight: 600; margin-left: 4px; }
+.lmark.done { color: var(--sage, #6F9A86); } .lmark.next { color: var(--accent); }
 .youthnote { margin: 0 0 12px; padding: 10px 14px; border-radius: 12px; border: 1.5px solid var(--accent); color: var(--ink); font-size: 14px; font-weight: 500; }
 #rYouth { margin: -8px 0 18px; } #infoYouth { margin: 0 0 6px; }
 .reviewnote { margin: 30px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--raised); color: var(--muted); font-size: 13px; }
@@ -503,6 +514,15 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .tabbar button { min-height: 52px; border-radius: 20px; padding: 5px 0 4px; }
 .tabbar button[aria-current="page"] { color: var(--ink); background: var(--line); }
 .tabbed .scroll { padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px)); } /* the floating bar never covers the last item */
+/* ---------- Offline (Stage 25) ---------- */
+.offlinebox { padding: 12px 14px; font-size: 15px; line-height: 1.4; } .offlinebox p { margin: 0; } .offlinebox p + p { margin-top: 6px; color: var(--muted); font-size: 14px; }
+.updnote { position: fixed; z-index: 11; left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); max-width: 456px; margin: 0 auto;
+  bottom: calc(80px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 16px; border-radius: 18px;
+  background: var(--raised); border: 1px solid var(--line); box-shadow: 0 8px 24px rgba(0,0,0,.45); font-size: 15px; font-weight: 600; }
+.updnote .updtext { flex: 1; min-width: 0; }
+.updnote .updreload { min-height: 44px; padding: 0 16px; border-radius: 22px; background: var(--accent); color: var(--bg); font-weight: 600; font-size: 15px; }
+.updnote .updclose { width: 44px; height: 44px; flex: none; }
+body.hasupd .tabbed .scroll { padding-bottom: calc(172px + env(safe-area-inset-bottom, 0px)); } /* the notice never covers the last item either */
 .savebtn svg { fill: none; }
 .savebtn.on svg { fill: var(--accent); stroke: var(--accent); }
 .bmbig svg { width: 44px; height: 44px; stroke: var(--line); fill: none; stroke-width: 2; stroke-linejoin: round; filter: brightness(1.6); }
@@ -623,6 +643,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
       </section>
       <h2 class="sec">Body areas</h2><div class="chips" id="areaChips"></div>
       <h2 class="sec">Quick routines <span>4 min or less</span></h2><span class="sr" id="quickLabel">Quick routines, 4 minutes or less, swipe sideways</span><ul class="rows carousel" id="quickList" aria-labelledby="quickLabel"></ul>
+      <h2 class="sec" id="ladderHead">Ladders <span>step by step</span></h2><ul class="ladders" id="ladderCards" aria-labelledby="ladderHead"></ul>
       <h2 class="sec">Ice hockey</h2>
       <button class="hockeycard" id="hockeyCard"><span class="hk" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 3l-6.5 14.5H4.5a1.5 1.5 0 0 0 0 3h5.2L18 3"/><ellipse cx="17.5" cy="18.5" rx="3" ry="1.6"/></svg></span><span><b>Warm-ups and cool-downs</b><small>For players, youth players and referees</small></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <h2 class="sec">Categories</h2><div class="grid" id="catGrid"></div>
@@ -636,6 +657,15 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <h1 class="title" id="listTitle"></h1><p class="lede" id="listSub"></p>
     <h2 class="sec">Routines</h2><ul class="rows" id="listRoutines"></ul>
     <h2 class="sec" id="listStretchHead">Stretches</h2><ul class="rows" id="listStretches"></ul>
+  </div>
+</section>
+
+<section class="screen tabbed" id="ladder" hidden>
+  <div class="bar"><button class="icon" id="ladderBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
+  <div class="scroll" style="padding-top:4px">
+    <h1 class="title" id="ladderTitle"></h1><p class="lede" id="ladderSub"></p>
+    <p class="ladderprog" id="ladderProg" data-private></p>
+    <h2 class="sec" id="ladderStepsHead">Steps</h2><ol class="rows" id="ladderSteps" aria-labelledby="ladderStepsHead"></ol>
   </div>
 </section>
 
@@ -754,6 +784,12 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <button class="ghost" id="restoreBtn">Restore defaults</button>
     <p class="restoremsg" id="restoreMsg" aria-live="polite"></p>
     <p class="note" style="text-align:center;margin-inline:auto">Restores sound, colors, timing, default hold and weekly goal. Your routine times, history and privacy choice stay.</p>
+    <section id="offlineSec" aria-labelledby="offlineHead" hidden>
+      <h2 class="sec" id="offlineHead">Offline</h2>
+      <div class="group offlinebox"><p id="offlineState" aria-live="polite"></p><p id="offlineNow" hidden>You're offline right now. Everything still works.</p></div>
+      <p class="note">After MeFlex has opened once with a signal, it opens and works without one: routines, the player, History, Saved, your own routines, ladders and Describe. If MeFlex isn't opened for a while, your iPhone may remove this offline copy; it downloads again the next time MeFlex opens with a signal.</p>
+      <p class="note" id="offlineVer"></p>
+    </section>
     <h2 class="sec">Start over</h2>
     <button class="ghost danger" id="resetAppBtn">Reset app and show setup again</button>
     <p class="note">Deletes your setup answers, history, routine times and settings on this device.</p>
@@ -907,6 +943,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 </section>
 
 
+<div class="updnote" id="updNote" role="status" hidden><span class="updtext">A new version is ready.</span><button class="updreload" id="updReload">Reload</button><button class="icon updclose" id="updClose" aria-label="Not now"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
 <nav class="tabbar" id="tabbar" aria-label="Main">
   <button data-tab="home" aria-current="page"><svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20h-5.5v-6h-5v6H4z"/></svg>Home</button>
   <button data-tab="explore"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Explore</button>
@@ -1340,6 +1377,53 @@ const ROUTINES = [
   { id: 'posture-longer', title: 'Posture Reset: Longer', cat: 'posture', why: 'Neck, chest, upper back, spine and hip flexors',
     desc: 'Longer holds for the neck, chest, upper back, spine and hip flexors, including some on the floor.',
     items: [['chintuck', 30], ['neckturn', 30], ['doorway', 45], ['sphinx', 45], ['thread', 45], ['puppy', 45], ['lunge', 45], ['child', 45]] },
+
+  // ---- Stage 24: routine ladders. Numbered steps for one body area, each a little longer or harder than the one before.
+  // Existing stretches only. "Harder" means only: more stretches, longer holds, or a stretch the library already rates at a
+  // higher level. Each Why line names the areas worked (from the stretches' own area tags) and how the step differs from
+  // the one before. No category of their own (cat: 'ladder' is not in CATEGORIES). Review before publishing. ----
+  { id: 'ladder-hips-1', title: 'Hips 1', cat: 'ladder', ladder: 'hips', step: 1, why: 'Hips and quads · the first step: three stretches, 30-second holds',
+    desc: 'Step 1 of the Hips ladder: three beginner holds.', items: [['butterfly', 30], ['figure4', 30], ['lunge', 30]] },
+  { id: 'ladder-hips-2', title: 'Hips 2', cat: 'ladder', ladder: 'hips', step: 2, why: 'Hips, quads and back · one more stretch than Hips 1 (Happy Baby)',
+    desc: 'Step 2 of the Hips ladder: Hips 1 plus Happy Baby.', items: [['butterfly', 30], ['figure4', 30], ['lunge', 30], ['happybaby', 30]] },
+  { id: 'ladder-hips-3', title: 'Hips 3', cat: 'ladder', ladder: 'hips', step: 3, why: 'Hips, quads and back · one more stretch than Hips 2 (Standing Groin Stretch)',
+    desc: 'Step 3 of the Hips ladder: Hips 2 plus the Standing Groin Stretch.', items: [['butterfly', 30], ['figure4', 30], ['lunge', 30], ['groinhold', 30], ['happybaby', 30]] },
+  { id: 'ladder-hips-4', title: 'Hips 4', cat: 'ladder', ladder: 'hips', step: 4, why: 'Hips, quads and back · the same five stretches as Hips 3, held 45 seconds instead of 30',
+    desc: 'Step 4 of the Hips ladder: the Hips 3 stretches with longer holds.', items: [['butterfly', 45], ['figure4', 45], ['lunge', 45], ['groinhold', 45], ['happybaby', 45]] },
+  { id: 'ladder-hips-5', title: 'Hips 5', cat: 'ladder', ladder: 'hips', step: 5, why: 'Hips, quads and back · Pigeon (rated intermediate in the library) in place of Figure Four, and Frog (intermediate) added',
+    desc: 'Step 5 of the Hips ladder: six stretches, two of them intermediate.', items: [['butterfly', 45], ['pigeon', 45], ['lunge', 45], ['groinhold', 45], ['frog', 45], ['happybaby', 45]] },
+  { id: 'ladder-hips-6', title: 'Hips 6', cat: 'ladder', ladder: 'hips', step: 6, why: 'Hips, quads and back · the same six stretches as Hips 5, held 60 seconds instead of 45',
+    desc: 'Step 6 of the Hips ladder: the Hips 5 stretches with longer holds.', items: [['butterfly', 60], ['pigeon', 60], ['lunge', 60], ['groinhold', 60], ['frog', 60], ['happybaby', 60]] },
+  { id: 'ladder-hips-7', title: 'Hips 7', cat: 'ladder', ladder: 'hips', step: 7, why: 'Hips, quads and back · Lizard Lunge (rated advanced in the library) in place of Low Lunge, and Couch Stretch (advanced) added',
+    desc: 'Step 7 of the Hips ladder: seven stretches, two of them advanced.', items: [['butterfly', 60], ['pigeon', 60], ['lizard', 60], ['couch', 60], ['groinhold', 60], ['frog', 60], ['happybaby', 60]] },
+
+  { id: 'ladder-back-1', title: 'Back 1', cat: 'ladder', ladder: 'back', step: 1, why: 'Back and hips · the first step: three stretches, 30-second holds',
+    desc: 'Step 1 of the Back ladder: three beginner holds.', items: [['catcow', 30], ['seatedtwist', 30], ['child', 30]] },
+  { id: 'ladder-back-2', title: 'Back 2', cat: 'ladder', ladder: 'back', step: 2, why: 'Back, chest and hips · one more stretch than Back 1 (Sphinx)',
+    desc: 'Step 2 of the Back ladder: Back 1 plus Sphinx.', items: [['catcow', 30], ['sphinx', 30], ['seatedtwist', 30], ['child', 30]] },
+  { id: 'ladder-back-3', title: 'Back 3', cat: 'ladder', ladder: 'back', step: 3, why: 'Back, chest, shoulders and hips · one more stretch than Back 2 (Thread the Needle)',
+    desc: 'Step 3 of the Back ladder: Back 2 plus Thread the Needle.', items: [['catcow', 30], ['sphinx', 30], ['seatedtwist', 30], ['thread', 30], ['child', 30]] },
+  { id: 'ladder-back-4', title: 'Back 4', cat: 'ladder', ladder: 'back', step: 4, why: 'Back, chest, shoulders and hips · the same five stretches as Back 3, held 45 seconds instead of 30',
+    desc: 'Step 4 of the Back ladder: the Back 3 stretches with longer holds.', items: [['catcow', 45], ['sphinx', 45], ['seatedtwist', 45], ['thread', 45], ['child', 45]] },
+  { id: 'ladder-back-5', title: 'Back 5', cat: 'ladder', ladder: 'back', step: 5, why: 'Back, chest, shoulders and hips · one more stretch than Back 4: Puppy Pose (rated intermediate in the library)',
+    desc: 'Step 5 of the Back ladder: six stretches, one of them intermediate.', items: [['catcow', 45], ['sphinx', 45], ['seatedtwist', 45], ['thread', 45], ['puppy', 45], ['child', 45]] },
+
+  { id: 'ladder-shoulders-1', title: 'Shoulders 1', cat: 'ladder', ladder: 'shoulders', step: 1, why: 'Shoulders and chest · the first step: three stretches, 30-second holds',
+    desc: 'Step 1 of the Shoulders ladder: three standing beginner holds.', items: [['crossbody', 30], ['doorway', 30], ['chestclasp', 30]] },
+  { id: 'ladder-shoulders-2', title: 'Shoulders 2', cat: 'ladder', ladder: 'shoulders', step: 2, why: 'Shoulders, chest and neck · one more stretch than Shoulders 1 (Levator Release)',
+    desc: 'Step 2 of the Shoulders ladder: Shoulders 1 plus Levator Release.', items: [['levator', 30], ['crossbody', 30], ['doorway', 30], ['chestclasp', 30]] },
+  { id: 'ladder-shoulders-3', title: 'Shoulders 3', cat: 'ladder', ladder: 'shoulders', step: 3, why: 'Shoulders, chest, neck and back · one more stretch than Shoulders 2 (Thread the Needle)',
+    desc: 'Step 3 of the Shoulders ladder: Shoulders 2 plus Thread the Needle.', items: [['levator', 30], ['crossbody', 30], ['doorway', 30], ['chestclasp', 30], ['thread', 30]] },
+  { id: 'ladder-shoulders-4', title: 'Shoulders 4', cat: 'ladder', ladder: 'shoulders', step: 4, why: 'Shoulders, chest, neck and back · the same five stretches as Shoulders 3, held 45 seconds instead of 30',
+    desc: 'Step 4 of the Shoulders ladder: the Shoulders 3 stretches with longer holds.', items: [['levator', 45], ['crossbody', 45], ['doorway', 45], ['chestclasp', 45], ['thread', 45]] },
+  { id: 'ladder-shoulders-5', title: 'Shoulders 5', cat: 'ladder', ladder: 'shoulders', step: 5, why: 'Shoulders, chest, neck and back · one more stretch than Shoulders 4: Puppy Pose (rated intermediate in the library)',
+    desc: 'Step 5 of the Shoulders ladder: six stretches, one of them intermediate.', items: [['levator', 45], ['crossbody', 45], ['doorway', 45], ['chestclasp', 45], ['thread', 45], ['puppy', 45]] },
+];
+// Stage 24: the ladders, in the order Explore shows them. Steps are the routines with the matching `ladder`, by `step`.
+const LADDERS = [
+  { id: 'hips', name: 'Hips', blurb: 'Seven steps for the hips. Each is a little longer or harder than the one before; start with any step.' },
+  { id: 'back', name: 'Back', blurb: 'Five steps for the back. Each is a little longer or harder than the one before; start with any step.' },
+  { id: 'shoulders', name: 'Shoulders', blurb: 'Five steps for the shoulders and chest. Each is a little longer or harder than the one before; start with any step.' },
 ];
 
 // ---------- Analytics config (PostHog) ----------
@@ -1378,11 +1462,13 @@ const Analytics = {
   // Load the library only when analytics is on and a real key is configured.
   load() {
     if (this.loading || this.ready || !this.configured()) return;
+    // Stage 25: with no signal, don't try; load once the signal is back (nothing from the offline time is kept).
+    if (navigator.onLine === false) { addEventListener('online', () => { if (this.enabled) this.load(); }, { once: true }); return; }
     this.loading = true;
     const s = document.createElement('script');
     s.src = ANALYTICS_CONFIG.library; s.async = true; s.crossOrigin = 'anonymous';
     s.onload = () => this.start();
-    s.onerror = () => { this.loading = false; this.queue = []; };
+    s.onerror = () => { this.loading = false; this.queue = []; addEventListener('online', () => { if (this.enabled) this.load(); }, { once: true }); };
     document.head.appendChild(s);
   },
 
@@ -1430,6 +1516,7 @@ const Analytics = {
   track(name, props = {}, opts) {
     const allowed = ANALYTICS_EVENTS[name];
     if (!allowed || !this.enabled || !this.configured()) return;
+    if (navigator.onLine === false) return; // Stage 25: no signal: dropped quietly, never queued for later
     const clean = {}; allowed.forEach(k => { if (props[k] !== undefined) clean[k] = props[k]; });
     // Stage 23 guard: routine_id may only ever be a library routine's own id (built-in routines); anything else is dropped.
     if ('routine_id' in clean && !ROUTINES.some(r => r.id === clean.routine_id)) return;
@@ -1454,6 +1541,9 @@ const Analytics = {
   // Opt out first so the recorder's last buffered batch is dropped, not sent.
   applyOff() { if (!this.ready) return; try { window.posthog.opt_out_capturing(); window.posthog.stopSessionRecording(); } catch (e) {} },
 };
+// Stage 25: pause screen recording while there is no signal, so nothing recorded offline is sent later.
+addEventListener('offline', () => { if (Analytics.ready && Analytics.enabled) try { window.posthog.stopSessionRecording(); } catch (e) {} });
+addEventListener('online', () => { if (Analytics.ready && Analytics.enabled && !Analytics.isQuiet) try { window.posthog.startSessionRecording(); } catch (e) {} });
 Analytics.init();
 
 // ---------- Sound ----------
@@ -1607,7 +1697,9 @@ const STEP_S = 5, MIN_S = 10, MAX_S = 180;
 // Built-in routines, then the person's own (Stage 21: ids "my-…", which no built-in id uses).
 const R = (id) => ROUTINES.find(r => r.id === id) || myRoutine(id);
 const MINE_CAT = { id: 'mine', name: 'My routine', blurb: 'Made by you' };
-const catOf = (r) => CATEGORIES.find(c => c.id === r.cat) || MINE_CAT;
+// Stage 24: ladder steps have no category of their own; their rows read "Hips ladder" and so on.
+const ladderOf = (r) => r && r.ladder ? LADDERS.find(l => l.id === r.ladder) : null;
+const catOf = (r) => CATEGORIES.find(c => c.id === r.cat) || (r.ladder ? { id: 'ladder', name: ladderOf(r).name + ' ladder', blurb: r.why } : MINE_CAT);
 const timesKey = (r) => 'meflex.times2.' + r.id; // only times you chose for this routine
 function savedTimes(r) {
   let saved = store.get(timesKey(r), null);
@@ -1633,16 +1725,17 @@ const QUICK_S = 240; // quick routine: 4 minutes or less
 const isQuick = (r) => routineSecs(r) <= QUICK_S;
 
 // ---------- Navigation ----------
-const SCREENS = ['home', 'explore', 'list', 'library', 'history', 'saved', 'settings', 'routine', 'player', 'info', 'done', 'setup', 'hockey', 'builder'];
+const SCREENS = ['home', 'explore', 'list', 'library', 'history', 'saved', 'settings', 'routine', 'player', 'info', 'done', 'setup', 'hockey', 'builder', 'ladder'];
 // Stage 20: tabs are Home, Explore, Library, History, Saved. Settings is not a tab: it opens from the profile icon on Home,
 // has its own Back control, and keeps the tab bar with the tab it was opened from marked current (as iPhone apps do).
 const tabOf = (id) => id === 'settings' ? TABBED[settingsFrom] || 'home' : TABBED[id];
-const TABBED = { home: 'home', explore: 'explore', list: 'explore', hockey: 'explore', library: 'library', history: 'history', saved: 'saved' };
+const TABBED = { home: 'home', explore: 'explore', list: 'explore', hockey: 'explore', ladder: 'explore', library: 'library', history: 'history', saved: 'saved' };
 let current = 'home';
 function show(id) {
   SCREENS.forEach(s => { $(s).hidden = s !== id; });
   current = id;
   $('tabbar').hidden = !tabOf(id);
+  try { updateNotice(); } catch (e) {} // Stage 25: "A new version is ready" only on browsing screens
   // Youth routines send nothing: replay pauses while one is open (routine, player, its instructions, finish screen).
   Analytics.quiet(!!(cur && cur.r.youth && (['routine', 'player', 'done'].includes(id) || (id === 'info' && ['routine', 'player'].includes(infoFrom)))));
   document.querySelectorAll('#tabbar button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === tabOf(id) ? 'page' : 'false'));
@@ -1655,7 +1748,8 @@ $('tabbar').addEventListener('click', (e) => {
 });
 // Shared rows: any element with data-routine / data-stretch / data-area / data-cat is a link.
 document.addEventListener('click', (e) => {
-  const el = e.target.closest('[data-routine],[data-stretch],[data-area],[data-cat]'); if (!el) return;
+  const el = e.target.closest('[data-routine],[data-stretch],[data-area],[data-cat],[data-ladder]'); if (!el) return;
+  if (el.dataset.ladder) return openLadder(el.dataset.ladder);
   if (el.dataset.routine) openRoutine(el.dataset.routine, current, el.dataset.rec !== undefined ? REC[+el.dataset.rec] : el.dataset.desc !== undefined ? DESC[+el.dataset.desc] : null);
   else if (el.dataset.stretch) openInfo(BY_ID[el.dataset.stretch], false, current, false);
   else if (el.dataset.area) openList('area', el.dataset.area);
@@ -1739,8 +1833,10 @@ function wireCarousel(row) {
 
 // ---------- Explore: everything for finding a routine ----------
 function renderExplore() {
-  $('quickList').innerHTML = ROUTINES.filter(isQuick).sort((a, b) => routineSecs(a) - routineSecs(b)).map(routineRow).join('');
+  $('quickList').innerHTML = ROUTINES.filter(r => !r.ladder && isQuick(r)).sort( // ladder steps live in Ladders, so this row is unchanged
+    (a, b) => routineSecs(a) - routineSecs(b)).map(routineRow).join('');
   wireCarousel($('quickList'));
+  $('ladderCards').innerHTML = LADDERS.map(l => `<li>${ladderCard(l)}</li>`).join('');
   $('areaChips').innerHTML = AREAS.map(a => `<button class="chip" data-area="${a.id}">${a.name}</button>`).join('');
   $('catGrid').innerHTML = CATEGORIES.map(c => {
     const rs = ROUTINES.filter(r => r.cat === c.id);
@@ -1782,7 +1878,7 @@ function openList(kind, id) {
   if (kind === 'area') {
     const a = AREAS.find(x => x.id === id); title = a.name;
     sts = STRETCHES.filter(s => s.areas.includes(id));
-    rs = ROUTINES.filter(r => r.items.some(([sid]) => BY_ID[sid].areas.includes(id)));
+    rs = ROUTINES.filter(r => !r.ladder && r.items.some(([sid]) => BY_ID[sid].areas.includes(id))); // ladder steps are listed under Ladders
     sub = `${rs.length} routines · ${sts.length} stretches`;
   } else {
     const c = CATEGORIES.find(x => x.id === id); title = c.name; sub = c.blurb;
@@ -1795,6 +1891,47 @@ function openList(kind, id) {
   show('list'); $('list').querySelector('.scroll').scrollTop = 0;
 }
 $('listBack').onclick = () => { renderExplore(); show('explore'); };
+
+// ---------- Ladders (Stage 24) ----------
+// A ladder is a numbered set of built-in routines for one area. Progress is worked out from History only (no new stored
+// data): a step is done when a session of it is recorded; the current step is the first step not done. Nothing is ever
+// locked. Progress is personal, so every progress element is data-private (hidden from session replay); the ladder
+// routines themselves are not. Viewing ladders sends no analytics.
+const ladderSteps = (id) => ROUTINES.filter(r => r.ladder === id).sort((a, b) => a.step - b.step);
+function ladderProgress(id) {
+  const steps = ladderSteps(id), had = new Set(store.get(HIST_KEY, []).map(h => h && h.id));
+  const done = steps.map(r => had.has(r.id)), next = done.indexOf(false);
+  return { steps, done, next: next < 0 ? null : next + 1, all: next < 0 };
+}
+// Recommended and Describe consider only each ladder's current step (the first not yet done), so steps never crowd them.
+const ladderEligible = (r) => !r.ladder || ladderProgress(r.ladder).next === r.step;
+const listAnd = (a) => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+function ladderSummary(id) { // the text equivalent, e.g. "Hips, step 3 of 7, steps 1 and 2 done"
+  const l = LADDERS.find(x => x.id === id), p = ladderProgress(id), n = p.steps.length, d = p.done.map((v, i) => v ? i + 1 : 0).filter(Boolean);
+  if (p.all) return `${l.name}, all ${n} steps done`;
+  return `${l.name}, step ${p.next} of ${n}, ` + (d.length ? `step${d.length > 1 ? 's' : ''} ${listAnd(d)} done` : 'no steps done yet');
+}
+const LADDER_ICON = '<svg viewBox="0 0 24 24"><path d="M7 3v18M17 3v18M7 7h10M7 12h10M7 17h10"/></svg>';
+function ladderCard(l) {
+  const p = ladderProgress(l.id), n = p.steps.length;
+  return `<button class="hockeycard laddercard" data-ladder="${l.id}"><span class="hk" aria-hidden="true">${LADDER_ICON}</span>
+    <span><span aria-hidden="true"><b>${esc(l.name)}</b><small>${n} steps · <span data-private class="lprog">${p.all ? 'All steps done' : 'Step ' + p.next + ' next'}</span></small></span><span class="sr" data-private>${esc(ladderSummary(l.id))}</span></span>${CHEV}</button>`;
+}
+let LADDER_OPEN = null;
+function openLadder(id) { LADDER_OPEN = id; renderLadder(); show('ladder'); $('ladder').querySelector('.scroll').scrollTop = 0; }
+function renderLadder() {
+  const l = LADDERS.find(x => x.id === LADDER_OPEN); if (!l) return;
+  const p = ladderProgress(l.id);
+  $('ladderTitle').textContent = l.name + ' ladder'; $('ladderSub').textContent = l.blurb;
+  $('ladderProg').innerHTML = `<span aria-hidden="true">${p.all ? 'All steps done. Every step stays open to play again.' : `Step ${p.next} of ${p.steps.length} is next · ${p.done.filter(Boolean).length} done`}</span><span class="sr">${esc(ladderSummary(l.id))}</span>`;
+  $('ladderSteps').innerHTML = p.steps.map((r, i) => {
+    const items = itemsOf(r), state = p.done[i] ? 'done' : p.next === i + 1 ? 'next' : '';
+    return `<li><button class="row lstep" data-routine="${r.id}"><span class="thumb lnum" aria-hidden="true">${r.step}</span>
+      <span class="label"><span class="n">${esc(r.title)} <span class="lmark ${state}" data-private>${state === 'done' ? '<span aria-hidden="true">✓</span><span class="sr">, done</span>' : state === 'next' ? 'Next' : ''}</span></span>
+      <span class="sub">${fmtTotal(secsOf(items))} · ${items.length} stretches</span><span class="why">${esc(r.why)}</span></span>${CHEV}</button></li>`;
+  }).join('');
+}
+$('ladderBack').onclick = () => { renderExplore(); show('explore'); };
 
 // ---------- Library ----------
 // Library: filter by equipment and difficulty; grouped by equipment.
@@ -1939,6 +2076,7 @@ $('rBack').onclick = () => {
   if (routineFrom === 'history') renderHistory();
   if (routineFrom === 'saved') renderSaved();
   if (routineFrom === 'library') renderLibrary();
+  if (routineFrom === 'ladder') renderLadder();
   show(routineFrom);
 };
 
@@ -1954,7 +2092,7 @@ let MINE = null;
 // hold from Settings wins over it (itemsOf: look.hold || suggested), exactly as for built-in routines.
 // Stage 23 routines are left out so own routines keep the default holds they had (see DECISIONS.md).
 const STAGE23_CATS = new Set(['running', 'splits', 'posture']);
-const SUGGESTED = (() => { const c = {}; ROUTINES.filter(r => !STAGE23_CATS.has(r.cat)).forEach(r => r.items.forEach(([id, s]) => { (c[id] = c[id] || {})[s] = (c[id][s] || 0) + 1; }));
+const SUGGESTED = (() => { const c = {}; ROUTINES.filter(r => !STAGE23_CATS.has(r.cat) && !r.ladder).forEach(r => r.items.forEach(([id, s]) => { (c[id] = c[id] || {})[s] = (c[id][s] || 0) + 1; }));
   return Object.fromEntries(Object.entries(c).map(([id, m]) => [id, +Object.entries(m).sort((a, b) => b[1] - a[1] || a[0] - b[0])[0][0]])); })();
 const suggestedHold = (id) => SUGGESTED[id] || MINE_FALLBACK_HOLD;
 function mineRaw() { const v = store.get(MINE_KEY, []); return Array.isArray(v) ? v : []; }
@@ -2496,6 +2634,7 @@ function renderPreview() {
   $('setPreview').innerHTML = `<div class="big">${art(sample[0])}</div><div class="small">${sample.slice(1).map(s => `<div>${art(s)}</div>`).join('')}</div>`;
 }
 function renderSettings() {
+  try { renderOfflineNote(); } catch (e) {} // Stage 25
   SOUND_ROWS.forEach(([k, , , vk]) => {
     $('set-' + k).checked = !!prefs[k];
     $('vol-' + k).value = Math.round(prefs[vk] * 100);
@@ -2864,10 +3003,10 @@ function recommendations() {
   const p = tailorPrefs();
   // Equipment routines only for people who have that equipment (and, for weights, the level).
   const fits = (r) => (r.cat !== 'band' || p.kinds.has('band')) && (r.cat !== 'loaded' || (p.kinds.has('weight') && p.maxLevel === 2));
-  return ROUTINES.filter(fits).filter(r => !r.youth).map(r => tailor(r, p)) // youth routines only via the Hockey screen or a description that mentions kids.filter(t => t.items.length >= 3)
+  return ROUTINES.filter(fits).filter(r => !r.youth && ladderEligible(r)).map(r => tailor(r, p)) // youth routines only via the Hockey screen or a description that mentions kids.filter(t => t.items.length >= 3)
     // hockey routines are specialised: they can be recommended, but rank a little lower; moving warm-ups can't be
     // swapped to chair/wall options, so they rank lower for anyone who prefers supported stretches (45+)
-    .map(t => ({ t, s: score(t, p) - (R(t.id).cat === 'hockey' || STAGE23_CATS.has(R(t.id).cat) ? 1.5 : 0) /* specialist categories rank a little lower, as hockey does */ - (p.support && R(t.id).dynamic ? 2 : 0) })).sort((a, b) => b.s - a.s).slice(0, 3)
+    .map(t => ({ t, s: score(t, p) - (R(t.id).cat === 'hockey' || STAGE23_CATS.has(R(t.id).cat) || R(t.id).ladder ? 1.5 : 0) /* specialist categories rank a little lower, as hockey does */ - (p.support && R(t.id).dynamic ? 2 : 0) })).sort((a, b) => b.s - a.s).slice(0, 3)
     .map(({ t }) => ({ plan: t, r: R(t.id), why: whyLine(t, p) }));
 }
 
@@ -3034,10 +3173,10 @@ function describeBuild(text) {
     && (!r.youth || q.group === 'youth') && (q.group !== 'youth' || !q.hockey || r.youth); // kids get the youth routines, adults never do
   // hockey routines lead when hockey is mentioned, and sit slightly lower otherwise (they are specialised)
   const hockeyBonus = (r) => r.cat !== 'hockey' ? 0 : !q.hockey ? -1.5 : 2 + (q.group && r.group === q.group ? 4 : 0) + (!q.group && r.group === 'players' ? 2 : 0) + (q.phase && r.phase === q.phase ? 4 : 0);
-  const results = ROUTINES.filter(fits).map(r => tailor(r, p)).filter(t => t.items.length >= 3)
+  const results = ROUTINES.filter(r => fits(r) && ladderEligible(r)).map(r => tailor(r, p)).filter(t => t.items.length >= 3)
     .map(t => { const kinds = new Set(t.items.map(([id]) => BY_ID[id].kind));
       const wantsGear = (q.equip.includes('band') && kinds.has('band') ? 2 : 0) + (q.equip.includes('dumbbells') && kinds.has('weight') ? 2 : 0); // asked for equipment: use it
-      return { t, s: score(t, p) + (q.context && R(t.id).cat === q.context ? 2 : 0) + wantsGear + hockeyBonus(R(t.id)) + (!STAGE23_CATS.has(R(t.id).cat) ? 0 : q.named.has(R(t.id).cat) ? 2 : -1.5) }; }) // Stage 23 categories rank a little lower unless named, like hockey
+      return { t, s: score(t, p) + (q.context && R(t.id).cat === q.context ? 2 : 0) + wantsGear + hockeyBonus(R(t.id)) + (!STAGE23_CATS.has(R(t.id).cat) ? 0 : q.named.has(R(t.id).cat) ? 2 : -1.5) - (R(t.id).ladder ? 1.5 : 0) }; }) /* Stage 24: ladder steps rank like the Stage 23 routines */ // Stage 23 categories rank a little lower unless named, like hockey
     .sort((a, b) => b.s - a.s).slice(0, 3)
     .map(({ t }) => Object.assign(t, { label: 'Built from your description', why: describeWhy(q, t, p) }));
   return { q, results };
@@ -3089,6 +3228,61 @@ function runDescribe(text) {
 $('descForm').addEventListener('submit', (e) => { e.preventDefault(); $('descInput').blur(); runDescribe($('descInput').value); });
 $('descChips').addEventListener('click', (e) => { const b = e.target.closest('[data-ex]'); if (!b) return; $('descInput').value = DESC_EXAMPLES[+b.dataset.ex]; runDescribe($('descInput').value); });
 $('descInput').addEventListener('input', () => { if (!$('descInput').value.trim()) { $('descOut').innerHTML = ''; DESC = []; } });
+
+// ---------- Offline (Stage 25) ----------
+// Only the GitHub Pages site has <meta name="meflex-sw">; the preview page and the test pages without it never register.
+// The service worker (meflex-site/sw.js, built from app/sw.template.js) keeps a copy of the app's own files.
+// A new version downloads in the background and waits. The page then offers "A new version is ready" with Reload,
+// only on browsing screens (never on a routine, in the player, on the finish screen, in setup or while editing a
+// routine), never while a new routine or a description is typed but not saved, and reloads only when the person taps Reload. Nothing here is personal data or sent anywhere.
+const OFFLINE = { on: false, reg: null, state: 'off', waiting: false, dismissed: false, reloading: false };
+const UPD_SCREENS = ['home', 'explore', 'library', 'history', 'saved', 'settings', 'list', 'hockey', 'ladder'];
+function offlineInit() {
+  const m = document.querySelector('meta[name="meflex-sw"]');
+  if (!m || !('serviceWorker' in navigator)) return;
+  OFFLINE.on = true; OFFLINE.state = 'getting';
+  const sw = navigator.serviceWorker;
+  sw.addEventListener('controllerchange', () => { if (OFFLINE.reloading) location.reload(); }); // only after the person tapped Reload
+  sw.register(m.content, { scope: './' }).then((reg) => {
+    OFFLINE.reg = reg;
+    const check = () => {
+      if (reg.active) OFFLINE.state = 'ready';
+      if (reg.waiting && sw.controller) OFFLINE.waiting = true; // an update (not the first install) is ready
+      updateNotice(); renderOfflineNote();
+    };
+    const watch = (w) => w && w.addEventListener('statechange', check);
+    watch(reg.installing); watch(reg.waiting);
+    reg.addEventListener('updatefound', () => watch(reg.installing));
+    check();
+    // Look for a new version when the app comes back to the front (fails quietly without a signal).
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
+  }).catch(() => { OFFLINE.state = 'failed'; renderOfflineNote(); });
+  addEventListener('online', renderOfflineNote); addEventListener('offline', renderOfflineNote);
+}
+// Something typed but not saved: a new routine being built (kept when you step back to Library) or a description.
+const unsavedDraft = () => (B.mode !== 'edit' && (B.name.trim() !== '' || B.ids.length > 0)) || $('descInput').value.trim() !== '';
+function updateNotice() {
+  const show = OFFLINE.waiting && !OFFLINE.dismissed && UPD_SCREENS.includes(current) && !unsavedDraft();
+  $('updNote').hidden = !show; document.body.classList.toggle('hasupd', show);
+}
+$('updReload').onclick = () => {
+  OFFLINE.reloading = true; $('updReload').disabled = true;
+  const w = OFFLINE.reg && OFFLINE.reg.waiting;
+  if (w) w.postMessage('meflex-use-new-version'); else location.reload();
+  setTimeout(() => location.reload(), 4000); // in case the switch-over message never arrives
+};
+$('updClose').onclick = () => { OFFLINE.dismissed = true; updateNotice(); }; // back next time the app opens
+function renderOfflineNote() {
+  $('offlineSec').hidden = !OFFLINE.on; if (!OFFLINE.on) return;
+  const ready = OFFLINE.state === 'ready';
+  $('offlineState').textContent = ready ? 'Ready to use without a signal on this device.'
+    : OFFLINE.state === 'failed' ? 'Not saved for offline use yet. MeFlex tries again the next time it opens with a signal.'
+    : 'Saving a copy for offline use…';
+  $('offlineNow').hidden = navigator.onLine !== false || !ready;
+  const v = document.querySelector('meta[name="meflex-version"]'); $('offlineVer').textContent = v ? 'Version ' + v.content : '';
+}
+offlineInit();
+$('descInput').addEventListener('input', () => updateNotice());
 
 // ---------- Setup flow ----------
 // One question per screen, Skip on every screen. Answers stay on this device (profile in look.js)
