@@ -5,11 +5,15 @@
 // those go to the network exactly as without it. It sends nothing of its own except fetching FILES from the site.
 // It never stores personal data: history, routines, settings and answers live in the page's own storage, not here.
 // A new version waits until the person taps Reload ("A new version is ready"); it never takes over by itself.
-const VERSION = 'b801cdf19cd9';
-const PREFIX = 'meflex-offline-';
-const CACHE = PREFIX + VERSION;
+const VERSION = 'c4ca6b930af3';
 const FILES = ["index.html", "manifest.webmanifest", "apple-touch-icon.png", "icon-192.png", "icon-512.png"];
 const BASE = self.registration.scope; // the folder sw.js lives in, e.g. https://example.github.io/meflex/meflex-site/meflex-site/
+// Hardening: cache names carry a tag of this folder, so another copy of MeFlex on the same address keeps its own offline
+// files. Caches from before this change (meflex-offline-<12 hex>) are cleared once.
+const scopeTag = (p) => { let h = 5381; for (const c of p) h = ((h * 33) ^ c.charCodeAt(0)) >>> 0; return h.toString(36); }; // short tag of the folder path
+const PREFIX = 'meflex-offline-' + scopeTag(new URL(BASE).pathname) + '-';
+const LEGACY = /^meflex-offline-[0-9a-f]{12}$/;
+const CACHE = PREFIX + VERSION;
 
 self.addEventListener('install', (e) => {
   e.waitUntil((async () => {
@@ -24,7 +28,7 @@ self.addEventListener('install', (e) => {
 
 self.addEventListener('activate', (e) => {
   // Remove only MeFlex's own older copies; other sites' caches on the same address are never touched.
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith(PREFIX) && k !== CACHE).map(k => caches.delete(k)))));
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => (k.startsWith(PREFIX) && k !== CACHE) || LEGACY.test(k)).map(k => caches.delete(k)))));
 });
 
 // The page asks for this only when the person taps Reload.
