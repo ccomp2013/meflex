@@ -5,7 +5,7 @@
 // those go to the network exactly as without it. It sends nothing of its own except fetching FILES from the site.
 // It never stores personal data: history, routines, settings and answers live in the page's own storage, not here.
 // A new version waits until the person taps Reload ("A new version is ready"); it never takes over by itself.
-const VERSION = '4c2b9a4f6204';
+const VERSION = 'b801cdf19cd9';
 const PREFIX = 'meflex-offline-';
 const CACHE = PREFIX + VERSION;
 const FILES = ["index.html", "manifest.webmanifest", "apple-touch-icon.png", "icon-192.png", "icon-512.png"];
