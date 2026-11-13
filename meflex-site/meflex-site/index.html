@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="4c2b9a4f6204">
+<meta name="meflex-version" content="b801cdf19cd9">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -68,7 +68,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .reset { color: var(--muted); font-size: 14px; text-decoration: underline; text-underline-offset: 3px; margin-top: 16px; padding: 6px 0; }
 .startbar { position: absolute; left: 0; right: 0; bottom: 0; padding: 28px max(16px, env(safe-area-inset-right, 0px)) calc(16px + var(--sab)) max(16px, env(safe-area-inset-left, 0px));
   background: linear-gradient(transparent, var(--bg) 38%); }
-.cta { height: 56px; border-radius: 28px; background: var(--accent); color: #fff; font-size: 18px; font-weight: 600; width: 100%; }
+.cta { height: 56px; border-radius: 28px; background: var(--accent); color: var(--bg); font-size: 18px; font-weight: 600; width: 100%; } /* Stage 30: dark text, 5.7:1 (white was 3.3:1) */
 .cta:active { filter: brightness(0.92); }
 
 /* Player */
@@ -136,7 +136,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .title { font-size: 34px; line-height: 1.1; letter-spacing: -0.6px; margin: 0; text-wrap: balance; }
 .lede { color: var(--muted); margin: 6px 0 0; }
 .sec { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin: 30px 0 12px; }
-.sec span { color: var(--line); margin-left: 4px; filter: brightness(2); }
+.sec span { color: var(--muted); margin-left: 4px; } /* axe and Hallmark: was about 2.5:1, now 6.4:1 */
 .rows { list-style: none; margin: 0; padding: 0; }
 .row { width: 100%; display: flex; align-items: center; gap: 14px; padding: 10px 0; text-align: left; border-top: 1px solid var(--line); }
 .rows li:first-child .row { border-top: 0; }
@@ -231,6 +231,28 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .note { color: var(--muted); font-size: 13px; margin: 10px 0 0; max-width: 60ch; }
 #restoreBtn { width: 100%; margin-top: 30px; }
 #restoreBtn.armed { border-color: var(--accent); color: var(--accent); }
+#ydMsg:focus { outline: none; }
+/* Stage 33: the five "What feels tight?" chips wrap, so all are visible */
+#tightChips { flex-wrap: wrap; overflow: visible; }
+#listTitle:focus { outline: none; }
+/* Stage 34: Your starting plan */
+#planSub { color: var(--muted); font-size: 14px; margin: 4px 8px 0 0; }
+.planlist { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.planrow { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; width: 100%; min-height: 56px; text-align: left; padding: 8px 10px; border-radius: 14px; background: var(--bg); color: var(--ink); }
+.planrow .pday { flex: none; width: auto; min-width: 46px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.planrow .pt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.planrow .pt b { font-weight: 600; } .planrow .pt small { color: var(--muted); font-size: 13px; }
+.planrow .pdone { flex: none; font-size: 13px; color: var(--muted); }
+.planrow.done .pdone { color: var(--accent); font-weight: 600; }
+#planAnswers { margin-top: 8px; min-height: 44px; }
+/* Stage 32: Reminders */
+.remlbl { margin: 0 0 6px; font-weight: 600; }
+.remdays { display: grid; grid-template-columns: repeat(auto-fit, minmax(max(44px, 3em), 1fr)); gap: 4px; font-size: .875rem; } /* 7 across at normal size; wraps when text is enlarged */
+.remday { min-height: 44px; min-width: 0; border-radius: 12px; border: 1.5px solid var(--line); color: var(--ink); font-size: 1em; font-weight: 600; }
+.remday[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.remtime { display: flex; align-items: center; justify-content: space-between; min-height: 48px; margin-top: 10px; }
+.remtime input { font: inherit; font-size: 16px; color: var(--ink); background: var(--raised); border: 1.5px solid var(--muted); border-radius: 12px; min-height: 44px; padding: 0 12px; color-scheme: dark; }
+.remtime input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .restoremsg { color: var(--muted); font-size: 14px; text-align: center; min-height: 20px; margin: 4px 0 0; }
 /* Library filters */
 .filters { display: grid; gap: 10px; margin-top: 18px; }
@@ -303,7 +325,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .calwk, .calgrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
 .calwk span { color: var(--muted); font-size: 11px; font-weight: 600; padding: 6px 0; }
 .cd { height: 40px; border-radius: 50%; font-size: 15px; font-variant-numeric: tabular-nums; position: relative; justify-self: center; width: 40px; max-width: 100%; }
-.cd.has { background: var(--accent); color: #fff; font-weight: 600; }
+.cd.has { background: var(--accent); color: var(--bg); font-weight: 600; } /* Stage 31 extra: dark numbers, 5.7:1 (white was 3.3:1) */
 .cd.today { box-shadow: inset 0 0 0 2px var(--ink); }
 .cd.sel:not(.has) { background: var(--line); }
 .cd.sel.has { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
@@ -315,7 +337,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .descform input { flex: 1; min-width: 0; height: 46px; border-radius: 23px; border: 0; background: var(--raised); color: var(--ink); font: 16px var(--font); padding: 0 16px; outline: none; -webkit-appearance: none; appearance: none; }
 .descform input::placeholder { color: var(--muted); }
 .descform input:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
-.build { flex: none; height: 46px; padding: 0 18px; border-radius: 23px; background: var(--accent); color: #fff; font-weight: 600; }
+.build { flex: none; height: 46px; padding: 0 18px; border-radius: 23px; background: var(--accent); color: var(--bg); font-weight: 600; } /* Stage 30: 5.7:1 */
 .excs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
 .chip.small { height: 30px; padding: 0 11px; font-size: 13px; color: var(--muted); }
 .understood { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 16px 0 4px; font-size: 13px; }
@@ -344,7 +366,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 #rYouth { margin: -8px 0 18px; } #infoYouth { margin: 0 0 6px; }
 .reviewnote { margin: 30px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--raised); color: var(--muted); font-size: 13px; }
 .ghost.danger { width: 100%; color: #E9A08A; border-color: #5A3A33; }
-.dangercta { background: #B5533F; }
+.dangercta { background: #B5533F; color: #fff; } /* white on this red is 4.9:1, so it stays */
 .resettext { color: var(--muted); font-size: 15px; margin: 0 0 14px; }
 /* Tab bar */
 .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: flex; justify-content: center; gap: 8px;
@@ -539,6 +561,14 @@ html, body, button, a, input, label, select, textarea, summary { touch-action: m
   bottom: calc(80px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 16px; border-radius: 18px;
   background: var(--raised); border: 1px solid var(--line); box-shadow: 0 8px 24px rgba(0,0,0,.45); font-size: 15px; font-weight: 600; }
 .updnote .updtext { flex: 1; min-width: 0; }
+/* Stage 31: Your data and the Home Screen tip */
+.ydstate { margin: 10px 0 0; font-weight: 600; font-size: 15px; line-height: 1.4; } .ydnudge { margin: 6px 0 0; color: var(--accent); font-size: 14px; }
+#yourData .wide, #remSec .wide { width: 100%; margin-top: 10px; } /* Stage 32: the Reminders button matches */
+#ydFile { font-size: 16px; } /* never shown, but kept at 16 px like every field (Stage 26 rule) */
+.ydtip { margin-top: 12px; } .ydtip summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: var(--accent); font-weight: 600; }
+.tipsteps { margin: 6px 0 0; padding-left: 22px; line-height: 1.5; }
+.hometip { margin-top: var(--sp4); padding: 12px 8px 14px 16px; border-radius: var(--r-card); background: var(--raised); }
+.hometiprow { display: flex; align-items: center; gap: 8px; } .hometiprow h2 { flex: 1; margin: 0; font-size: 16px; }
 .updnote .updreload { min-height: 44px; padding: 0 16px; border-radius: 22px; background: var(--accent); color: var(--bg); font-weight: 600; font-size: 15px; }
 .updnote .updclose { width: 44px; height: 44px; flex: none; }
 body.hasupd .tabbed .scroll { padding-bottom: calc(172px + env(safe-area-inset-bottom, 0px)); } /* the notice never covers the last item either */
@@ -648,6 +678,17 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <h2 class="sec" id="recHead">Recommended</h2>
     <div class="primary" id="recPrimary"></div>
     <button class="progstrip" id="homeProgress" data-private></button>
+    <section class="hometip planbox" id="homePlan" aria-labelledby="planHead" data-private hidden>
+      <div class="hometiprow"><h2 id="planHead">Your starting plan</h2><button class="icon" id="planClose" aria-label="Dismiss your starting plan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
+      <p class="tipnote" id="planSub"></p>
+      <ol class="planlist" id="planList" role="list"></ol>
+      <button class="textlink" id="planAnswers" hidden>Add a few setup answers to tailor this plan</button>
+    </section>
+    <section class="hometip" id="homeTip" aria-labelledby="homeTipHead" hidden>
+      <div class="hometiprow"><h2 id="homeTipHead">Keep MeFlex on your Home Screen</h2><button class="icon" id="homeTipClose" aria-label="Dismiss this tip"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
+      <ol class="tipsteps"><li>Tap Share, the square with an arrow, in Safari.</li><li>Tap Add to Home Screen.</li><li>Tap Add.</li></ol>
+      <p class="note">It then opens full screen, like an app, and works offline.</p>
+    </section>
     <h2 class="sec">More for you</h2>
     <span class="sr" id="recMoreLabel">Recommended routines, swipe sideways</span><div class="morelist carousel" id="recMore" role="region" aria-labelledby="recMoreLabel"></div>
     <button class="textlink" id="browseAll">Browse all routines<svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
@@ -673,7 +714,8 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
         <div class="excs" id="descChips" aria-label="Examples"></div>
         <div id="descOut" aria-live="polite"></div>
       </section>
-      <h2 class="sec">Body areas</h2><div class="chips" id="areaChips"></div>
+      <h2 class="sec" id="tightHead">What feels tight?</h2><div class="chips" id="tightChips" role="group" aria-labelledby="tightHead"></div>
+      <h2 class="sec" id="areaHead">Body areas</h2><div class="chips" id="areaChips" role="group" aria-labelledby="areaHead"></div>
       <h2 class="sec">Quick routines <span>4 min or less</span></h2><span class="sr" id="quickLabel">Quick routines, 4 minutes or less, swipe sideways</span><ul class="rows carousel" id="quickList" aria-labelledby="quickLabel"></ul>
       <h2 class="sec" id="ladderHead">Ladders <span>step by step</span></h2><ul class="ladders" id="ladderCards" aria-labelledby="ladderHead"></ul>
       <h2 class="sec">Ice hockey</h2>
@@ -686,7 +728,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 <section class="screen tabbed" id="list" hidden>
   <div class="bar"><button class="icon" id="listBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
   <div class="scroll" style="padding-top:4px">
-    <h1 class="title" id="listTitle"></h1><p class="lede" id="listSub"></p>
+    <h1 class="title" id="listTitle" tabindex="-1"></h1><p class="lede" id="listSub"></p>
     <h2 class="sec">Routines</h2><ul class="rows" id="listRoutines"></ul>
     <h2 class="sec" id="listStretchHead">Stretches</h2><ul class="rows" id="listStretches"></ul>
   </div>
@@ -803,6 +845,15 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <h2 class="sec">Weekly goal</h2>
     <div class="segs" id="setGoal" role="radiogroup" aria-label="Weekly goal, days a week"></div>
     <p class="note">Days a week you aim to stretch. History compares each week, and your 4-week consistency, with this goal.</p>
+    <section id="remSec" aria-labelledby="remHead" data-private>
+      <h2 class="sec" id="remHead">Reminders</h2>
+      <p class="remlbl" id="remDaysLbl">Days</p>
+      <div class="remdays" id="remDays" role="group" aria-labelledby="remDaysLbl"></div>
+      <label class="remtime" for="remTime"><span>Time</span><input type="time" id="remTime" value="08:00"></label>
+      <p class="note" id="remNote">This adds a repeating event to your phone’s calendar. MeFlex can’t send notifications itself; your calendar reminds you. To stop the reminders, delete the event in your calendar app.</p>
+      <button class="ghost wide" id="remAdd" aria-describedby="remNote">Add to my calendar</button>
+      <p class="restoremsg" id="remMsg" role="status"></p>
+    </section>
     <h2 class="sec">Default hold</h2>
     <div class="segs" id="setHold" role="radiogroup" aria-label="Default hold"></div>
     <p class="note">Used for every stretch, on each side. A time you set inside a routine still wins.</p>
@@ -826,6 +877,21 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
       <p class="note">After MeFlex has opened once with a signal, it opens and works without one: routines, the player, History, Saved, your own routines, ladders and Describe. If MeFlex isn't opened for a while, your iPhone may remove this offline copy; it downloads again the next time MeFlex opens with a signal.</p>
       <p class="note" id="offlineVer"></p>
     </section>
+    <section id="yourData" aria-labelledby="ydHead" data-private>
+      <h2 class="sec" id="ydHead">Your data</h2>
+      <p class="note">History, your routines, Saved and your settings are kept only in this browser on this phone. A backup is a file you keep yourself; it never leaves your phone unless you share it.</p>
+      <p class="ydstate" id="ydPersist"></p>
+      <p class="ydnudge" id="ydNudge" hidden></p>
+      <button class="ghost wide" id="ydBackup">Back up my data</button>
+      <button class="ghost wide" id="ydShare" hidden>Share a backup…</button>
+      <button class="ghost wide" id="ydRestore">Restore from a backup</button>
+      <input type="file" id="ydFile" accept="application/json,.json" hidden tabindex="-1" aria-hidden="true">
+      <p class="note" id="ydLast"></p>
+      <p class="restoremsg" id="ydMsg" role="status" aria-live="polite" tabindex="-1"></p>
+      <div id="ydUndoRow" hidden><button class="ghost wide" id="ydUndo">Undo the restore</button></div>
+      <details class="ydtip"><summary>Add MeFlex to your Home Screen (iPhone)</summary>
+        <ol class="tipsteps"><li>Open MeFlex in Safari.</li><li>Tap Share, the square with an arrow.</li><li>Tap Add to Home Screen, then Add.</li></ol></details>
+    </section>
     <h2 class="sec">Start over</h2>
     <button class="ghost danger" id="resetAppBtn">Reset app and show setup again</button>
     <p class="note">Deletes your setup answers, history, routine times and settings on this device.</p>
@@ -848,7 +914,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <button class="ghost editbtn" id="rEdit" aria-label="Edit this routine" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-4-4L4 16v4z"/></svg>Edit</button>
     <button class="ghost editbtn" id="rCustomize" aria-label="Customize a copy of this routine" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h9M18 7h1M5 17h3M12 17h7"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Customize</button>
     <p class="rwhy" id="rWhy" data-private hidden></p>
-    <p class="youthnote" id="rYouth" hidden>Stop if anything hurts. Ask a coach or doctor.</p>
+    <p class="youthnote" id="rYouth" hidden>It should feel a little tight, never painful. Stop if anything hurts. Ask a coach or doctor.</p>
     <ul class="list" id="rList"></ul>
     <button class="reset" id="resetTimes" hidden>Reset times</button>
     <p class="note" id="rEdited" hidden>Changed for this visit only. Leave the routine to go back to the original.</p>
@@ -890,7 +956,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
   <div class="bar"><button class="icon" id="infoBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="mid">How to</div><span></span></div>
   <div class="head"><div class="mini" id="infoArt"></div><div><h2 id="infoName"></h2><div class="focus" id="infoFocus"></div></div></div>
   <div class="tags" id="infoTags"></div>
-  <p class="youthnote" id="infoYouth" hidden>Stop if anything hurts. Ask a coach or doctor.</p>
+  <p class="youthnote" id="infoYouth" hidden>It should feel a little tight, never painful. Stop if anything hurts. Ask a coach or doctor.</p>
   <p class="pnote" id="infoPersonal" data-private hidden></p>
   <section class="isec" id="sec-instructions" aria-labelledby="h-instructions"><h3 id="h-instructions">Instructions</h3>
     <h4 class="isub">Steps</h4><ol id="infoSteps"></ol>
@@ -925,6 +991,15 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
   </div>
 </div>
 
+<div class="sheet" id="restoreSheet" data-private hidden>
+  <div class="panel" role="alertdialog" aria-modal="true" aria-labelledby="rsTitle" aria-describedby="rsDate rsWhat rsWarn">
+    <div class="grab"></div><h2 id="rsTitle">Replace what is on this phone?</h2>
+    <p class="resettext" id="rsDate"></p><p class="resettext" id="rsWhat"></p>
+    <p class="resettext" id="rsWarn">Your current History, routines, Saved and settings will be replaced by the backup. You can undo this until you close MeFlex.</p>
+    <button class="cta dangercta" id="rsGo">Replace with the backup</button>
+    <button class="ghost" id="rsCancel">Cancel</button>
+  </div>
+</div>
 <div class="sheet" id="discardSheet" data-private hidden>
   <div class="panel slide" role="alertdialog" aria-modal="true" aria-labelledby="discardTitle" aria-describedby="discardText">
     <div class="grab"></div><h2 id="discardTitle">Discard your changes?</h2>
@@ -1223,14 +1298,14 @@ const STRETCHES = [
     steps: ['Hold a band behind your back with both hands, arms low.', 'Draw your shoulder blades together.', 'Let the band ease your arms back and open the chest.'],
     tips: ['Use a light band; it should guide, not yank.', 'Keep your chin level and ribs down.'] },
   { id: 'bandlat', name: 'Band Lat Stretch', areas: ['shoulders', 'back'], kind: 'band', level: 'intermediate', pos: 'standing', balance: false, overhead: true, sides: LR, circle: C.teal, focus: 'Lats · side of the body',
-    steps: ['Anchor a band at head height and hold it with one hand.', 'Step back and hinge forward, arm overhead.', 'Sit the hips back and let the band lengthen your side.'],
+    steps: ['Anchor a band at head height and hold it with one hand.', 'Step back and hinge forward, arm overhead.', 'Sit the hips back until you feel the stretch along your side.'],
     tips: ['Check the anchor is secure before you lean.', 'Keep the arm straight but not locked.'] },
   // ---- Light dumbbells (7): all advanced, all with a safety tip ----
   { id: 'goblet', name: 'Goblet Squat Hold', areas: ['hips', 'calves'], kind: 'weight', level: 'advanced', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.clay, focus: 'Hips · ankles',
     steps: ['Hold one light dumbbell upright at your chest.', 'Sit down into a deep squat, heels down.', 'Use your elbows to ease the knees apart and stay tall.'],
     tips: [SAFETY, 'Raise your heels on a small plate if they lift.'] },
   { id: 'pullover', name: 'Dumbbell Pullover Stretch', areas: ['shoulders', 'chest'], kind: 'weight', level: 'advanced', pos: 'floor', balance: false, overhead: true, sides: null, circle: C.sage, focus: 'Lats · chest',
-    steps: ['Lie on the floor holding one light dumbbell with both hands over your chest.', 'Lower it slowly behind your head with soft elbows.', 'Let the weight gently lengthen your sides, then hold.'],
+    steps: ['Lie on the floor holding one light dumbbell with both hands over your chest.', 'Lower it slowly behind your head with soft elbows.', 'Let the weight gently take your arms back until you feel your sides, then hold.'],
     tips: [SAFETY, 'Keep your lower back in contact with the floor.'] },
   { id: 'calfdrop', name: 'Loaded Calf Drop', areas: ['calves'], kind: 'weight', level: 'advanced', pos: 'standing', balance: true, overhead: false, sides: LR, circle: C.plum, focus: 'Calves · Achilles',
     steps: ['Stand on a step on the ball of one foot, holding a light dumbbell on that side.', 'Hold a rail with the other hand.', 'Let the heel sink below the step and hold.'],
@@ -1336,6 +1411,7 @@ const CATEGORIES = [
   { id: 'running', name: 'Running', blurb: 'Calves, hips and legs, before and after a run' },
   { id: 'splits', name: 'Splits', blurb: 'Hip flexors, hamstrings and inner thighs' },
   { id: 'posture', name: 'Posture', blurb: 'Neck, chest, upper back and hips' },
+  { id: 'office', name: 'At the Office', blurb: 'Seated or standing, with a chair, wall or doorway' }, // Stage 33
 ];
 
 // items: [stretch id, default seconds per side]
@@ -1416,6 +1492,17 @@ const ROUTINES = [
   { id: 'posture-longer', title: 'Posture Reset: Longer', cat: 'posture', why: 'Neck, chest, upper back, spine and hip flexors',
     desc: 'Longer holds for the neck, chest, upper back, spine and hip flexors, including some on the floor.',
     items: [['chintuck', 30], ['neckturn', 30], ['doorway', 45], ['sphinx', 45], ['thread', 45], ['puppy', 45], ['lunge', 45], ['child', 45]] },
+  // Stage 33: At the Office. Only stretches the library itself marks as bodyweight, not moving, no one-leg balance, beginner,
+  // and standing, or seated with support (a chair): no floor work, no kneeling, nothing beyond a chair, wall or doorway.
+  { id: 'office-short', title: 'Office Reset', cat: 'office', why: 'Neck, chest, shoulders and back',
+    desc: 'Seated and standing holds for the neck, chest, shoulders and back. A chair and a doorway are all you need.',
+    items: [['chintuck', 20], ['necktilt', 20], ['doorway', 30], ['seatedtwist', 15]] },
+  { id: 'office-medium', title: 'Office Reset: Medium', cat: 'office', why: 'Neck, shoulders, chest, back, hamstrings and calves',
+    desc: 'Seated and standing holds for the neck, shoulders, chest, back, hamstrings and calves. Uses a chair and a doorway.',
+    items: [['neckturn', 20], ['levator', 25], ['crossbody', 20], ['doorway', 30], ['seatedtwist', 20], ['chairham', 20]] },
+  { id: 'office-longer', title: 'Office Reset: Longer', cat: 'office', why: 'Neck, shoulders, chest, back, hips, hamstrings and calves',
+    desc: 'Longer set of seated and standing holds from neck to calves. Uses a chair, a wall and a doorway.',
+    items: [['chintuck', 20], ['necktilt', 20], ['levator', 20], ['crossbody', 20], ['doorway', 30], ['chestclasp', 20], ['seatedtwist', 20], ['chairfig4', 25], ['chairham', 20], ['calf', 20]] },
 
   // ---- Stage 24: routine ladders. Numbered steps for one body area, each a little longer or harder than the one before.
   // Existing stretches only. "Harder" means only: more stretches, longer holds, or a stretch the library already rates at a
@@ -1602,7 +1689,9 @@ const CHIME_STYLES = {
 const COACH_RATE = 0.85;
 const prefs = { ...SOUND_DEFAULTS };
 try { Object.assign(prefs, JSON.parse(localStorage.getItem(PREFS_KEY) || '{}')); } catch (e) {}
-if (!CHIME_STYLES[prefs.chimeStyle]) prefs.chimeStyle = SOUND_DEFAULTS.chimeStyle;
+// Anything stored that the app doesn't use is put back to its default (a restored or old value can't break the player).
+for (const k of Object.keys(SOUND_DEFAULTS)) { const d = SOUND_DEFAULTS[k], v = prefs[k];
+  if (typeof d === 'boolean' ? typeof v !== 'boolean' : typeof d === 'number' ? !(typeof v === 'number' && v >= 0 && v <= 1) : !Object.prototype.hasOwnProperty.call(CHIME_STYLES, v)) prefs[k] = d; }
 const savePrefs = () => { try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) {} };
 
 const Sound = {
@@ -1720,6 +1809,9 @@ const PROFILE_KEY = 'meflex.profile';
 const PROFILE_BLANK = { done: false, skipped: false, guide: null, age: null, level: null, focus: [], equipment: [], minutes: null, avoid: [] };
 const profile = { ...PROFILE_BLANK };
 try { Object.assign(profile, JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')); } catch (e) {}
+// Stage 32: the 45–59 range became 45–64 (it is inside it, so the answer moves across); an older "60+" answer is kept as
+// it was (it can't be split into 60–64 and 65+) and keeps its 60-second holds until the person picks a new range.
+if (profile.age === '45-59') { profile.age = '45-64'; try { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); } catch (e) {} }
 const saveProfile = () => { try { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); } catch (e) {} };
 
 // ---------- Helpers ----------
@@ -1844,11 +1936,12 @@ $('tabbar').addEventListener('pointercancel', (e) => endTabDrag(e, false));
 addEventListener('resize', () => placeBubble(currentTabButton()));
 // Shared rows: any element with data-routine / data-stretch / data-area / data-cat is a link.
 document.addEventListener('click', (e) => {
-  const el = e.target.closest('[data-routine],[data-stretch],[data-area],[data-cat],[data-ladder]'); if (!el) return;
+  const el = e.target.closest('[data-routine],[data-stretch],[data-area],[data-cat],[data-ladder],[data-tight]'); if (!el) return;
   if (el.dataset.ladder) return openLadder(el.dataset.ladder);
   if (el.dataset.routine) openRoutine(el.dataset.routine, current, el.dataset.rec !== undefined ? REC[+el.dataset.rec] : el.dataset.desc !== undefined ? DESC[+el.dataset.desc] : null);
   else if (el.dataset.stretch) openInfo(BY_ID[el.dataset.stretch], false, current, false);
   else if (el.dataset.area) openList('area', el.dataset.area);
+  else if (el.dataset.tight) openList('tight', el.dataset.tight);
   else if (el.dataset.cat) openList('cat', el.dataset.cat);
 });
 
@@ -1875,6 +1968,8 @@ function recCard(x, i, compact) {
     <span class="why" data-private><span class="whylabel">Why this routine</span>${esc(x.why)}</span></span>${compact ? CHEV : ''}</button>`;
 }
 function renderHome() {
+  try { renderHomeTip(); } catch (e) {} // Stage 31
+  try { renderPlan(); } catch (e) {} // Stage 34
   const recs = recommendations(); REC = recs.map(x => x.plan);
   $('homeDate').textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
   $('recHead').textContent = hasRoutineAnswers() ? 'Recommended for you' : 'Recommended';
@@ -1958,6 +2053,7 @@ function renderExplore() {
   wireCarousel($('quickList'));
   $('ladderCards').innerHTML = LADDERS.map(l => `<li>${ladderCard(l)}</li>`).join('');
   $('areaChips').innerHTML = AREAS.map(a => `<button class="chip" data-area="${a.id}">${a.name}</button>`).join('');
+  $('tightChips').innerHTML = TIGHT.map(([id, name]) => `<button class="chip" data-tight="${id}">${name}</button>`).join(''); // Stage 33
   $('catGrid').innerHTML = CATEGORIES.map(c => {
     const rs = ROUTINES.filter(r => r.cat === c.id);
     const dots = [...new Set(rs.flatMap(r => r.items.map(([id]) => BY_ID[id].circle)))].slice(0, 3);
@@ -1982,7 +2078,7 @@ $('searchClear').onclick = () => { $('search').value = ''; applySearch(); $('sea
 
 // ---------- Area / category list ----------
 // ---------- Ice hockey ----------
-const YOUTH_NOTE = 'Stop if anything hurts. Ask a coach or doctor.';
+const YOUTH_NOTE = 'It should feel a little tight, never painful. Stop if anything hurts. Ask a coach or doctor.'; // Stage 32: the plain "tight, never painful" line added
 const HOCKEY_GROUPS = [['players', 'Players', 'Adult players'], ['youth', 'Youth players', 'Simple steps for kids'], ['refs', 'Referees', 'Including nights with 3 to 6 games']];
 function openHockey() {
   $('hockeyBody').innerHTML = HOCKEY_GROUPS.map(([g, name, sub]) => `<h2 class="sec">${name} <span>${sub}</span></h2>
@@ -1992,10 +2088,31 @@ function openHockey() {
 }
 $('hockeyBack').onclick = () => { renderExplore(); show('explore'); };
 $('hockeyCard').onclick = openHockey;
+// Stage 33: "What feels tight?" Five areas people name; each opens the best existing routines for it, shortest first.
+// Candidates are the routines of that body-area list (no ladder steps, no youth or hockey, equipment as in Recommended); they are ranked with the same score
+// Describe uses (share of stretches on the area, and coverage), with the same −1.5 for specialist categories, and the
+// best five are shown shortest first. Wording is only "feels tight": no pain, fix or relief claims.
+const TIGHT = [['neck', 'Neck', 'neck'], ['shoulders', 'Shoulders', 'shoulders'], ['lowback', 'Low back', 'back', (st) => /lower back/i.test(st.focus)], ['hips', 'Hips', 'hips'], ['hamstrings', 'Hamstrings', 'hamstrings']];
+// Low back uses the stretches whose own focus says "lower back" (review, Stage 33). A routine is listed only if, for this
+// person, it needs no swap, drop or avoided position (the page opens the routine as it is) and still works the area.
+function tightRoutines(area, n = 5, pick = (TIGHT.find(x => x[2] === area && x[3]) || [])[3]) {
+  const p = { ...tailorPrefs(), focus: [area], target: 0 }, hits = (st) => st.areas.includes(area) && (!pick || pick(st));
+  const gear = (r) => (r.cat !== 'band' || p.kinds.has('band')) && (r.cat !== 'loaded' || (p.kinds.has('weight') && p.maxLevel === 2)); // as Recommended
+  return ROUTINES.filter(r => !r.ladder && !r.youth && r.cat !== 'hockey' && gear(r) && r.items.some(([sid]) => hits(BY_ID[sid]))) // hockey stays in its own section
+    .map(r => ({ r, t: tailor(r, p) }))
+    .filter(({ t }) => !t.notes.swaps && !t.notes.dropped && !t.notes.avoided.size && t.items.length >= 3 && t.items.some(([sid]) => hits(BY_ID[sid])))
+    .map(({ r, t }) => ({ r, s: score(t, p) - (STAGE23_CATS.has(r.cat) ? 1.5 : 0) - (p.support && r.dynamic ? 2 : 0) /* as Recommended */ }))
+    .sort((a, b) => b.s - a.s || routineSecs(a.r) - routineSecs(b.r)).slice(0, n).map(x => x.r)
+    .sort((a, b) => routineSecs(a) - routineSecs(b));
+}
 function openList(kind, id) {
   if (kind === 'cat' && id === 'hockey') return openHockey();
   let title, sub, rs, sts = [];
-  if (kind === 'area') {
+  if (kind === 'tight') { // Stage 33: "What feels tight?"
+    const [, name, area, pick] = TIGHT.find(x => x[0] === id); title = `${name} feels tight`;
+    rs = tightRoutines(area); sub = !rs.length ? 'No routine fits your setup answers for this area yet. Body areas lists every routine.'
+      : `Routines for the ${pick ? 'lower back' : AREAS.find(a => a.id === area).name.toLowerCase()}, shortest first`;
+  } else if (kind === 'area') {
     const a = AREAS.find(x => x.id === id); title = a.name;
     sts = STRETCHES.filter(s => s.areas.includes(id));
     rs = ROUTINES.filter(r => !r.ladder && r.items.some(([sid]) => BY_ID[sid].areas.includes(id))); // ladder steps are listed under Ladders
@@ -2009,8 +2126,12 @@ function openList(kind, id) {
   $('listStretchHead').hidden = !sts.length;
   $('listStretches').innerHTML = sts.map(stretchRow).join('');
   show('list'); $('list').querySelector('.scroll').scrollTop = 0;
+  LIST_FROM = { kind, id }; $('listTitle').focus({ preventScroll: true }); // Stage 33: VoiceOver hears the new title
 }
-$('listBack').onclick = () => { renderExplore(); show('explore'); };
+let LIST_FROM = null;
+$('listBack').onclick = () => { renderExplore(); show('explore');
+  // Stage 33: focus goes back to the chip or tile that opened the list (the buttons are rebuilt, so find it by its value)
+  const f = LIST_FROM && document.querySelector(`#explore [data-${LIST_FROM.kind === 'cat' ? 'cat' : LIST_FROM.kind}="${LIST_FROM.id}"]`); if (f) f.focus({ preventScroll: false }); };
 
 // ---------- Ladders (Stage 24) ----------
 // A ladder is a numbered set of built-in routines for one area. Progress is worked out from History only (no new stored
@@ -2218,7 +2339,7 @@ let MINE = null;
 // Suggested hold for a stretch: the hold most often used for it in the built-in routines, else 30 s. The person's default
 // hold from Settings wins over it (itemsOf: look.hold || suggested), exactly as for built-in routines.
 // Stage 23 routines are left out so own routines keep the default holds they had (see DECISIONS.md).
-const STAGE23_CATS = new Set(['running', 'splits', 'posture']);
+const STAGE23_CATS = new Set(['running', 'splits', 'posture', 'office']); // Stage 33: At the Office ranks the same way
 const SUGGESTED = (() => { const c = {}; ROUTINES.filter(r => !STAGE23_CATS.has(r.cat) && !r.ladder).forEach(r => r.items.forEach(([id, s]) => { (c[id] = c[id] || {})[s] = (c[id][s] || 0) + 1; }));
   return Object.fromEntries(Object.entries(c).map(([id, m]) => [id, +Object.entries(m).sort((a, b) => b[1] - a[1] || a[0] - b[0])[0][0]])); })();
 const suggestedHold = (id) => SUGGESTED[id] || MINE_FALLBACK_HOLD;
@@ -2744,7 +2865,7 @@ function coachResume() {
 function coachStop() { if (COACH.i >= 0 && COACH.token === Sound.speechToken && COACH.next < COACH.until) Sound.stopSpeech(); COACH.i = -1; }
 function heldStep(i, ms) { if (ms >= 1000 && STEPS[i]) P.held.add(STEPS[i].si); } // at least 1 s of holding
 function begin() {
-  Sound.unlock();
+  Sound.unlock(); try { persistAsk(); } catch (e) {} // Stage 31: ask the browser to keep our data, after a tap
   STEPS = cur.items.flatMap((it, si) => (it.st.sides || [null]).map((side, k) => ({ s: it.st, it, si, side, mirror: k === 1 })));
   P.active = 0; P.running = false; P.phase = 'hold'; P.held = new Set(); P.recorded = false;
   if (!cur.r.youth && !cur.r.custom) Analytics.track('routine_started', { routine_id: cur.r.id }); // youth and the person's own routines send nothing
@@ -2794,7 +2915,7 @@ $('prevBtn').onclick = () => { if (P.i > 0) jump(P.i - 1); };
 
 // ---------- Stretch sheet sections (Stage 17) ----------
 // Caution comes only from facts the app already holds: the position flags that setup lets people avoid (named with the
-// app's existing wording) and the existing dumbbell safety note. No new medical wording.
+// app's existing wording) and the existing dumbbell safety note, then (Stage 32) one plain line: mild discomfort, never pain.
 const CAUTION_POS = [['kneeling', st => st.pos === 'kneeling', 'Kneeling'], ['floor', st => st.pos === 'floor', 'Floor work'],
   ['overhead', st => st.overhead, 'Arms overhead'], ['balance', st => st.balance, 'One-leg balance']];
 const cautionFlags = (st) => CAUTION_POS.filter(([, has]) => has(st));
@@ -2802,8 +2923,10 @@ function cautionItems(st) {
   const out = [], pos = cautionFlags(st).map(([, , label]) => label);
   if (pos.length) out.push('Positions: ' + pos.join(' · '));
   if (st.tips.includes(SAFETY)) out.push(SAFETY);
+  if (out.length) out.push(FEEL_NOTE); // Stage 32: wherever Caution shows, the plain line on how a stretch should feel
   return out;
 }
+const FEEL_NOTE = 'A stretch should feel like mild discomfort, never pain. Ease off if it hurts.';
 const INFO_SECTIONS = [['caution', cautionItems], ['modifications', st => st.modifications || []], ['benefits', st => st.benefits || []]];
 // Personal caution note: ON (wording approved by the product owner, 2026-11-12). Uses only the setup answer
 // "Any positions to avoid?" (kept on this device; the note is blocked from replay; nothing is sent). Shown only when at
@@ -2924,6 +3047,8 @@ function renderPreview() {
 }
 function renderSettings() {
   try { renderOfflineNote(); } catch (e) {} // Stage 25
+  try { renderYourData(); } catch (e) {} // Stage 31
+  try { renderReminders(); } catch (e) {} // Stage 32
   SOUND_ROWS.forEach(([k, , , vk]) => {
     $('set-' + k).checked = !!prefs[k] && (k !== 'coach' || SPEECH_OK);
     $('set-' + k).closest('.setrow').classList.toggle('off', !prefs[k]);
@@ -3185,9 +3310,11 @@ $('calGrid').addEventListener('click', (e) => { const b = e.target.closest('[dat
 //
 // Hold times by age follow ACSM's Guidelines for Exercise Testing and Prescription (11th ed., 2021):
 // hold a static stretch 10–30 s for most adults; older adults may benefit more from 30–60 s.
-// Under 45 uses 30 s (top of the adult range); 45–59 uses 45 s and 60+ uses 60 s (within the
-// older-adult range). A default hold chosen in Settings, or a time set in a routine, still wins.
-const AGE_HOLD = { under30: 30, '30-44': 30, '45-59': 45, '60+': 60 };
+// Stage 32: the longer older-adult holds start at 65, matching published guidance (30–60 s for adults over 65). Under 65
+// uses 30 s (top of the adult range); 65+ uses 60 s. An older "60+" answer keeps 60 s until changed. A default hold chosen
+// in Settings, or a time set in a routine, still wins.
+const AGE_HOLD = { under30: 30, '30-44': 30, '45-64': 30, '65+': 60, '60+': 60 };
+const OLDER_AGES = ['45-64', '65+', '60+']; // chair and wall options preferred from 45, unchanged
 const LEVEL_RANK = { beginner: 0, intermediate: 1, advanced: 2 };
 const EQUIP_KIND = { none: 'body', band: 'band', dumbbells: 'weight' };
 const AVOID_POS = { kneeling: 'kneeling', floor: 'floor' };
@@ -3202,8 +3329,8 @@ function tailorPrefs() {
     maxLevel: LEVEL_RANK[profile.level || 'beginner'],                       // no answer: beginner (safest)
     avoid: new Set(profile.avoid), focus: profile.focus,
     target: profile.minutes ? profile.minutes * 60 : null,
-    older: profile.age === '45-59' || profile.age === '60+',
-    support: profile.age === '45-59' || profile.age === '60+', // prefer chair / wall options (also set by "gentle" or "seated" in a description)
+    older: OLDER_AGES.includes(profile.age),
+    support: OLDER_AGES.includes(profile.age), // prefer chair / wall options (also set by "gentle" or "seated" in a description)
     hold: AGE_HOLD[profile.age] || null,
   };
 }
@@ -3285,20 +3412,20 @@ function whyLine(t, p) {
 }
 
 // The Recommended section: 3 tailored routines, or the standing defaults when setup was skipped.
-function recommendations() {
+function recommendations(n = 3) { // Stage 34: n > 3 gives the starting plan more to choose from
   if (!hasRoutineAnswers()) {
     const h = new Date().getHours();
     const [pick, why] = h < 11 ? ['first-light', 'Good for mornings'] : h < 17 ? ['desk-reset', 'A midday reset'] : ['lights-out', 'Winds you down for bed'];
-    return [pick, 'hip-opener', 'back-ease', 'stride-reset'].filter((v, i, a) => a.indexOf(v) === i).slice(0, 3)
+    return [pick, 'hip-opener', 'back-ease', 'stride-reset'].filter((v, i, a) => a.indexOf(v) === i).slice(0, Math.min(n, 4))
       .map((id, i) => ({ plan: null, r: R(id), why: i === 0 ? why : (R(id).why || catOf(R(id)).blurb) }));
   }
   const p = tailorPrefs();
   // Equipment routines only for people who have that equipment (and, for weights, the level).
   const fits = (r) => (r.cat !== 'band' || p.kinds.has('band')) && (r.cat !== 'loaded' || (p.kinds.has('weight') && p.maxLevel === 2));
-  return ROUTINES.filter(fits).filter(r => !r.youth && ladderEligible(r)).map(r => tailor(r, p)) // youth routines only via the Hockey screen or a description that mentions kids.filter(t => t.items.length >= 3)
+  return ROUTINES.filter(fits).filter(r => !r.youth && ladderEligible(r)).map(r => tailor(r, p)).filter(t => t.items.length >= 3) // youth routines only via the Hockey screen or a description that mentions kids (hardening: this comment used to swallow the 3-stretch filter, found in the Stage 34 review)
     // hockey routines are specialised: they can be recommended, but rank a little lower; moving warm-ups can't be
     // swapped to chair/wall options, so they rank lower for anyone who prefers supported stretches (45+)
-    .map(t => ({ t, s: score(t, p) - (R(t.id).cat === 'hockey' || STAGE23_CATS.has(R(t.id).cat) || R(t.id).ladder ? 1.5 : 0) /* specialist categories rank a little lower, as hockey does */ - (p.support && R(t.id).dynamic ? 2 : 0) })).sort((a, b) => b.s - a.s).slice(0, 3)
+    .map(t => ({ t, s: score(t, p) - (R(t.id).cat === 'hockey' || STAGE23_CATS.has(R(t.id).cat) || R(t.id).ladder ? 1.5 : 0) /* specialist categories rank a little lower, as hockey does */ - (p.support && R(t.id).dynamic ? 2 : 0) })).sort((a, b) => b.s - a.s).slice(0, n)
     .map(({ t }) => ({ plan: t, r: R(t.id), why: whyLine(t, p) }));
 }
 
@@ -3444,7 +3571,7 @@ function parseRequest(text) {
   ];
   q.any = q.understood.length > 0;
   // Stage 23: a description that names running, splits or posture lifts that category (and it is not ranked lower)
-  q.named = new Set([['running', ['run', 'runs', 'running', 'runner', 'runners', 'jog', 'jogging']], ['splits', ['split', 'splits']], ['posture', ['posture']]].filter(([, list]) => words.some(w => list.includes(w))).map(([c]) => c));
+  q.named = new Set([['running', ['run', 'runs', 'running', 'runner', 'runners', 'jog', 'jogging']], ['splits', ['split', 'splits']], ['posture', ['posture']], ['office', ['office', 'offices', 'workday', 'cubicle']]].filter(([, list]) => words.some(w => list.includes(w))).map(([c]) => c));
   return q;
 }
 
@@ -3576,6 +3703,343 @@ function renderOfflineNote() {
 offlineInit();
 $('descInput').addEventListener('input', () => updateNotice());
 
+// ---------- Your data: backup, restore, persistent storage, Home Screen tip (Stage 31) ----------
+// Everything MeFlex keeps lives in this browser's localStorage under "meflex." keys. A backup is one JSON file the person
+// saves themselves; it never leaves the device unless they share it. Restore checks the file strictly and changes
+// nothing unless every check passes and the person agrees; it is all-or-nothing and keeps a one-step Undo (in
+// sessionStorage, so it lasts until the app is closed). Backup text is only ever shown with textContent. No analytics.
+const BK = {
+  FORMAT: 'meflex-backup', VERSION: 1, MAX_BYTES: 2 * 1024 * 1024,
+  // What a backup holds. The analytics choice is never backed up or restored (a restore must never switch analytics
+  // back on), and the backup date is about this phone, not the data.
+  FIXED: ['meflex.history', 'meflex.mine', 'meflex.saved', 'meflex.look', 'meflex.profile', 'meflex.sound', 'meflex.avatar', 'meflex.homeTip', 'meflex.reminder', 'meflex.plan'],
+  TIMES: /^meflex\.times2?\.[a-z0-9-]{1,80}$/,
+  AT_KEY: 'meflex.backupAt', UNDO_KEY: 'meflex.undoRestore', TIP_KEY: 'meflex.homeTip',
+};
+const bkKeyOk = (k) => BK.FIXED.includes(k) || BK.TIMES.test(k);
+function bkKeys() { const out = []; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (bkKeyOk(k)) out.push(k); } } catch (e) {} return out.sort(); }
+function bkSnapshot() { // the person's data as it is now: key -> parsed value (unreadable values are left out)
+  const data = {}; bkKeys().forEach(k => { try { data[k] = JSON.parse(localStorage.getItem(k)); } catch (e) {} }); return data;
+}
+const bkAppVersion = () => { const m = document.querySelector('meta[name="meflex-version"]'); return m ? m.content : 'preview'; };
+const bkPad = (n) => String(n).padStart(2, '0');
+const bkFileName = (d = new Date()) => `meflex-backup-${d.getFullYear()}-${bkPad(d.getMonth() + 1)}-${bkPad(d.getDate())}.json`;
+function bkMake() {
+  const now = new Date();
+  return { name: bkFileName(now), text: JSON.stringify({ format: BK.FORMAT, formatVersion: BK.VERSION, appVersion: bkAppVersion(), createdAt: now.toISOString(), data: bkSnapshot() }, null, 1) };
+}
+
+// ---- strict checks ----
+const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v) && Object.getPrototypeOf(v) === Object.prototype;
+const isStr = (v, max) => typeof v === 'string' && v.length <= max;
+const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
+const isPrim = (v) => v === null || typeof v === 'boolean' || isNum(v) || isStr(v, 200);
+const BAD_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+function bkSafeShape(v, depth = 0) { // no prototype tricks, no deep nesting
+  if (depth > 5) return false;
+  if (Array.isArray(v)) return v.every(x => bkSafeShape(x, depth + 1));
+  if (v && typeof v === 'object') return Object.keys(v).every(k => !BAD_KEYS.has(k) && bkSafeShape(v[k], depth + 1));
+  return true;
+}
+const flatObj = (v, val) => isObj(v) && Object.keys(v).length <= 200 && Object.values(v).every(val);
+const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+// Dates must be real ones (from 2020 to a day from now): a date thousands of years back would make the weekly-streak
+// walk take minutes. A session is at most a day long.
+const BK_MIN_AT = Date.UTC(2020, 0, 1), bkAtOk = (v) => isNum(v) && v >= BK_MIN_AT && v <= Date.now() + 864e5;
+// Setup answers: each one must be one of the app's own options (Stage 31 review: a string where a list belongs, or an
+// unknown value, broke Home and Settings after a restore).
+function bkProfileOk(v) {
+  if (!isObj(v)) return false;
+  return Object.keys(v).every(k => {
+    const x = v[k];
+    if (k === 'done' || k === 'skipped') return typeof x === 'boolean';
+    const q = SETUP_QS.find(q => q.key === k); if (!q) return false;
+    const vals = q.options.map(o => o[0]).concat(k === 'age' ? ['45-59', '60+'] : []); // Stage 32: answers saved before the age ranges changed
+    return q.type === 'many' ? Array.isArray(x) && x.length <= vals.length && x.every(y => vals.includes(y)) : x === null || vals.includes(x);
+  });
+}
+// Sound settings: only the app's own switches (true/false), volumes from 0 to 1, and a chime style the app has.
+function bkSoundOk(v) {
+  return isObj(v) && Object.keys(v).every(k => own(SOUND_DEFAULTS, k) && (k === 'chimeStyle' ? typeof v[k] === 'string' && own(CHIME_STYLES, v[k])
+    : typeof SOUND_DEFAULTS[k] === 'boolean' ? typeof v[k] === 'boolean' : isNum(v[k]) && v[k] >= 0 && v[k] <= 1));
+}
+const BK_CHECK = {
+  'meflex.history': (v) => Array.isArray(v) && v.length <= 1000 && v.every(x => isObj(x) && isStr(x.id, 80) && isStr(x.title, 120) && bkAtOk(x.at) && isNum(x.secs) && x.secs >= 0 && x.secs <= 86400 && Object.keys(x).every(k => ['id', 'title', 'at', 'secs'].includes(k))),
+  'meflex.mine': (v) => Array.isArray(v) && v.length <= 500 && v.every(x => isObj(x) && isStr(x.id, 40) && /^my-[a-z0-9]+$/.test(x.id) && isStr(x.name, 120) && Array.isArray(x.items) && x.items.length <= 50 && x.items.every(i => isStr(i, 40)) && (x.created === undefined || isNum(x.created)) && (x.edited === undefined || isNum(x.edited)) && Object.keys(x).every(k => ['id', 'name', 'items', 'created', 'edited'].includes(k))),
+  'meflex.saved': (v) => Array.isArray(v) && v.length <= 1000 && v.every(x => isObj(x) && isStr(x.id, 80) && bkAtOk(x.at) && Object.keys(x).every(k => ['id', 'at'].includes(k))),
+  'meflex.look': (v) => flatObj(v, isPrim),
+  'meflex.sound': bkSoundOk,
+  'meflex.profile': bkProfileOk,
+  'meflex.avatar': (v) => isStr(v, 20),
+  'meflex.homeTip': (v) => isStr(v, 20),
+  'meflex.plan': (v) => isObj(v) && Object.keys(v).every(k => ['start', 'ids', 'key', 'dismissed'].includes(k)) && bkAtOk(v.start) && Array.isArray(v.ids) && v.ids.length >= 1 && v.ids.length <= 3 && new Set(v.ids).size === v.ids.length && v.ids.every(x => isStr(x, 80)) && isStr(v.key, 400) && (v.dismissed === undefined || typeof v.dismissed === 'boolean'), // Stage 34
+  'meflex.reminder': (v) => isObj(v) && Object.keys(v).every(k => k === 'days' || k === 'time' || k === 'uid') && remDaysOk(v.days) && remTimeOk(v.time) && (v.uid === undefined || remUidOk(v.uid)), // Stage 32
+};
+// Hold times: seconds from 0 to 3600. The Stage 4 keys (meflex.times.<id>) may hold them as text, which the app reads with +x.
+const bkSecsOk = (x, legacy) => (isNum(x) || (legacy && isStr(x, 8) && /^\d{1,4}$/.test(x))) && +x >= 0 && +x <= 3600;
+const bkCheckValue = (k, v) => (BK.TIMES.test(k) ? flatObj(v, (x) => bkSecsOk(x, k.startsWith('meflex.times.'))) : !!(BK_CHECK[k] && BK_CHECK[k](v)));
+// Returns { ok: true, backup } or { ok: false, why } (a plain sentence for the person).
+function bkValidate(text) {
+  const no = (why) => ({ ok: false, why });
+  if (typeof text !== 'string' || !text.length) return no('This file is empty.');
+  if (text.length > BK.MAX_BYTES) return no('This file is too large to be a MeFlex backup.');
+  let b; try { b = JSON.parse(text); } catch (e) { return no('This file is not a MeFlex backup.'); }
+  if (!isObj(b) || !bkSafeShape(b) || b.format !== BK.FORMAT) return no('This file is not a MeFlex backup.');
+  if (b.formatVersion !== BK.VERSION) return no('This backup was made by a different version of MeFlex and can’t be restored here.');
+  const at = isStr(b.createdAt, 40) ? Date.parse(b.createdAt) : NaN;
+  if (!Number.isFinite(at) || !isObj(b.data) || !isStr(b.appVersion, 40) || Object.keys(b).some(k => !['format', 'formatVersion', 'appVersion', 'createdAt', 'data'].includes(k))) return no('This backup is incomplete or damaged.');
+  const keys = Object.keys(b.data);
+  if (keys.some(k => !bkKeyOk(k))) return no('This backup contains something MeFlex doesn’t recognise, so it wasn’t used.');
+  const bad = keys.find(k => !bkCheckValue(k, b.data[k])); if (bad) return no('This backup is incomplete or damaged.');
+  return { ok: true, backup: { at, appVersion: b.appVersion, data: b.data } };
+}
+function bkSummary(bk) {
+  const d = bk.data, n = (k) => Array.isArray(d[k]) ? d[k].length : 0, has = (k) => k in d;
+  const date = new Date(bk.at).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+  const parts = [`${n('meflex.history')} session${n('meflex.history') === 1 ? '' : 's'} in History`, `${n('meflex.mine')} own routine${n('meflex.mine') === 1 ? '' : 's'}`, `${n('meflex.saved')} saved`];
+  if (has('meflex.look') || has('meflex.sound') || has('meflex.profile')) parts.push('your settings and setup answers');
+  return { date, text: parts.join(', ') };
+}
+// All-or-nothing: write every key of `data` after removing the current ones; on any failure put the old ones back.
+function bkReplace(data) {
+  const before = bkSnapshot();
+  const write = (d) => { bkKeys().forEach(k => localStorage.removeItem(k)); Object.keys(d).forEach(k => localStorage.setItem(k, JSON.stringify(d[k]))); };
+  try { write(data); return before; } catch (e) { try { write(before); } catch (e2) {} return null; }
+}
+
+// ---- persistent storage: report only what the browser says ----
+// Wording from WebKit's own posts (see DECISIONS.md, Stage 31): in a Safari tab, Safari can delete a site's script-writable
+// storage after seven days of Safari use without visiting it; a Home Screen web app keeps its own count of days of use and
+// its first-party data is not expected to be deleted; data can still go under storage pressure or if the person clears it.
+// So: never promise the data is safe; a backup is the only sure protection.
+const PERSIST = { supported: !!(navigator.storage && navigator.storage.persist && navigator.storage.persisted), state: null, asked: false };
+function contextText() {
+  if (isIOS() && isStandalone()) return 'Your data is kept with the app on this phone.';
+  if (isIOS()) return 'Safari can clear MeFlex’s saved data if you don’t open it for a while.';
+  return 'Your browser can clear saved data, for example when space runs low or when you clear browsing data.';
+}
+function persistText() {
+  const p = !PERSIST.supported ? 'This browser doesn’t report whether it will keep MeFlex’s data.'
+    : PERSIST.state === true ? 'This browser reports that MeFlex’s data is in persistent storage.'
+    : PERSIST.state === false ? 'This browser hasn’t put MeFlex’s data in persistent storage.' : '';
+  return [contextText(), p, 'A backup is the only sure protection.'].filter(Boolean).join(' ');
+}
+function persistCheck() { if (!PERSIST.supported) { renderYourData(); return; } navigator.storage.persisted().then(v => { PERSIST.state = !!v; renderYourData(); }).catch(() => {}); }
+function persistAsk() { // after a user action (Start, Back up): ask once per visit
+  if (!PERSIST.supported || PERSIST.asked || PERSIST.state === true) return; PERSIST.asked = true;
+  navigator.storage.persist().then(v => { PERSIST.state = !!v; renderYourData(); }).catch(() => {});
+}
+
+// ---- Home Screen tip ----
+const isIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+function tipWanted() { return isIOS() && !isStandalone() && store.get(BK.TIP_KEY, '') !== 'off' && store.get(HIST_KEY, []).length > 0; }
+function renderHomeTip() { $('homeTip').hidden = !tipWanted(); }
+$('homeTipClose').onclick = () => { store.set(BK.TIP_KEY, 'off'); renderHomeTip(); $('browseAll').focus(); }; // focus moves on to the next control
+
+// ---- the Your data section ----
+function backupAge() { const at = store.get(BK.AT_KEY, 0); return at ? Math.floor((Date.now() - at) / 86400000) : null; }
+function renderYourData() {
+  if (!$('ydPersist')) return;
+  const pt = persistText(); if ($('ydPersist').textContent !== pt) $('ydPersist').textContent = pt; // only when it changes (not a live region)
+  const hist = store.get(HIST_KEY, []).length, age = backupAge();
+  $('ydNudge').textContent = !hist ? '' : age === null ? 'You haven’t made a backup yet.' : age > 30 ? `Your last backup was ${age} days ago.` : '';
+  $('ydNudge').hidden = !$('ydNudge').textContent;
+  $('ydLast').textContent = age === null ? '' : `Last backup: ${new Date(store.get(BK.AT_KEY, 0)).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}.`;
+  $('ydShare').hidden = !bkCanShare();
+  let undo = null; try { undo = sessionStorage.getItem(BK.UNDO_KEY); } catch (e) {}
+  $('ydUndoRow').hidden = !undo;
+}
+function bkCanShare() { try { return !!(navigator.canShare && navigator.share && navigator.canShare({ files: [new File(['{}'], 'meflex-backup.json', { type: 'application/json' })] })); } catch (e) { return false; } }
+function ydMsg(t) { $('ydMsg').textContent = t; }
+$('ydBackup').onclick = () => {
+  persistAsk();
+  const f = bkMake(), url = URL.createObjectURL(new Blob([f.text], { type: 'application/json' }));
+  const a = document.createElement('a'); a.href = url; a.download = f.name; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  store.set(BK.AT_KEY, Date.now()); renderYourData(); ydMsg(`Your backup file ${f.name} is ready. Choose Download if asked, then keep it somewhere safe, such as Files or iCloud Drive.`);
+};
+$('ydShare').onclick = () => {
+  persistAsk(); const f = bkMake();
+  const file = new File([f.text], f.name, { type: 'application/json' });
+  navigator.share({ files: [file], title: 'MeFlex backup' }).then(() => { store.set(BK.AT_KEY, Date.now()); renderYourData(); ydMsg(`Shared ${f.name}.`); }).catch(() => {}); // cancelled: nothing recorded
+};
+let BK_PENDING = null;
+$('ydRestore').onclick = () => { ydMsg(''); $('ydFile').value = ''; $('ydFile').click(); };
+$('ydFile').addEventListener('change', () => {
+  const file = $('ydFile').files && $('ydFile').files[0]; if (!file) return;
+  if (file.size > BK.MAX_BYTES) { ydMsg('This file is too large to be a MeFlex backup.'); return; }
+  const r = new FileReader();
+  r.onload = () => { const v = bkValidate(String(r.result)); if (!v.ok) { ydMsg(v.why); return; }
+    BK_PENDING = v.backup; const s = bkSummary(v.backup);
+    $('rsDate').textContent = `Backup from ${s.date}`; $('rsWhat').textContent = `It contains ${s.text}.`;
+    rsOpen(true); $('rsCancel').focus(); };
+  r.onerror = () => ydMsg('This file couldn’t be read.');
+  r.readAsText(file);
+});
+// While the question is open, everything behind it is inert, so Tab and VoiceOver stay on it; Escape is Cancel.
+function rsOpen(on) { $('restoreSheet').hidden = !on; ['settings', 'tabbar'].forEach(id => { const e = $(id); if (e) e.inert = on; }); }
+$('rsCancel').onclick = () => { BK_PENDING = null; rsOpen(false); $('ydRestore').focus(); };
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('restoreSheet').hidden) $('rsCancel').click(); });
+$('restoreSheet').addEventListener('click', (e) => { if (e.target === $('restoreSheet')) $('rsCancel').click(); });
+$('rsGo').onclick = () => {
+  if (!BK_PENDING) return;
+  const before = bkReplace(BK_PENDING.data);
+  if (!before) { rsOpen(false); $('ydRestore').focus(); ydMsg('Couldn’t restore on this device just now; its storage may be full. Nothing was changed.'); return; }
+  // A dismissed Home Screen tip stays dismissed, whatever the backup says.
+  if (before[BK.TIP_KEY] === 'off') store.set(BK.TIP_KEY, 'off');
+  // The Undo copy also keeps this phone's last-backup date, so Undo puts that back too.
+  let undoKept = false; try { sessionStorage.setItem(BK.UNDO_KEY, JSON.stringify({ data: before, at: Date.now(), backupAt: store.get(BK.AT_KEY, 0) })); undoKept = true; } catch (e) {}
+  store.set(BK.AT_KEY, BK_PENDING.at); BK_PENDING = null;
+  try { sessionStorage.setItem('meflex.afterRestore', undoKept ? 'restored' : 'restored-noundo'); } catch (e) {}
+  location.reload(); // every screen starts again from the restored data
+};
+$('ydUndo').onclick = () => {
+  let u = null; try { u = JSON.parse(sessionStorage.getItem(BK.UNDO_KEY)); } catch (e) {}
+  if (!u || !isObj(u.data)) { renderYourData(); return; }
+  if (!bkReplace(u.data)) { ydMsg('Couldn’t undo on this device just now. Nothing was changed.'); return; }
+  try { if (isNum(u.backupAt) && u.backupAt > 0) localStorage.setItem(BK.AT_KEY, JSON.stringify(u.backupAt)); else localStorage.removeItem(BK.AT_KEY); } catch (e) {}
+  try { sessionStorage.removeItem(BK.UNDO_KEY); sessionStorage.setItem('meflex.afterRestore', 'undone'); } catch (e) {}
+  location.reload();
+};
+(function afterReload() { // say what happened, once, on Settings → Your data
+  let m = null; try { m = sessionStorage.getItem('meflex.afterRestore'); sessionStorage.removeItem('meflex.afterRestore'); } catch (e) {}
+  if (!m) return; BK.notice = m === 'restored' ? 'Your backup was restored. You can undo this until you close MeFlex.'
+    : m === 'restored-noundo' ? 'Your backup was restored. This device couldn’t keep a copy for Undo.' : 'The restore was undone. Your earlier data is back.';
+})();
+persistCheck();
+// After a restore or undo the page reloads; show what happened in Settings → Your data.
+if (BK.notice) setTimeout(() => { if (current === 'setup') return; openSettings('home'); ydMsg(BK.notice); $('yourData').scrollIntoView({ block: 'start' }); $('ydMsg').focus(); }, 0); // focus the notice so VoiceOver reads it
+
+// ---------- Reminders: a repeating calendar event (Stage 32) ----------
+// MeFlex can't send notifications itself (a web page on iPhone can't, and nothing runs on a server). Instead the person
+// picks days and a time, and "Add to my calendar" gives them one .ics file (RFC 5545) that their calendar app turns into
+// a weekly repeating event with an alert. The choice is kept on this device (meflex.reminder); nothing is sent anywhere;
+// no analytics. The event is changed or removed in the calendar app, not here.
+const REM_KEY = 'meflex.reminder';
+const REM_DAYS = [['MO', 'Mon', 'Monday'], ['TU', 'Tue', 'Tuesday'], ['WE', 'Wed', 'Wednesday'], ['TH', 'Thu', 'Thursday'], ['FR', 'Fri', 'Friday'], ['SA', 'Sat', 'Saturday'], ['SU', 'Sun', 'Sunday']];
+const REM_DEFAULT = { days: ['MO', 'WE', 'FR'], time: '08:00' };
+const remTimeOk = (t) => typeof t === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(t);
+const remDaysOk = (d) => Array.isArray(d) && d.length <= 7 && d.every(x => REM_DAYS.some(([c]) => c === x)) && new Set(d).size === d.length;
+const remUidOk = (u) => typeof u === 'string' && /^[0-9a-f]{24}@meflex\.app$/.test(u);
+const remNewUid = () => `${Array.from(crypto.getRandomValues(new Uint8Array(12)), b => b.toString(16).padStart(2, '0')).join('')}@meflex.app`;
+function remLoad() { const v = store.get(REM_KEY, null); const ok = v && typeof v === 'object' && remDaysOk(v.days) && remTimeOk(v.time);
+  return { days: ok ? v.days.slice() : REM_DEFAULT.days.slice(), time: ok ? v.time : REM_DEFAULT.time, uid: ok && remUidOk(v.uid) ? v.uid : null }; }
+const REM = remLoad();
+// The event keeps one UID (made on the first "Add to my calendar"), so a calendar that recognises it updates the event
+// instead of adding a second one (review, Stage 32).
+const remSave = () => store.set(REM_KEY, { days: REM.days, time: REM.time, ...(REM.uid ? { uid: REM.uid } : {}) });
+
+// ---- the .ics file ----
+const icsEsc = (s) => String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+// Fold a content line at 75 octets (UTF-8), continuing with CRLF and one space (RFC 5545 §3.1). Never splits a character.
+function icsFold(line) {
+  const enc = new TextEncoder(), out = []; let cur = '', n = 0, limit = 75;
+  for (const ch of line) { const b = enc.encode(ch).length; if (n + b > limit) { out.push(cur); cur = ' '; n = 1; limit = 75; } cur += ch; n += b; }
+  out.push(cur); return out.join('\r\n');
+}
+const icsPad = (n) => String(n).padStart(2, '0');
+// Floating local time (no Z, no TZID). The time comes from the chosen h:m, never read back from the Date, so a time that
+// doesn't exist on a spring-forward day (02:30) isn't moved an hour for every later week (review, Stage 32).
+const icsLocal = (d, time) => `${d.getFullYear()}${icsPad(d.getMonth() + 1)}${icsPad(d.getDate())}T${time.replace(':', '')}00`;
+const icsUtc = (d) => `${d.getUTCFullYear()}${icsPad(d.getUTCMonth() + 1)}${icsPad(d.getUTCDate())}T${icsPad(d.getUTCHours())}${icsPad(d.getUTCMinutes())}${icsPad(d.getUTCSeconds())}Z`;
+// The first chosen day at the chosen time that is still ahead (today counts if the time hasn't passed).
+function remFirst(days, time, now = new Date()) {
+  const [h, m] = time.split(':').map(Number), order = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+  for (let k = 0; k < 8; k++) { const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + k, 12, 0, 0, 0), d = new Date(day.getFullYear(), day.getMonth(), day.getDate(), h, m, 0, 0);
+    if (days.includes(order[day.getDay()]) && d > now) return day; } // the day (taken at noon, clear of clock changes)
+  return null;
+}
+const remUrl = () => { try { return /^https?:$/.test(location.protocol) ? location.origin + location.pathname : ''; } catch (e) { return ''; } }; // no URL line from file: or a sandboxed preview
+function icsReminder({ days, time, now = new Date(), url = remUrl(), uid } = {}) {
+  const sorted = REM_DAYS.map(([c]) => c).filter(c => days.includes(c)), start = remFirst(sorted, time, now);
+  uid = uid || remNewUid();
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//MeFlex//Stretch reminder//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'BEGIN:VEVENT', `UID:${uid}`, `DTSTAMP:${icsUtc(now)}`, `DTSTART:${icsLocal(start, time)}`, 'DURATION:PT10M', `RRULE:FREQ=WEEKLY;BYDAY=${sorted.join(',')}`,
+    `SUMMARY:${icsEsc('MeFlex stretch')}`, `DESCRIPTION:${icsEsc('Time for a few minutes of stretching in MeFlex. To stop these reminders, delete this event in your calendar app.')}`,
+    ...(url ? [`URL:${url}`] : []), 'TRANSP:TRANSPARENT',
+    'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${icsEsc('MeFlex stretch')}`, 'TRIGGER:PT0M', 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'];
+  return lines.map(icsFold).join('\r\n') + '\r\n';
+}
+
+// ---- Settings → Reminders ----
+function renderReminders() {
+  if (!$('remDays')) return;
+  $('remDays').innerHTML = REM_DAYS.map(([c, short, long]) => `<button type="button" class="remday" data-remday="${c}" aria-pressed="${REM.days.includes(c)}" aria-label="${long}">${short}</button>`).join('');
+  if ($('remTime').value !== REM.time) $('remTime').value = REM.time;
+}
+$('remDays').addEventListener('click', (e) => { const b = e.target.closest('[data-remday]'); if (!b) return; const c = b.dataset.remday;
+  REM.days = REM.days.includes(c) ? REM.days.filter(x => x !== c) : REM_DAYS.map(([x]) => x).filter(x => x === c || REM.days.includes(x));
+  remSave(); b.setAttribute('aria-pressed', String(REM.days.includes(c))); $('remMsg').textContent = ''; });
+// iOS can give "08:00:00" or an empty value (Clear): keep hours and minutes; an empty box shows the saved time again.
+$('remTime').addEventListener('change', () => { const v = ($('remTime').value || '').slice(0, 5); if (remTimeOk(v)) { REM.time = v; remSave(); } else $('remTime').value = REM.time; $('remMsg').textContent = ''; });
+$('remAdd').onclick = () => {
+  if (!REM.days.length) { $('remMsg').textContent = 'Choose at least one day first.'; return; }
+  const typed = ($('remTime').value || '').slice(0, 5); if (remTimeOk(typed) && typed !== REM.time) { REM.time = typed; remSave(); } else if (!remTimeOk(typed)) $('remTime').value = REM.time;
+  const again = !!REM.uid; if (!REM.uid) { REM.uid = remNewUid(); remSave(); }
+  const url = URL.createObjectURL(new Blob([icsReminder({ days: REM.days, time: REM.time, uid: REM.uid })], { type: 'text/calendar;charset=utf-8' }));
+  const a = document.createElement('a'); a.href = url; a.download = 'meflex-reminder.ics'; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  const say = (t) => { $('remMsg').textContent = ''; requestAnimationFrame(() => { $('remMsg').textContent = t; }); }; // cleared first, so a repeat is announced again
+  say('Your calendar file is ready. Open it and choose Add to put the repeating event in your calendar.' + (again ? ' If the earlier MeFlex event is still there, delete it so you don’t get two.' : ''));
+};
+
+// ---------- Your starting plan (Stage 34) ----------
+// Three routines for the first week, chosen by the existing Recommended scoring from the setup answers already given
+// (no new questions: the intro already asks session length, areas and level). For variety over the week, the plan takes
+// the best-scoring routine from each of three different categories when it can. It is fixed for the week once made and
+// is rebuilt only when the answers change. A day is ticked when History has a session of that routine since the plan
+// started. Stored on this device only (meflex.plan: start, ids, the answers it was built from, dismissed); hidden from
+// session replay; no analytics; no medical screening.
+const PLAN_KEY = 'meflex.plan', PLAN_DAYS = 7;
+const planAnswersKey = () => JSON.stringify(['age', 'level', 'focus', 'equipment', 'minutes', 'avoid'].map(k => Array.isArray(profile[k]) ? profile[k].slice().sort() : profile[k] ?? null)); // order of choices doesn't matter
+const planMissing = () => ['level', 'minutes', 'focus'].filter(k => k === 'focus' ? !(profile.focus || []).length : !profile[k]);
+// Three different sessions: a day is skipped if most of its tailored stretches (over 60%) are already in a picked day (a
+// ladder step can tailor to the same stretches as its base routine), and hockey routines are left to the Hockey screen
+// (review, Stage 34). Then fill from the next-best scores.
+function planPick() {
+  const recs = recommendations(ROUTINES.length).filter(x => x.r.cat !== 'hockey'), out = [], cats = new Set(); // every candidate, so three different sessions can be found
+  const ids = (x) => new Set((x.plan ? x.plan.items.map(([id]) => id) : x.r.items.map(([id]) => id)));
+  const same = (a, b) => { const A = ids(a), B = ids(b); let n = 0; A.forEach(i => { if (B.has(i)) n++; }); return n / Math.max(1, Math.min(A.size, B.size)) > 0.6; };
+  const fresh = (x) => !out.some(y => same(x, y));
+  const catOfX = (x) => (x.r.ladder ? 'ladder' : x.r.cat || 'mine');
+  for (const x of recs) if (out.length < 3 && !cats.has(catOfX(x)) && fresh(x)) { out.push(x); cats.add(catOfX(x)); }
+  for (const x of recs) if (out.length < 3 && !out.includes(x) && fresh(x)) out.push(x); // fewer categories: next-best different session
+  for (const x of recs) if (out.length < 3 && !out.includes(x)) out.push(x); // still short: next best
+  return out;
+}
+function planGet() {
+  if (!profile.done) return null;
+  let p = store.get(PLAN_KEY, null); const key = planAnswersKey();
+  const valid = p && typeof p === 'object' && Number.isFinite(p.start) && p.start <= Date.now() + 864e5 && Array.isArray(p.ids) && p.ids.length >= 1 && p.ids.length <= 3 && new Set(p.ids).size === p.ids.length && p.ids.every(id => typeof id === 'string' && R(id));
+  if (!valid) p = { start: Date.now(), ids: planPick().map(x => x.r.id), key, dismissed: false };
+  else if (p.key !== key) p = { ...p, ids: planPick().map(x => x.r.id), key }; // answers changed in Settings: rebuild, same week
+  else return p;
+  store.set(PLAN_KEY, p); return p;
+}
+// Each day is tailored from the routine itself (not looked up in today's Recommended list), so a finished ladder step or
+// the time of day can't change a row (review, Stage 34).
+function planRec(id) { const r = R(id); if (!hasRoutineAnswers()) return { r, plan: null, why: r.why || catOf(r).blurb };
+  const p = tailorPrefs(), t = tailor(r, p); return { r, plan: t, why: whyLine(t, p) }; }
+const planActive = (p, now = Date.now()) => !!p && !p.dismissed && now < p.start + PLAN_DAYS * 864e5;
+function planDone(p) { const h = store.get(HIST_KEY, []); return p.ids.map(id => h.some(x => x.id === id && x.at >= p.start)); }
+let PLAN_RECS = [];
+function renderPlan() {
+  const box = $('homePlan'); if (!box) return;
+  const p = planGet(); if (!planActive(p)) { box.hidden = true; return; }
+  const done = planDone(p), all = done.every(Boolean);
+  PLAN_RECS = p.ids.map(planRec);
+  $('planSub').textContent = all ? 'All three done. Nice going. Keep on with any routine, or dismiss this plan.' : 'Three routines for this week, chosen from your setup answers. Do them on any three days.';
+  $('planList').innerHTML = PLAN_RECS.map((x, i) => { const mins = fmtMin(secsOf(itemsOf(x.r, x.plan ? x.plan.items : undefined)));
+    return `<li><button class="planrow${done[i] ? ' done' : ''}" data-plan="${i}" aria-label="Day ${i + 1}: ${esc(x.r.title)}${/\bmin\b/.test(x.why) ? '' : ', ' + mins}. ${esc(x.why)}${done[i] ? '. Done' : ''}"><span class="pday" aria-hidden="true">Day ${i + 1}</span><span class="pt" aria-hidden="true"><b>${esc(x.r.title)}</b><small>${esc(x.why)}</small></span><span class="pdone" aria-hidden="true">${done[i] ? 'Done' : mins}</span></button></li>`; }).join('');
+  const miss = planMissing(); $('planAnswers').hidden = !miss.length;
+  box.hidden = false;
+}
+$('planList').addEventListener('click', (e) => { const b = e.target.closest('[data-plan]'); if (!b) return; const x = PLAN_RECS[+b.dataset.plan]; if (x) openRoutine(x.r.id, 'home', x.plan || undefined); });
+$('planClose').onclick = () => { const p = planGet(); if (p) store.set(PLAN_KEY, { ...p, dismissed: true }); renderPlan(); (!$('homeTip').hidden ? $('homeTipClose') : document.querySelector('#recMore button') || $('browseAll')).focus({ preventScroll: false }); }; // the next thing on Home
+$('planAnswers').onclick = () => openSetup('settings');
+
 // ---------- Setup flow ----------
 // One question per screen, Skip on every screen. Answers stay on this device (profile in look.js)
 // and are never sent to analytics. The whole screen is data-private, so replay never records it.
@@ -3584,7 +4048,8 @@ const SETUP_QS = [
     options: [['woman', 'Woman'], ['man', 'Man']],
     note: (v) => v === 'man' ? 'A man figure isn’t drawn yet, so stretches show as plain circles for now.' : '' },
   { key: 'age', type: 'one', title: 'What’s your age range?', sub: 'Used to suggest suitable holds.',
-    options: [['under30', 'Under 30'], ['30-44', '30–44'], ['45-59', '45–59'], ['60+', '60+']] },
+    options: [['under30', 'Under 30'], ['30-44', '30–44'], ['45-64', '45–64'], ['65+', '65+']],
+    note: (v) => v === '60+' ? 'Your earlier answer was 60+. Choose the range that fits now, or leave it as it is.' : '' }, // Stage 32: ranges end at 64 / start at 65 (older-adult holds from 65)
   { key: 'level', type: 'one', title: 'How flexible are you today?',
     options: [['beginner', 'Beginner', 'Tight; touching your toes is hard'], ['intermediate', 'Intermediate', 'You stretch now and then'], ['advanced', 'Advanced', 'You stretch often and go deep']] },
   { key: 'focus', type: 'many', title: 'Which areas do you want to work on?', sub: 'Choose any.',
@@ -3597,6 +4062,7 @@ const SETUP_QS = [
     options: [['kneeling', 'Kneeling'], ['floor', 'Lying on the floor'], ['overhead', 'Arms overhead'], ['balance', 'One-leg balance']] },
 ];
 const SETUP_LABELS = Object.fromEntries(SETUP_QS.map(q => [q.key, Object.fromEntries(q.options.map(([v, n]) => [v, n]))]));
+SETUP_LABELS.age['60+'] = '60+'; // Stage 32: an answer given before the ranges changed is kept and shown as it was until changed
 const SETUP = { i: 0, from: 'first', draft: null };
 // Stage 27: the weekly goal on the first screen (with the guide choice). The same setting, value (look.goal) and row
 // as Settings → Weekly goal; already set to the current goal (3 days unless changed), so Skip keeps it.
