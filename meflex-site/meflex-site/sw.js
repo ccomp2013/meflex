@@ -5,7 +5,7 @@
 // those go to the network exactly as without it. It sends nothing of its own except fetching FILES from the site.
 // It never stores personal data: history, routines, settings and answers live in the page's own storage, not here.
 // A new version waits until the person taps Reload ("A new version is ready"); it never takes over by itself.
-const VERSION = 'c4ca6b930af3';
+const VERSION = 'fe7e355d86ac';
 const FILES = ["index.html", "manifest.webmanifest", "apple-touch-icon.png", "icon-192.png", "icon-512.png"];
 const BASE = self.registration.scope; // the folder sw.js lives in, e.g. https://example.github.io/meflex/meflex-site/meflex-site/
 // Hardening: cache names carry a tag of this folder, so another copy of MeFlex on the same address keeps its own offline

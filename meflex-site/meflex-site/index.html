@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="c4ca6b930af3">
+<meta name="meflex-version" content="fe7e355d86ac">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -238,6 +238,8 @@ h1.mid { font-size: inherit; font-weight: inherit; margin: 0; line-height: inher
 /* Stage 33: the five "What feels tight?" chips wrap, so all are visible */
 #tightChips { flex-wrap: wrap; overflow: visible; }
 #listTitle:focus, #seriesTitle:focus { outline: none; }
+/* Headings are focused only by script (screen changes, for VoiceOver); they are not controls, so they show no outline. Real controls keep their focus rings. */
+h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus { outline: none; }
 #seriesGo { width: 100%; margin: 8px 0 4px; }
 #seriesTitle { overflow-wrap: anywhere; }
 /* Stage 34: Your starting plan */
