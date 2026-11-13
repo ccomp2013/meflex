@@ -13,12 +13,12 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="b801cdf19cd9">
+<meta name="meflex-version" content="fe7e355d86ac">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'"><!-- hardening: the font no longer holds up the first paint (system font until it arrives, and offline) -->
 <style>
 /* Layout: one screen at a time, a single centered column sized to the phone; dark only, by design. */
 :root {
@@ -29,6 +29,8 @@
   --bg: #0E1113; --raised: #171B1E; --line: #252B2F;
   --ink: #F2EEE8; --muted: #8E979C; --accent: #C9785A;
   --ring-track: #22282C;
+  /* hardening (Hallmark floor): every colour is a token */
+  --sage: #6F9A86; --dusk: #5A74A6; --sand: #D8B678; --on-danger: #fff; --danger: #B5533F; --danger-ink: #E9A08A; --danger-line: #5A3A33;
   --sat: 0px; --sab: 0px; /* extra top/bottom safe-area space; the site build sets these to the phone's insets */
   --font: "Inter", -apple-system, "SF Pro Text", system-ui, sans-serif;
   color-scheme: dark;
@@ -43,7 +45,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; }
 .icon:active { background: var(--raised); }
 .icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.bar { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; min-height: 52px; }
+.bar { display: grid; grid-template-columns: minmax(44px, auto) 1fr minmax(44px, auto); align-items: center; min-height: 52px; } /* hardening: side buttons keep their width at large text */
 .bar .mid { text-align: center; color: var(--muted); font-size: 15px; font-weight: 500; font-variant-numeric: tabular-nums; }
 .plate { width: 100%; height: 100%; display: block; }
 
@@ -99,9 +101,9 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 #info { overflow-y: auto; }
 #info .head { display: flex; gap: 16px; align-items: center; margin: 6px 0 22px; }
 #info .head .mini { width: 72px; height: 72px; flex: none; }
-#info h2 { font-size: 26px; margin: 0; letter-spacing: -0.4px; line-height: 1.15; }
+#info h1, #info h2 { font-size: 26px; margin: 0; letter-spacing: -0.4px; line-height: 1.15; }
 #info .focus { color: var(--accent); font-size: 15px; font-weight: 600; margin-top: 2px; }
-#info h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 22px 0 10px; font-weight: 600; }
+#info h3 { font-size: 13px; color: var(--muted); margin: 22px 0 10px; font-weight: 600; }
 #info ol { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 14px; }
 #info ol li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; gap: 10px; max-width: 60ch; }
 #info ol li::before { content: counter(s); width: 26px; height: 26px; border-radius: 50%; background: var(--raised); color: var(--muted); font-size: 13px; font-weight: 600; display: grid; place-items: center; }
@@ -135,7 +137,8 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .tabbed .scroll { padding-block: 22px calc(96px + env(safe-area-inset-bottom, 0px)); }
 .title { font-size: 34px; line-height: 1.1; letter-spacing: -0.6px; margin: 0; text-wrap: balance; }
 .lede { color: var(--muted); margin: 6px 0 0; }
-.sec { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin: 30px 0 12px; }
+.sec { font-size: 13px; color: var(--muted); font-weight: 600; margin: 30px 0 12px; }
+/* Hardening (Hallmark floor): labels in sentence case, no tracked capitals */
 .sec span { color: var(--muted); margin-left: 4px; } /* axe and Hallmark: was about 2.5:1, now 6.4:1 */
 .rows { list-style: none; margin: 0; padding: 0; }
 .row { width: 100%; display: flex; align-items: center; gap: 14px; padding: 10px 0; text-align: left; border-top: 1px solid var(--line); }
@@ -169,7 +172,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .card { flex: none; width: 200px; display: grid; gap: 2px; align-content: start; text-align: left; scroll-snap-align: start; }
 .card .cover { width: 200px; height: 200px; margin-bottom: 10px; }
 .card .why { color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.35; }
-.card .whylabel, .rwhy b { display: block; color: var(--accent); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.card .whylabel, .rwhy b { display: block; color: var(--accent); font-size: 12px; font-weight: 600; }
 .rwhy small { display: block; color: var(--muted); font-size: 12px; margin-top: 6px; }
 .rwhy { margin: -10px 0 20px; padding: 12px 14px; border-radius: 14px; background: var(--raised); font-size: 14px; color: var(--ink); }
 .card .n { font-size: 18px; font-weight: 600; letter-spacing: -0.2px; }
@@ -192,7 +195,6 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .blank b { color: var(--ink); font-size: 18px; }
 .blank .ghost { padding: 0 22px; margin-top: 8px; }
 /* Sub-screen header */
-.subhead { padding-top: 6px; }
 /* Routine screen extras */
 #rList .label.link { text-align: left; display: grid; }
 #rList .label .sub { color: var(--muted); font-size: 13px; }
@@ -202,7 +204,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .setrow { border-top: 1px solid var(--line); padding-bottom: 12px; }
 .setrow:first-child { border-top: 0; }
 .setrow .opt { border-top: 0; }
-.setrow.off .vol { opacity: .45; }
+.setrow.off .vol input { opacity: .45; } /* hardening: the % text keeps full contrast (it was 2.2:1) */
 .vol { display: flex; align-items: center; gap: 12px; }
 .vol svg { width: 18px; height: 18px; stroke: var(--muted); fill: none; stroke-width: 2; stroke-linejoin: round; flex: none; }
 .vol output { width: 42px; text-align: right; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
@@ -222,7 +224,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .sw { position: relative; cursor: pointer; }
 .sw input, .seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .sw span { display: block; width: 34px; height: 34px; border-radius: 50%; box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--line); }
-.sw span i { display: block; width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(#C9785A 0 25%, #6F9A86 0 50%, #5A74A6 0 75%, #D8B678 0); }
+.sw span i { display: block; width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(var(--accent) 0 25%, var(--sage) 0 50%, var(--dusk) 0 75%, var(--sand) 0); }
 .sw input:checked + span { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--ink); }
 .sw input:focus-visible + span, .seg input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 6px; }
 .segs { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -232,9 +234,14 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 #restoreBtn { width: 100%; margin-top: 30px; }
 #restoreBtn.armed { border-color: var(--accent); color: var(--accent); }
 #ydMsg:focus { outline: none; }
+h1.mid { font-size: inherit; font-weight: inherit; margin: 0; line-height: inherit; } /* hardening: the builder title is the screen heading */
 /* Stage 33: the five "What feels tight?" chips wrap, so all are visible */
 #tightChips { flex-wrap: wrap; overflow: visible; }
-#listTitle:focus { outline: none; }
+#listTitle:focus, #seriesTitle:focus { outline: none; }
+/* Headings are focused only by script (screen changes, for VoiceOver); they are not controls, so they show no outline. Real controls keep their focus rings. */
+h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus { outline: none; }
+#seriesGo { width: 100%; margin: 8px 0 4px; }
+#seriesTitle { overflow-wrap: anywhere; }
 /* Stage 34: Your starting plan */
 #planSub { color: var(--muted); font-size: 14px; margin: 4px 8px 0 0; }
 .planlist { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
@@ -262,7 +269,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .fchip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .count { color: var(--muted); font-size: 13px; margin: 14px 0 0; font-variant-numeric: tabular-nums; }
 .needs { margin-top: 30px; border-top: 1px solid var(--line); padding-top: 14px; }
-.needs summary { cursor: pointer; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.needs summary { min-height: 44px; cursor: pointer; font-size: 13px; color: var(--muted); font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; }
 .needs summary::-webkit-details-marker { display: none; }
 .needs summary::after { content: "Show"; text-transform: none; letter-spacing: 0; color: var(--accent); font-weight: 600; }
 .needs[open] summary::after { content: "Hide"; }
@@ -315,7 +322,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .mpct { position: absolute; inset: 0; display: grid; place-items: center; font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .mtext { min-width: 0; display: grid; gap: 2px; }
 .mtext b { font-size: 17px; }
-.mtarget { color: var(--muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.mtarget { color: var(--muted); font-size: 12px; font-weight: 600; }
 .mtext p { margin: 4px 0 0; font-size: 14px; }
 .mtext .mini { font-size: 12px; line-height: 1.4; }
 .cal { margin-top: 22px; }
@@ -341,10 +348,10 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .excs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
 .chip.small { height: 30px; padding: 0 11px; font-size: 13px; color: var(--muted); }
 .understood { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 16px 0 4px; font-size: 13px; }
-.understood span { color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: 12px; margin-right: 2px; }
+.understood span { color: var(--accent); font-weight: 600; font-size: 12px; margin-right: 2px; }
 .understood i { font-style: normal; background: var(--raised); border-radius: 12px; padding: 3px 9px; }
 #descOut .row .why { display: block; color: var(--muted); font-size: 12.5px; margin-top: 4px; line-height: 1.35; }
-#descOut .row .whylabel { display: block; color: var(--accent); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+#descOut .row .whylabel { display: block; color: var(--accent); font-size: 11px; font-weight: 600; }
 #descOut .row em { font-style: normal; color: var(--accent); font-size: 12px; font-weight: 600; margin-left: 4px; }
 .descfail { color: var(--muted); background: var(--raised); border-radius: 14px; padding: 12px 14px; margin: 14px 0 0; font-size: 14px; }
 /* Ice hockey */
@@ -361,12 +368,12 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .lstep .lnum { display: grid; place-items: center; background: var(--line); color: var(--ink); font-weight: 700; font-size: 17px; }
 .lstep .why { display: block; color: var(--muted); font-size: 12.5px; margin-top: 4px; line-height: 1.35; }
 .lmark { font-size: 13px; font-weight: 600; margin-left: 4px; }
-.lmark.done { color: var(--sage, #6F9A86); } .lmark.next { color: var(--accent); }
+.lmark.done { color: var(--sage); } .lmark.next { color: var(--accent); }
 .youthnote { margin: 0 0 12px; padding: 10px 14px; border-radius: 12px; border: 1.5px solid var(--accent); color: var(--ink); font-size: 14px; font-weight: 500; }
 #rYouth { margin: -8px 0 18px; } #infoYouth { margin: 0 0 6px; }
 .reviewnote { margin: 30px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--raised); color: var(--muted); font-size: 13px; }
-.ghost.danger { width: 100%; color: #E9A08A; border-color: #5A3A33; }
-.dangercta { background: #B5533F; color: #fff; } /* white on this red is 4.9:1, so it stays */
+.ghost.danger { width: 100%; color: var(--danger-ink); border-color: var(--danger-line); }
+.dangercta { background: var(--danger); color: var(--on-danger); } /* white on this red is 4.9:1, so it stays */
 .resettext { color: var(--muted); font-size: 15px; margin: 0 0 14px; }
 /* Tab bar */
 .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: flex; justify-content: center; gap: 8px;
@@ -390,10 +397,6 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .progstrip .pgtext b small { font-weight: 400; margin-left: 4px; }
 .progstrip b { font-size: var(--fs-body); font-weight: 600; }
 .progstrip small { color: var(--muted); font-size: var(--fs-xs); }
-.pgdots { display: flex; gap: 6px; }
-.pgdots i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--line); box-sizing: border-box; }
-.pgdots i.done { background: var(--accent); border-color: var(--accent); }
-.pgdots i.today { box-shadow: 0 0 0 1.5px var(--raised), 0 0 0 3px var(--ink); }
 .pgpct { display: grid; justify-items: end; text-align: right; }
 .pgpct b { font-size: var(--fs-h2); font-variant-numeric: tabular-nums; }
 .morelist { display: grid; gap: var(--sp2); }
@@ -410,7 +413,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .title, #routine h1 { font-size: var(--fs-title); letter-spacing: -0.5px; }
 .q { font-size: 28px; }
 .lede, .desc { font-size: var(--fs-small); line-height: 1.5; }
-.sec { margin: 28px 0 var(--sp3); font-size: var(--fs-label); letter-spacing: .08em; }
+.sec { margin: 28px 0 var(--sp3); font-size: var(--fs-label); }
 .row { padding: var(--sp3) 0; gap: var(--sp3); min-height: 72px; }
 .row .thumb, .list .thumb { width: 56px; height: 56px; }
 .row .n, .list .n { font-size: var(--fs-body); }
@@ -464,7 +467,7 @@ html, body, button, a, input, label, select, textarea, summary { touch-action: m
 .sides2 svg { width: 15px; height: 15px; stroke: var(--muted); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .upnext { position: absolute; top: 1%; right: 0; transform: translateX(30%); width: 66px; padding: 6px 6px 5px; border-radius: var(--r-note); background: var(--raised); border: 1px solid var(--line); display: grid; justify-items: center; gap: 3px; pointer-events: none; box-shadow: 0 4px 14px rgba(0,0,0,.35); }
 .upnext .fig { width: 44px; height: 44px; }
-.upnext b { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); white-space: nowrap; }
+.upnext b { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
 /* ---------- Routine and stretch pages (Stage 17) ---------- */
 #info .isec h3 { margin-top: var(--sp5); }
 #info .isub { font-size: var(--fs-small); font-weight: 600; color: var(--ink); margin: var(--sp3) 0 var(--sp2); }
@@ -519,14 +522,15 @@ html, body, button, a, input, label, select, textarea, summary { touch-action: m
 #done .addmsg:empty { display: none; }
 /* ---------- Stats and history (Stage 19) ---------- */
 .tiles { list-style: none; margin: var(--sp4) 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp2); }
+@media (max-width: 300px) { .tiles { grid-template-columns: 1fr; } .cd { width: auto; min-width: 0; } .wkdots { gap: 2px; } .wd { min-width: 0; } .wd i { width: 100%; max-width: 28px; height: auto; aspect-ratio: 1; } .meter { flex-wrap: wrap; } } /* hardening: 200% zoom */
+.bar .mid { min-width: 0; overflow-wrap: anywhere; } /* hardening: a long title never pushes Save off screen */
 .tile2 { background: var(--raised); border-radius: var(--r-card); padding: var(--sp3) var(--sp4); display: grid; gap: 2px; align-content: start; min-height: 84px; }
-.tile2 .tl { color: var(--muted); font-size: var(--fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.tile2 .tl { color: var(--muted); font-size: var(--fs-label); font-weight: 600; }
 .tile2 .tv { font-size: var(--fs-h2); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink); line-height: 1.2; }
 .tile2 .tv.small { font-size: var(--fs-body); }
 .tile2 .ts { color: var(--muted); font-size: var(--fs-xs); line-height: 1.35; }
 .tile2.zero .tv { color: var(--muted); }
 .tile2 .tv .flame { width: 18px; height: 18px; vertical-align: -2px; margin-right: 4px; }
-.histfilled .blank { padding-top: 8vh; }
 .flame.lit-static { fill: var(--accent); stroke: var(--accent); }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } /* text for screen readers only */
 .alllist { list-style: none; margin: 0; padding: 0; }
@@ -543,8 +547,8 @@ html, body, button, a, input, label, select, textarea, summary { touch-action: m
 .tabbar button[aria-current="page"] { color: var(--ink); }
 /* Stage 27: one bubble behind the current tab; it slides when a finger moves across the bar (instant with Reduce Motion). */
 .tabbar { touch-action: none; } .tabbar button { position: relative; z-index: 1; touch-action: none; }
-.tabbubble { position: absolute; top: 4px; bottom: 4px; left: 4px; width: 0; border-radius: 20px; background: var(--line); z-index: 0; opacity: 0; transition: left .22s ease, width .22s ease; pointer-events: none; }
-@media (prefers-reduced-motion: reduce) { .tabbubble { transition: none; } }
+.tabbubble { position: absolute; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 20px; background: var(--line); z-index: 0; opacity: 0; transition: transform .22s ease; pointer-events: none; } /* hardening: moves with transform, not left/width */
+@media (prefers-reduced-motion: reduce) { .tabbubble { transition: none; } .opt input::after { transition: none; } } /* hardening: the switch knob too */
 /* Stage 27: profile icons */
 #homeProfile svg.av { width: 32px; height: 32px; }
 .avopt span svg.av, #homeProfile svg.av { stroke: none; } /* shapes carry their own colours */
@@ -671,7 +675,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <header class="homehead">
       <div class="hrow"><h1 class="title">MeFlex</h1>
         <button class="streakchip" id="homeStreak" data-private><svg class="flame" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5c-3.7 0-6.5-2.6-6.5-6.2 0-2.6 1.4-4.4 2.8-5.9.3 1.5 1 2.5 2.1 2.9C10.2 8.6 11.6 5.3 14.2 2.5c.3 3.3 4.3 5.9 4.3 11.5 0 4.6-2.9 7.5-6.5 7.5z"/></svg><span id="homeStreakN">0</span></button>
-        <button class="icon" id="homeProfile" aria-label="Profile and settings" data-private><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c.8-3.6 3.7-5.6 7.2-5.6s6.4 2 7.2 5.6"/></svg></button></div>
+        <button class="icon" id="homeProfile" aria-label="Profile and settings" data-private><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c.8-3.6 3.7-5.6 7.2-5.6s6.4 2 7.2 5.6"/></svg></button></div>
       <p class="lede" id="homeDate"></p>
       <div class="wdots home" id="homeDots" role="img" data-private></div>
     </header>
@@ -685,13 +689,13 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
       <button class="textlink" id="planAnswers" hidden>Add a few setup answers to tailor this plan</button>
     </section>
     <section class="hometip" id="homeTip" aria-labelledby="homeTipHead" hidden>
-      <div class="hometiprow"><h2 id="homeTipHead">Keep MeFlex on your Home Screen</h2><button class="icon" id="homeTipClose" aria-label="Dismiss this tip"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
+      <div class="hometiprow"><h2 id="homeTipHead">Keep MeFlex on your Home Screen</h2><button class="icon" id="homeTipClose" aria-label="Dismiss this tip"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
       <ol class="tipsteps"><li>Tap Share, the square with an arrow, in Safari.</li><li>Tap Add to Home Screen.</li><li>Tap Add.</li></ol>
       <p class="note">It then opens full screen, like an app, and works offline.</p>
     </section>
     <h2 class="sec">More for you</h2>
     <span class="sr" id="recMoreLabel">Recommended routines, swipe sideways</span><div class="morelist carousel" id="recMore" role="region" aria-labelledby="recMoreLabel"></div>
-    <button class="textlink" id="browseAll">Browse all routines<svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+    <button class="textlink" id="browseAll">Browse all routines<svg aria-hidden="true" class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
   </div>
 </section>
 
@@ -699,16 +703,16 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
   <div class="scroll">
     <h1 class="title">Explore</h1>
     <form class="search" id="searchForm" role="search">
-      <svg class="glass" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <svg aria-hidden="true" class="glass" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
       <input type="search" id="search" placeholder="Search routines" aria-label="Search routines" autocomplete="off" enterkeyhint="search">
-      <button type="button" class="icon clear" id="searchClear" aria-label="Clear search" hidden><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button>
+      <button type="button" class="icon clear" id="searchClear" aria-label="Clear search" hidden><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button>
     </form>
     <div id="searchResults" hidden><h2 class="sec">Routines</h2><ul class="rows" id="searchList"></ul><p class="empty" id="searchEmpty" hidden></p></div>
     <div id="exploreSections">
       <section class="describe" id="describe" data-private aria-labelledby="descHead">
         <h2 class="sec" id="descHead">Describe your routine</h2>
         <form class="descform" id="descForm" autocomplete="off">
-          <input type="text" id="descInput" maxlength="300" placeholder="e.g. tight hips, 10 minutes, no floor work" aria-label="Describe the routine you want" enterkeyhint="go" spellcheck="false">
+          <input type="text" id="descInput" maxlength="300" autocomplete="off" placeholder="e.g. tight hips, 10 minutes, no floor work" aria-label="Describe the routine you want" enterkeyhint="go" spellcheck="false">
           <button class="build" type="submit">Build</button>
         </form>
         <div class="excs" id="descChips" aria-label="Examples"></div>
@@ -718,15 +722,16 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
       <h2 class="sec" id="areaHead">Body areas</h2><div class="chips" id="areaChips" role="group" aria-labelledby="areaHead"></div>
       <h2 class="sec">Quick routines <span>4 min or less</span></h2><span class="sr" id="quickLabel">Quick routines, 4 minutes or less, swipe sideways</span><ul class="rows carousel" id="quickList" aria-labelledby="quickLabel"></ul>
       <h2 class="sec" id="ladderHead">Ladders <span>step by step</span></h2><ul class="ladders" id="ladderCards" aria-labelledby="ladderHead"></ul>
+      <h2 class="sec" id="seriesHead">Series <span>one a day</span></h2><ul class="ladders" id="seriesCards" role="list" aria-labelledby="seriesHead"></ul>
       <h2 class="sec">Ice hockey</h2>
-      <button class="hockeycard" id="hockeyCard"><span class="hk" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 3l-6.5 14.5H4.5a1.5 1.5 0 0 0 0 3h5.2L18 3"/><ellipse cx="17.5" cy="18.5" rx="3" ry="1.6"/></svg></span><span><b>Warm-ups and cool-downs</b><small>For players, youth players and referees</small></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      <button class="hockeycard" id="hockeyCard"><span class="hk" aria-hidden="true"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 3l-6.5 14.5H4.5a1.5 1.5 0 0 0 0 3h5.2L18 3"/><ellipse cx="17.5" cy="18.5" rx="3" ry="1.6"/></svg></span><span><b>Warm-ups and cool-downs</b><small>For players, youth players and referees</small></span><svg aria-hidden="true" class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <h2 class="sec">Categories</h2><div class="grid" id="catGrid"></div>
     </div>
   </div>
 </section>
 
 <section class="screen tabbed" id="list" hidden>
-  <div class="bar"><button class="icon" id="listBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
+  <div class="bar"><button class="icon" id="listBack" aria-label="Back"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
   <div class="scroll" style="padding-top:4px">
     <h1 class="title" id="listTitle" tabindex="-1"></h1><p class="lede" id="listSub"></p>
     <h2 class="sec">Routines</h2><ul class="rows" id="listRoutines"></ul>
@@ -735,7 +740,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 </section>
 
 <section class="screen tabbed" id="ladder" hidden>
-  <div class="bar"><button class="icon" id="ladderBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
+  <div class="bar"><button class="icon" id="ladderBack" aria-label="Back"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
   <div class="scroll" style="padding-top:4px">
     <h1 class="title" id="ladderTitle"></h1><p class="lede" id="ladderSub"></p>
     <p class="ladderprog" id="ladderProg" data-private></p>
@@ -743,8 +748,18 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
   </div>
 </section>
 
+<section class="screen tabbed" id="series" hidden>
+  <div class="bar"><button class="icon" id="seriesBack" aria-label="Back"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
+  <div class="scroll" style="padding-top:4px">
+    <h1 class="title" id="seriesTitle" tabindex="-1"></h1><p class="lede" id="seriesSub"></p>
+    <p class="ladderprog" id="seriesProg" data-private></p>
+    <button class="ghost wide" id="seriesGo" data-private hidden></button>
+    <h2 class="sec" id="seriesDaysHead">Days</h2><ol class="rows" id="seriesDays" role="list" aria-labelledby="seriesDaysHead"></ol>
+  </div>
+</section>
+
 <section class="screen tabbed" id="hockey" hidden>
-  <div class="bar"><button class="icon" id="hockeyBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
+  <div class="bar"><button class="icon" id="hockeyBack" aria-label="Back"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
   <div class="scroll" style="padding-top:4px">
     <h1 class="title">Ice hockey</h1>
     <p class="lede">Moving warm-ups before you skate, still holds after. Focus: hips, groin, hamstrings, low back, shoulders, calves and ankles, and skating posture.</p>
@@ -788,7 +803,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
         <div class="mtext"><b>Consistency</b><span class="mtarget">90% target</span><p id="mMsg"></p><p class="mini" id="mHow"></p></div>
       </div>
       <div class="cal">
-        <div class="calhead"><button class="icon" id="calPrev" aria-label="Previous month"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><b id="calMonth"></b><button class="icon" id="calNext" aria-label="Next month"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></div>
+        <div class="calhead"><button class="icon" id="calPrev" aria-label="Previous month"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><b id="calMonth"></b><button class="icon" id="calNext" aria-label="Next month"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></div>
         <div class="calwk" aria-hidden="true"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
         <div class="calgrid" id="calGrid"></div>
       </div>
@@ -799,7 +814,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 </section>
 
 <section class="screen" id="builder" data-private hidden>
-  <div class="bar"><button class="icon" id="bBack" aria-label="Back to Library (your draft is kept)"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="mid" id="bTitle">New routine</div><button class="textbtn notready" id="bSave">Save</button></div>
+  <div class="bar"><button class="icon" id="bBack" aria-label="Back to Library (your draft is kept)"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h1 class="mid" id="bTitle">New routine</h1><button class="textbtn notready" id="bSave">Save</button></div>
   <div class="scroll">
     <label class="blabel" for="bName">Routine name</label>
     <input class="bname" id="bName" type="text" maxlength="40" autocomplete="off" spellcheck="true" placeholder="For example: Evening hips" enterkeyhint="done" aria-describedby="bCount bMsg">
@@ -812,7 +827,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <p class="empty" id="bEmpty">No stretches yet. Add some from the list below.</p>
     <h2 class="sec">Add stretches</h2>
     <form class="search" id="bSearchForm" role="search">
-      <svg class="glass" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <svg aria-hidden="true" class="glass" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
       <input type="search" id="bSearch" placeholder="Search stretches" aria-label="Search stretches" autocomplete="off" enterkeyhint="search">
     </form>
     <div class="fgroup bareas" id="bAreas" role="group" aria-label="Body area"></div>
@@ -831,7 +846,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 </section>
 
 <section class="screen tabbed" id="settings" hidden>
-  <div class="bar"><button class="icon" id="setBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
+  <div class="bar"><button class="icon" id="setBack" aria-label="Back"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
   <div class="scroll" style="padding-top:4px">
     <h1 class="title">Settings</h1>
     <h2 class="sec" id="avHead">Profile icon</h2>
@@ -899,13 +914,13 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 </section>
 
 <section class="screen" id="setup" data-private hidden>
-  <div class="bar"><button class="icon" id="setupBack" aria-label="Previous question"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="mid" id="setupStep"></div><button class="skip" id="setupSkip">Skip</button></div>
+  <div class="bar"><button class="icon" id="setupBack" aria-label="Previous question"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="mid" id="setupStep"></div><button class="skip" id="setupSkip">Skip</button></div>
   <div class="scroll"><div id="setupBody"></div></div>
   <div class="startbar"><button class="cta" id="setupNext">Next</button></div>
 </section>
 
 <section class="screen" id="routine" hidden>
-  <div class="bar"><button class="icon" id="rBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><button class="icon savebtn" id="rSave" aria-label="Save routine"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg></button></div>
+  <div class="bar"><button class="icon" id="rBack" aria-label="Back"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><button class="icon savebtn" id="rSave" aria-label="Save routine"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg></button></div>
   <p class="sr" id="rSaveMsg" aria-live="polite"></p>
   <div class="scroll" style="padding-top:2px">
     <div class="meta" id="rMeta"></div>
@@ -924,10 +939,11 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 </section>
 
 <section class="screen" id="player" hidden>
+  <h1 class="sr" id="playerHead">Now playing</h1>
   <div class="bar">
-    <button class="icon" id="closeBtn" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <button class="icon" id="closeBtn" aria-label="Close"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <div class="mid" id="count">1 of 6</div>
-    <button class="icon" id="soundBtn" aria-label="Sound settings"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></button>
+    <button class="icon" id="soundBtn" aria-label="Sound settings"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></button>
   </div>
   <div class="stage-wrap">
     <div class="stage">
@@ -938,27 +954,27 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
       <div class="art" id="art"></div>
       <div class="cdnum" id="cdNum" aria-live="polite" hidden></div>
       <div class="bubble" id="graceBubble" aria-live="off" hidden></div>
-      <div class="sides2" id="twoSides" role="img" aria-label="Two sides" hidden><svg viewBox="0 0 24 24"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/></svg></div>
+      <div class="sides2" id="twoSides" role="img" aria-label="Two sides" hidden><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/></svg></div>
       <div class="upnext" id="upNext" role="img" hidden><span class="fig" id="upNextFig"></span><b>Up Next</b></div>
     </div>
-    <div class="name"><span id="name"></span><button class="info" id="infoBtn" aria-label="How to do this stretch"><svg viewBox="0 0 16 16"><circle cx="8" cy="3.4" r="1.4"/><rect x="6.9" y="6" width="2.2" height="7.6" rx="1.1"/></svg></button></div>
+    <div class="name"><span id="name"></span><button class="info" id="infoBtn" aria-label="How to do this stretch"><svg aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="3.4" r="1.4"/><rect x="6.9" y="6" width="2.2" height="7.6" rx="1.1"/></svg></button></div>
     <div class="time" id="time" aria-live="off">0:45</div>
     <div class="side" id="side"></div><p class="sr" id="sideNote" aria-live="polite"></p>
   </div>
   <div class="controls">
-    <button class="icon" id="prevBtn" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M18 5.5L9 12l9 6.5zM6 5v14"/></svg></button>
+    <button class="icon" id="prevBtn" aria-label="Previous"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18 5.5L9 12l9 6.5zM6 5v14"/></svg></button>
     <button class="play" id="playBtn" aria-label="Pause"></button>
-    <button class="icon" id="nextBtn" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M6 5.5l9 6.5-9 6.5zM18 5v14"/></svg></button>
+    <button class="icon" id="nextBtn" aria-label="Next"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 5.5l9 6.5-9 6.5zM18 5v14"/></svg></button>
   </div>
 </section>
 
 <section class="screen" id="info" hidden>
-  <div class="bar"><button class="icon" id="infoBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="mid">How to</div><span></span></div>
-  <div class="head"><div class="mini" id="infoArt"></div><div><h2 id="infoName"></h2><div class="focus" id="infoFocus"></div></div></div>
+  <div class="bar"><button class="icon" id="infoBack" aria-label="Back"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="mid">How to</div><span></span></div>
+  <div class="head"><div class="mini" id="infoArt"></div><div><h1 id="infoName"></h1><div class="focus" id="infoFocus"></div></div></div>
   <div class="tags" id="infoTags"></div>
   <p class="youthnote" id="infoYouth" hidden>It should feel a little tight, never painful. Stop if anything hurts. Ask a coach or doctor.</p>
   <p class="pnote" id="infoPersonal" data-private hidden></p>
-  <section class="isec" id="sec-instructions" aria-labelledby="h-instructions"><h3 id="h-instructions">Instructions</h3>
+  <section class="isec" aria-labelledby="h-instructions"><h3 id="h-instructions">Instructions</h3>
     <h4 class="isub">Steps</h4><ol id="infoSteps"></ol>
     <h4 class="isub" id="tipsHead">Tips</h4><ul id="infoTips"></ul></section>
   <section class="isec" id="sec-caution" aria-labelledby="h-caution" hidden><h3 id="h-caution">Caution</h3><ul class="caution" id="info-caution"></ul></section>
@@ -1057,13 +1073,13 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 </section>
 
 
-<div class="updnote" id="updNote" role="status" hidden><span class="updtext">A new version is ready.</span><button class="updreload" id="updReload">Reload</button><button class="icon updclose" id="updClose" aria-label="Not now"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
+<div class="updnote" id="updNote" role="status" hidden><span class="updtext">A new version is ready.</span><button class="updreload" id="updReload">Reload</button><button class="icon updclose" id="updClose" aria-label="Not now"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
 <nav class="tabbar" id="tabbar" aria-label="Main"><span class="tabbubble" id="tabBubble" aria-hidden="true"></span>
-  <button data-tab="home" aria-current="page"><svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20h-5.5v-6h-5v6H4z"/></svg>Home</button>
-  <button data-tab="explore"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Explore</button>
-  <button data-tab="library"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="3.25"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="3.25"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="3.25"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="3.25"/></svg>Library</button>
-  <button data-tab="history"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>History</button>
-  <button data-tab="saved"><svg viewBox="0 0 24 24"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg>Saved</button>
+  <button data-tab="home" aria-current="page"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20h-5.5v-6h-5v6H4z"/></svg>Home</button>
+  <button data-tab="explore"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Explore</button>
+  <button data-tab="library"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="3.25"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="3.25"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="3.25"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="3.25"/></svg>Library</button>
+  <button data-tab="history"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>History</button>
+  <button data-tab="saved"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg>Saved</button>
 </nav>
 
 <script>
@@ -1170,49 +1186,49 @@ const SAFETY = 'Safety: use a light dumbbell (about 1–5 kg / 2–10 lb). The w
 const STRETCHES = [
   // ---- Bodyweight (35) ----
   { id: 'lunge', name: 'Low Lunge', areas: ['hips', 'quads'], kind: 'body', level: 'beginner', pos: 'kneeling', balance: false, overhead: false, sides: ['Left leg forward', 'Right leg forward'], circle: C.clay, figure: 'lunge',
-    focus: 'Hip flexors · quads',
+    focus: 'Hip flexors, quads',
     steps: ['Step one foot forward and lower the back knee onto the mat.', 'Stack the front knee over the ankle, shin vertical.', 'Rest your hands on the front knee and lift your chest.', 'Shift your hips gently forward until you feel the front of the back hip open.'],
     tips: ['Pad the back knee with a folded towel if it presses.', 'Squeeze the glute of the back leg to deepen the stretch without arching.'] },
-  { id: 'butterfly', name: 'Butterfly', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: null, circle: C.sage, focus: 'Inner thighs · groin',
+  { id: 'butterfly', name: 'Butterfly', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: null, circle: C.sage, focus: 'Inner thighs, groin',
     steps: ['Sit tall and bring the soles of your feet together.', 'Hold your feet and let the knees fall out to the sides.', 'Hinge forward from the hips, keeping the back long.'],
     tips: ['Sit on a folded blanket if your back rounds.', 'Do not press the knees down with your hands.'] },
-  { id: 'pigeon', name: 'Pigeon', areas: ['hips'], kind: 'body', level: 'intermediate', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.dusk, focus: 'Glutes · outer hip',
+  { id: 'pigeon', name: 'Pigeon', areas: ['hips'], kind: 'body', level: 'intermediate', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.dusk, focus: 'Glutes, outer hip',
     steps: ['From hands and knees, slide one knee forward behind the same wrist.', 'Angle that shin across the mat and extend the other leg straight back.', 'Square the hips and walk your hands forward to fold over the front leg.'],
     tips: ['Place a cushion under the front hip if it lifts off the mat.', 'Keep the back toes pointed straight back.'] },
-  { id: 'figure4', name: 'Figure Four', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.sand, focus: 'Glutes · piriformis',
+  { id: 'figure4', name: 'Figure Four', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.sand, focus: 'Glutes, piriformis',
     steps: ['Lie on your back with both knees bent.', 'Cross one ankle over the opposite knee.', 'Thread your hands behind the lower thigh and draw both legs toward your chest.'],
     tips: ['Flex the crossed foot to protect the knee.', 'Keep your head and shoulders relaxed on the mat.'] },
-  { id: 'frog', name: 'Frog', areas: ['hips'], kind: 'body', level: 'intermediate', pos: 'kneeling', balance: false, overhead: false, sides: null, circle: C.plum, focus: 'Inner thighs · hips',
+  { id: 'frog', name: 'Frog', areas: ['hips'], kind: 'body', level: 'intermediate', pos: 'kneeling', balance: false, overhead: false, sides: null, circle: C.plum, focus: 'Inner thighs, hips',
     steps: ['Start on hands and knees, then widen the knees as far as is comfortable.', 'Line the ankles up with the knees, feet turned out.', 'Lower onto your forearms and ease the hips back.'],
     tips: ['Use padding under the knees.', 'Move slowly; this one builds fast.'] },
-  { id: 'child', name: 'Child’s Pose', areas: ['back', 'hips'], kind: 'body', level: 'beginner', pos: 'kneeling', balance: false, overhead: false, sides: null, circle: C.sage, focus: 'Lower back · hips',
+  { id: 'child', name: 'Child’s Pose', areas: ['back', 'hips'], kind: 'body', level: 'beginner', pos: 'kneeling', balance: false, overhead: false, sides: null, circle: C.sage, focus: 'Lower back, hips',
     steps: ['Kneel with big toes touching and knees apart.', 'Sit the hips back toward the heels.', 'Walk the hands forward and rest your forehead on the mat.'],
     tips: ['Breathe into the back of your ribs.', 'Put a pillow under the chest for more support.'] },
   { id: 'catcow', name: 'Cat–Cow', areas: ['back'], kind: 'body', level: 'beginner', pos: 'kneeling', balance: false, overhead: false, sides: null, circle: C.teal, focus: 'Whole spine',
     steps: ['Start on hands and knees, wrists under shoulders.', 'Breathe in and let the belly drop as you lift your chest and tailbone.', 'Breathe out and round your back, tucking chin and tailbone.', 'Keep flowing slowly with your breath.'],
     tips: ['Move one vertebra at a time.', 'Keep your arms straight but not locked.'] },
-  { id: 'fold', name: 'Seated Forward Fold', areas: ['hamstrings', 'back'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: null, circle: C.dusk, focus: 'Hamstrings · lower back',
+  { id: 'fold', name: 'Seated Forward Fold', areas: ['hamstrings', 'back'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: null, circle: C.dusk, focus: 'Hamstrings, lower back',
     steps: ['Sit with both legs straight out in front of you.', 'Sit tall, then hinge forward from the hips.', 'Rest your hands on your shins and let your head relax toward your knees.'],
     tips: ['Bend your knees slightly if your back rounds hard.', 'Lead with the chest, not the head.'] },
   { id: 'quad', name: 'Standing Quad', areas: ['quads'], kind: 'body', level: 'beginner', pos: 'standing', balance: true, overhead: false, sides: LR, circle: C.rose, focus: 'Front of the thigh',
     steps: ['Stand tall and hold a wall or chair for balance.', 'Bend one knee and hold that foot behind you.', 'Keep the knees together and press the hip forward.'],
     tips: ['Tuck the tailbone slightly so the back does not arch.', 'Use a strap around the foot if you cannot reach it.'] },
-  { id: 'calf', name: 'Wall Calf', areas: ['calves'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: LR, circle: C.teal, focus: 'Calves · Achilles',
+  { id: 'calf', name: 'Wall Calf', areas: ['calves'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: LR, circle: C.teal, focus: 'Calves, Achilles',
     steps: ['Face a wall with your hands on it at chest height.', 'Step one foot back and press that heel into the floor.', 'Bend the front knee and lean in until you feel the back calf.'],
     tips: ['Point the back toes straight ahead.', 'Bend the back knee a little to reach the lower calf.'] },
   { id: 'necktilt', name: 'Side Neck Tilt', areas: ['neck'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.plum, focus: 'Side of the neck',
     steps: ['Sit tall with your shoulders relaxed.', 'Tilt one ear toward the same shoulder.', 'Let the opposite shoulder sink down.'],
     tips: ['Add light pressure with the hand on the tilting side.', 'Keep your face pointing forward.'] },
-  { id: 'levator', name: 'Levator Release', areas: ['neck', 'shoulders'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.sand, focus: 'Back of the neck · upper shoulder',
+  { id: 'levator', name: 'Levator Release', areas: ['neck', 'shoulders'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.sand, focus: 'Back of the neck, upper shoulder',
     steps: ['Turn your head about 45 degrees to one side.', 'Drop your chin toward that armpit.', 'Place the same hand on the back of your head and let its weight deepen the stretch.'],
     tips: ['Hold the opposite side of the seat to anchor the shoulder.', 'Do not pull; let the arm rest.'] },
-  { id: 'chintuck', name: 'Chin Tuck', areas: ['neck'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: null, circle: C.dusk, focus: 'Base of the skull · upper neck',
+  { id: 'chintuck', name: 'Chin Tuck', areas: ['neck'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: null, circle: C.dusk, focus: 'Base of the skull, upper neck',
     steps: ['Sit tall and look straight ahead.', 'Glide your chin straight back, making a double chin.', 'Hold, then release slowly.'],
     tips: ['Keep your eyes level; do not nod down.', 'Good to repeat during long screen sessions.'] },
   { id: 'crossbody', name: 'Cross-Body Shoulder', areas: ['shoulders'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: LR, circle: C.clay, focus: 'Back of the shoulder',
     steps: ['Bring one arm straight across your chest.', 'Hold it above the elbow with the other hand.', 'Draw it closer while keeping the shoulder down.'],
     tips: ['Do not let the shoulder hike toward your ear.', 'Works just as well sitting down.'] },
-  { id: 'doorway', name: 'Doorway Chest Opener', areas: ['chest', 'shoulders'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.rose, focus: 'Chest · front of the shoulders',
+  { id: 'doorway', name: 'Doorway Chest Opener', areas: ['chest', 'shoulders'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.rose, focus: 'Chest, front of the shoulders',
     steps: ['Stand in a doorway with forearms on the frame, elbows at shoulder height.', 'Step one foot through.', 'Lean forward gently until the chest opens.'],
     tips: ['Keep elbows at or below shoulder height.', 'Keep your ribs down; do not arch.'] },
   { id: 'twist', name: 'Supine Twist', areas: ['back'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.sage, focus: 'Mid and lower back',
@@ -1221,34 +1237,34 @@ const STRETCHES = [
   { id: 'kneeschest', name: 'Knees to Chest', areas: ['back'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.plum, focus: 'Lower back',
     steps: ['Lie on your back.', 'Hug both knees in toward your chest.', 'Rock gently side to side if it feels good.'],
     tips: ['Hold behind the thighs if your knees are sensitive.', 'Let your lower back sink into the mat.'] },
-  { id: 'cobra', name: 'Low Cobra', areas: ['back', 'chest'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.sand, focus: 'Front of the body · spine',
+  { id: 'cobra', name: 'Low Cobra', areas: ['back', 'chest'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.sand, focus: 'Front of the body, spine',
     steps: ['Lie face down with your hands under your shoulders.', 'Press lightly and lift your chest a few inches.', 'Keep your elbows bent and close to your sides.'],
     tips: ['Lift with your back, not by pushing hard with the arms.', 'Stop before any pinch in the lower back.'] },
-  { id: 'sidebend', name: 'Standing Side Bend', areas: ['back', 'shoulders'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: true, sides: LR, circle: C.teal, focus: 'Side of the body · lats',
+  { id: 'sidebend', name: 'Standing Side Bend', areas: ['back', 'shoulders'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: true, sides: LR, circle: C.teal, focus: 'Side of the body, lats',
     steps: ['Stand with feet hip-width apart.', 'Reach one arm overhead.', 'Lean gently to the opposite side, reaching up and over.'],
     tips: ['Keep both hips level and facing forward.', 'Rest the other hand on your thigh for support.'] },
   { id: 'neckturn', name: 'Neck Rotation', areas: ['neck'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.rose, focus: 'Sides and back of the neck',
     steps: ['Sit tall with your shoulders relaxed.', 'Slowly turn your head to look over one shoulder.', 'Stop where you feel a gentle stretch, keeping the chin level.'],
     tips: ['Move slowly and keep the turn within a comfortable range.', 'Do not force the last few degrees.'] },
-  { id: 'thread', name: 'Thread the Needle', areas: ['shoulders', 'back'], kind: 'body', level: 'beginner', pos: 'kneeling', balance: false, overhead: false, sides: LR, circle: C.sage, focus: 'Upper back · back of the shoulder',
+  { id: 'thread', name: 'Thread the Needle', areas: ['shoulders', 'back'], kind: 'body', level: 'beginner', pos: 'kneeling', balance: false, overhead: false, sides: LR, circle: C.sage, focus: 'Upper back, back of the shoulder',
     steps: ['Start on hands and knees.', 'Slide one arm under your body, palm up, along the mat.', 'Lower that shoulder and the side of your head to the mat.'],
     tips: ['Keep your hips over your knees.', 'Press lightly into the other hand to control the twist.'] },
-  { id: 'puppy', name: 'Puppy Pose', areas: ['shoulders', 'chest', 'back'], kind: 'body', level: 'intermediate', pos: 'kneeling', balance: false, overhead: true, sides: null, circle: C.clay, focus: 'Shoulders · upper back',
+  { id: 'puppy', name: 'Puppy Pose', areas: ['shoulders', 'chest', 'back'], kind: 'body', level: 'intermediate', pos: 'kneeling', balance: false, overhead: true, sides: null, circle: C.clay, focus: 'Shoulders, upper back',
     steps: ['Start on hands and knees.', 'Walk your hands forward and let your chest sink toward the mat.', 'Keep your hips above your knees and rest your forehead down.'],
     tips: ['Put a cushion under the forehead if it does not reach.', 'Back off if your shoulders pinch.'] },
-  { id: 'downdog', name: 'Downward Dog', areas: ['hamstrings', 'calves', 'shoulders'], kind: 'body', level: 'intermediate', pos: 'floor', balance: false, overhead: true, sides: null, circle: C.dusk, focus: 'Hamstrings · calves · shoulders',
+  { id: 'downdog', name: 'Downward Dog', areas: ['hamstrings', 'calves', 'shoulders'], kind: 'body', level: 'intermediate', pos: 'floor', balance: false, overhead: true, sides: null, circle: C.dusk, focus: 'Hamstrings, calves, shoulders',
     steps: ['From hands and knees, tuck your toes and lift your hips up and back.', 'Press the floor away and lengthen your spine.', 'Let your heels sink toward the floor.'],
     tips: ['Bend your knees as much as you need to keep the back long.', 'Pedal the feet to ease into the calves.'] },
-  { id: 'standfold', name: 'Standing Forward Fold', areas: ['hamstrings', 'back'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.plum, focus: 'Hamstrings · lower back',
+  { id: 'standfold', name: 'Standing Forward Fold', areas: ['hamstrings', 'back'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.plum, focus: 'Hamstrings, lower back',
     steps: ['Stand with feet hip-width apart, knees soft.', 'Hinge at the hips and let your upper body hang.', 'Hold your elbows and let your head relax.'],
     tips: ['Rest your hands on a chair seat if the floor is far away.', 'Roll up slowly to finish.'] },
-  { id: 'halfsplit', name: 'Half Split', areas: ['hamstrings', 'calves'], kind: 'body', level: 'intermediate', pos: 'kneeling', balance: false, overhead: false, sides: LR, circle: C.sand, focus: 'Hamstrings · calves',
+  { id: 'halfsplit', name: 'Half Split', areas: ['hamstrings', 'calves'], kind: 'body', level: 'intermediate', pos: 'kneeling', balance: false, overhead: false, sides: LR, circle: C.sand, focus: 'Hamstrings, calves',
     steps: ['From a low lunge, shift your hips back over the back knee.', 'Straighten the front leg and flex its foot.', 'Hinge forward over the front leg, hands on the floor or blocks.'],
     tips: ['Keep the back long rather than reaching for your toes.', 'Pad the back knee.'] },
-  { id: 'lizard', name: 'Lizard Lunge', areas: ['hips'], kind: 'body', level: 'advanced', pos: 'kneeling', balance: false, overhead: false, sides: ['Left leg forward', 'Right leg forward'], circle: C.teal, focus: 'Hip flexors · inner hip',
+  { id: 'lizard', name: 'Lizard Lunge', areas: ['hips'], kind: 'body', level: 'advanced', pos: 'kneeling', balance: false, overhead: false, sides: ['Left leg forward', 'Right leg forward'], circle: C.teal, focus: 'Hip flexors, inner hip',
     steps: ['From a low lunge, place both hands inside the front foot.', 'Walk the front foot slightly out to the side.', 'Lower onto your forearms if you can, keeping the back knee down.'],
     tips: ['Stay on your hands if forearms are too deep.', 'Let the front knee open out a little.'] },
-  { id: 'happybaby', name: 'Happy Baby', areas: ['hips', 'back'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.rose, focus: 'Inner thighs · lower back',
+  { id: 'happybaby', name: 'Happy Baby', areas: ['hips', 'back'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.rose, focus: 'Inner thighs, lower back',
     steps: ['Lie on your back and draw your knees toward your armpits.', 'Hold the outsides of your feet, soles facing the ceiling.', 'Gently pull the knees down toward the floor.'],
     tips: ['Hold your ankles or shins if your feet are out of reach.', 'Keep your tailbone heavy.'] },
   { id: 'lyingham', name: 'Lying Hamstring', areas: ['hamstrings'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.sage, focus: 'Back of the thigh',
@@ -1257,19 +1273,19 @@ const STRETCHES = [
   { id: 'sidequad', name: 'Side-Lying Quad', areas: ['quads', 'hips'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.clay, focus: 'Front of the thigh',
     steps: ['Lie on your side with your head resting on your lower arm.', 'Bend the top knee and hold that ankle.', 'Draw the heel toward your seat and press the hip forward.'],
     tips: ['No balance needed, so a good alternative to the standing version.', 'Use a strap if you cannot reach your ankle.'] },
-  { id: 'couch', name: 'Couch Stretch', areas: ['quads', 'hips'], kind: 'body', level: 'advanced', pos: 'kneeling', balance: false, overhead: false, sides: LR, circle: C.dusk, focus: 'Quads · hip flexors',
+  { id: 'couch', name: 'Couch Stretch', areas: ['quads', 'hips'], kind: 'body', level: 'advanced', pos: 'kneeling', balance: false, overhead: false, sides: LR, circle: C.dusk, focus: 'Quads, hip flexors',
     steps: ['Kneel with your back to a wall or sofa.', 'Slide one knee back so that shin rests up the wall.', 'Step the other foot forward and slowly lift your chest.'],
     tips: ['This is intense: start with your torso leaning forward.', 'Pad the knee well.'] },
   { id: 'seatedtwist', name: 'Seated Twist', areas: ['back'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.plum, focus: 'Mid back',
     steps: ['Sit tall on a chair or the floor.', 'Turn your chest to one side, hand on the back of the chair or behind you.', 'Lengthen up as you breathe in; turn a little more as you breathe out.'],
     tips: ['Turn from the middle of your back, not the neck.', 'Keep both sit bones down.'] },
-  { id: 'sphinx', name: 'Sphinx', areas: ['back', 'chest'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.sand, focus: 'Lower back · front of the body',
+  { id: 'sphinx', name: 'Sphinx', areas: ['back', 'chest'], kind: 'body', level: 'beginner', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.sand, focus: 'Lower back, front of the body',
     steps: ['Lie face down.', 'Prop yourself up on your forearms, elbows under shoulders.', 'Relax your lower back and let your hips stay heavy.'],
     tips: ['Gentler than cobra; a good first back bend.', 'Slide the elbows forward if you feel any pinch.'] },
-  { id: 'chestclasp', name: 'Behind-Back Chest Clasp', areas: ['chest', 'shoulders'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.teal, focus: 'Chest · front of the shoulders',
+  { id: 'chestclasp', name: 'Behind-Back Chest Clasp', areas: ['chest', 'shoulders'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.teal, focus: 'Chest, front of the shoulders',
     steps: ['Stand tall and clasp your hands behind your back.', 'Draw your shoulder blades together.', 'Lift your hands slightly away from your back.'],
     tips: ['Hold a towel between your hands if they do not meet.', 'Keep your chin level.'] },
-  { id: 'chairfig4', name: 'Chair Figure Four', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.rose, focus: 'Glutes · outer hip',
+  { id: 'chairfig4', name: 'Chair Figure Four', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.rose, focus: 'Glutes, outer hip',
     steps: ['Sit near the front of a sturdy chair, feet flat.', 'Rest one ankle on the opposite knee.', 'Sit tall, then lean forward slightly from the hips.'],
     tips: ['A supported option that needs no getting down to the floor.', 'Press gently on the raised knee only if it feels comfortable.'] },
   { id: 'chairham', name: 'Chair Hamstring', areas: ['hamstrings', 'calves'], kind: 'body', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.sage, focus: 'Back of the thigh',
@@ -1282,38 +1298,38 @@ const STRETCHES = [
   { id: 'bandadd', name: 'Band Inner Thigh', areas: ['hips', 'hamstrings'], kind: 'band', level: 'intermediate', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.rose, focus: 'Inner thigh',
     steps: ['Lie on your back with a band around one foot, held in the same hand.', 'Straighten the leg up, then let it open out to the side.', 'Use the band to control how far it lowers.'],
     tips: ['Keep the opposite hip on the mat.', 'Try a 5-second press back toward the middle, then relax deeper.'] },
-  { id: 'passthrough', name: 'Band Pass-Through', areas: ['shoulders', 'chest'], kind: 'band', level: 'intermediate', pos: 'standing', balance: false, overhead: true, sides: null, circle: C.dusk, focus: 'Shoulders · chest',
+  { id: 'passthrough', name: 'Band Pass-Through', areas: ['shoulders', 'chest'], kind: 'band', level: 'intermediate', pos: 'standing', balance: false, overhead: true, sides: null, circle: C.dusk, focus: 'Shoulders, chest',
     steps: ['Hold a band wide in front of your hips, arms straight.', 'Lift it overhead and behind you in one smooth arc.', 'Bring it back to the front and repeat slowly.'],
     tips: ['Widen your grip if your elbows bend.', 'Keep the ribs down as the arms go back.'] },
-  { id: 'bandcross', name: 'Band Outer Hip', areas: ['hips'], kind: 'band', level: 'intermediate', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.sand, focus: 'Outer hip · IT band area',
+  { id: 'bandcross', name: 'Band Outer Hip', areas: ['hips'], kind: 'band', level: 'intermediate', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.sand, focus: 'Outer hip, IT band area',
     steps: ['Lie on your back with a band around one foot, held in the opposite hand.', 'Raise the leg straight up.', 'Let it cross slowly over your body, keeping both shoulders down.'],
     tips: ['Only go as far as your hip stays comfortable.', 'Add a gentle 5-second press against the band, then relax deeper.'] },
   { id: 'bandquad', name: 'Band Quad', areas: ['quads', 'hips'], kind: 'band', level: 'intermediate', pos: 'floor', balance: false, overhead: false, sides: LR, circle: C.clay, focus: 'Front of the thigh',
     steps: ['Lie face down with a band looped around one ankle.', 'Bring the band over that shoulder and hold it with both hands.', 'Use the band to draw the heel toward your seat.'],
     tips: ['Keep both hips pressed into the mat.', 'Stop before any knee discomfort.'] },
-  { id: 'bandcalf', name: 'Band Calf', areas: ['calves'], kind: 'band', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.plum, focus: 'Calves · Achilles',
+  { id: 'bandcalf', name: 'Band Calf', areas: ['calves'], kind: 'band', level: 'beginner', pos: 'seated', balance: false, overhead: false, sides: LR, circle: C.plum, focus: 'Calves, Achilles',
     steps: ['Sit with one leg straight and a band around the ball of that foot.', 'Hold both ends and sit tall.', 'Draw the toes toward you with the band.'],
     tips: ['Keep the knee straight for the upper calf.', 'A gentle option for stiff ankles.'] },
-  { id: 'bandchest', name: 'Band Chest Opener', areas: ['chest', 'shoulders'], kind: 'band', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.sage, focus: 'Chest · front of the shoulders',
+  { id: 'bandchest', name: 'Band Chest Opener', areas: ['chest', 'shoulders'], kind: 'band', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.sage, focus: 'Chest, front of the shoulders',
     steps: ['Hold a band behind your back with both hands, arms low.', 'Draw your shoulder blades together.', 'Let the band ease your arms back and open the chest.'],
     tips: ['Use a light band; it should guide, not yank.', 'Keep your chin level and ribs down.'] },
-  { id: 'bandlat', name: 'Band Lat Stretch', areas: ['shoulders', 'back'], kind: 'band', level: 'intermediate', pos: 'standing', balance: false, overhead: true, sides: LR, circle: C.teal, focus: 'Lats · side of the body',
+  { id: 'bandlat', name: 'Band Lat Stretch', areas: ['shoulders', 'back'], kind: 'band', level: 'intermediate', pos: 'standing', balance: false, overhead: true, sides: LR, circle: C.teal, focus: 'Lats, side of the body',
     steps: ['Anchor a band at head height and hold it with one hand.', 'Step back and hinge forward, arm overhead.', 'Sit the hips back until you feel the stretch along your side.'],
     tips: ['Check the anchor is secure before you lean.', 'Keep the arm straight but not locked.'] },
   // ---- Light dumbbells (7): all advanced, all with a safety tip ----
-  { id: 'goblet', name: 'Goblet Squat Hold', areas: ['hips', 'calves'], kind: 'weight', level: 'advanced', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.clay, focus: 'Hips · ankles',
+  { id: 'goblet', name: 'Goblet Squat Hold', areas: ['hips', 'calves'], kind: 'weight', level: 'advanced', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.clay, focus: 'Hips, ankles',
     steps: ['Hold one light dumbbell upright at your chest.', 'Sit down into a deep squat, heels down.', 'Use your elbows to ease the knees apart and stay tall.'],
     tips: [SAFETY, 'Raise your heels on a small plate if they lift.'] },
-  { id: 'pullover', name: 'Dumbbell Pullover Stretch', areas: ['shoulders', 'chest'], kind: 'weight', level: 'advanced', pos: 'floor', balance: false, overhead: true, sides: null, circle: C.sage, focus: 'Lats · chest',
+  { id: 'pullover', name: 'Dumbbell Pullover Stretch', areas: ['shoulders', 'chest'], kind: 'weight', level: 'advanced', pos: 'floor', balance: false, overhead: true, sides: null, circle: C.sage, focus: 'Lats, chest',
     steps: ['Lie on the floor holding one light dumbbell with both hands over your chest.', 'Lower it slowly behind your head with soft elbows.', 'Let the weight gently take your arms back until you feel your sides, then hold.'],
     tips: [SAFETY, 'Keep your lower back in contact with the floor.'] },
-  { id: 'calfdrop', name: 'Loaded Calf Drop', areas: ['calves'], kind: 'weight', level: 'advanced', pos: 'standing', balance: true, overhead: false, sides: LR, circle: C.plum, focus: 'Calves · Achilles',
+  { id: 'calfdrop', name: 'Loaded Calf Drop', areas: ['calves'], kind: 'weight', level: 'advanced', pos: 'standing', balance: true, overhead: false, sides: LR, circle: C.plum, focus: 'Calves, Achilles',
     steps: ['Stand on a step on the ball of one foot, holding a light dumbbell on that side.', 'Hold a rail with the other hand.', 'Let the heel sink below the step and hold.'],
     tips: [SAFETY, 'Always keep a hand on a rail; lower slowly.'] },
-  { id: 'dbfly', name: 'Dumbbell Chest Opener', areas: ['chest', 'shoulders'], kind: 'weight', level: 'advanced', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.dusk, focus: 'Chest · front of the shoulders',
+  { id: 'dbfly', name: 'Dumbbell Chest Opener', areas: ['chest', 'shoulders'], kind: 'weight', level: 'advanced', pos: 'floor', balance: false, overhead: false, sides: null, circle: C.dusk, focus: 'Chest, front of the shoulders',
     steps: ['Lie on your back with knees bent, a light dumbbell in each hand.', 'Open your arms out to the sides, elbows slightly bent.', 'Let the weights draw the arms toward the floor and hold.'],
     tips: [SAFETY, 'Rest the weights on the floor whenever the stretch feels too strong.'] },
-  { id: 'cossack', name: 'Weighted Cossack Hold', areas: ['hips', 'hamstrings'], kind: 'weight', level: 'advanced', pos: 'standing', balance: true, overhead: false, sides: LR, circle: C.sand, focus: 'Inner thigh · hips',
+  { id: 'cossack', name: 'Weighted Cossack Hold', areas: ['hips', 'hamstrings'], kind: 'weight', level: 'advanced', pos: 'standing', balance: true, overhead: false, sides: LR, circle: C.sand, focus: 'Inner thigh, hips',
     steps: ['Stand with feet wide, holding one light dumbbell at your chest.', 'Shift your weight to one side and bend that knee deeply.', 'Keep the other leg straight, toes up, and hold.'],
     tips: [SAFETY, 'Only go as low as you can control.'] },
   { id: 'suitcase', name: 'Suitcase Side Bend', areas: ['back'], kind: 'weight', level: 'advanced', pos: 'standing', balance: false, overhead: false, sides: LR, circle: C.rose, focus: 'Side of the body',
@@ -1323,28 +1339,28 @@ const STRETCHES = [
     steps: ['Stand holding light dumbbells in front of your thighs, knees soft.', 'Push your hips back and slide the weights down your legs, back flat.', 'Stop when you feel the hamstrings and hold.'],
     tips: [SAFETY, 'Keep your back flat; stop before it rounds.'] },
   // ---- Ice hockey: dynamic moves (keep moving for the time shown) and hockey-specific holds ----
-  { id: 'legswing', name: 'Front Leg Swings', areas: ['hips', 'hamstrings'], kind: 'body', level: 'beginner', pos: 'standing', balance: true, overhead: false, dynamic: true, sides: LR, circle: C.dusk, focus: 'Hip flexors · hamstrings',
+  { id: 'legswing', name: 'Front Leg Swings', areas: ['hips', 'hamstrings'], kind: 'body', level: 'beginner', pos: 'standing', balance: true, overhead: false, dynamic: true, sides: LR, circle: C.dusk, focus: 'Hip flexors, hamstrings',
     steps: ['Stand side-on to a wall or the boards and hold on with one hand.', 'Swing the outside leg forward and back in a smooth arc.', 'Let the swing grow a little bigger each time, staying in control.'],
     tips: ['Stand tall; let the hip do the work, not the lower back.', 'Keep the swing easy at first.'] },
-  { id: 'sideswing', name: 'Side Leg Swings', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'standing', balance: true, overhead: false, dynamic: true, sides: LR, circle: C.teal, focus: 'Groin · outer hip',
+  { id: 'sideswing', name: 'Side Leg Swings', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'standing', balance: true, overhead: false, dynamic: true, sides: LR, circle: C.teal, focus: 'Groin, outer hip',
     steps: ['Face a wall or the boards with both hands on it.', 'Swing one leg across your body and back out to the side.', 'Keep your hips facing forward as the swing grows.'],
     tips: ['A key warm-up for the groin before skating.', 'Do not force the end of the swing.'] },
-  { id: 'gate', name: 'Open the Gate', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'standing', balance: true, overhead: false, dynamic: true, sides: LR, circle: C.clay, focus: 'Hip rotation · groin',
+  { id: 'gate', name: 'Open the Gate', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'standing', balance: true, overhead: false, dynamic: true, sides: LR, circle: C.clay, focus: 'Hip rotation, groin',
     steps: ['Stand tall, holding a wall if you need to.', 'Lift one knee to hip height in front of you.', 'Circle that knee out to the side and back down, like opening a gate.', 'Repeat, then reverse the circle (closing the gate).'],
     tips: ['Move slowly enough to feel the whole circle.', 'Keep the standing knee soft.'] },
-  { id: 'walklunge', name: 'Walking Lunge with Twist', areas: ['hips', 'quads', 'back'], kind: 'body', level: 'intermediate', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.sand, focus: 'Hip flexors · quads · upper back',
+  { id: 'walklunge', name: 'Walking Lunge with Twist', areas: ['hips', 'quads', 'back'], kind: 'body', level: 'intermediate', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.sand, focus: 'Hip flexors, quads, upper back',
     steps: ['Step forward into a lunge, back knee just above the floor.', 'Turn your chest toward the front leg, then back to centre.', 'Step through into the next lunge on the other leg and repeat.'],
     tips: ['Front knee over the ankle, not past the toes.', 'Lunge in place if you have no room to walk.'] },
-  { id: 'lateral', name: 'Lateral Lunge Shifts', areas: ['hips', 'hamstrings'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.plum, focus: 'Groin · inner thighs',
+  { id: 'lateral', name: 'Lateral Lunge Shifts', areas: ['hips', 'hamstrings'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.plum, focus: 'Groin, inner thighs',
     steps: ['Stand with feet wide, toes forward.', 'Shift your weight to one side, bending that knee and keeping the other leg straight.', 'Shift across to the other side and keep moving side to side.'],
     tips: ['Sit the hips back as you shift.', 'Keep both heels down.'] },
-  { id: 'skatestance', name: 'Skating Stance Shifts', areas: ['quads', 'hips', 'back'], kind: 'body', level: 'intermediate', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.rose, focus: 'Skating posture · quads · hips',
+  { id: 'skatestance', name: 'Skating Stance Shifts', areas: ['quads', 'hips', 'back'], kind: 'body', level: 'intermediate', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.rose, focus: 'Skating posture, quads, hips',
     steps: ['Get into a low skating stance: knees bent, chest up, back flat.', 'Push out to the side with one leg, then bring it back under you.', 'Alternate legs, staying low the whole time.'],
     tips: ['Knees bent, chest up, eyes forward: the same posture as on the ice.', 'Stay low rather than going fast.'] },
-  { id: 'highknees', name: 'High Knee March', areas: ['hips', 'quads'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.sage, focus: 'Hip flexors · warm-up',
+  { id: 'highknees', name: 'High Knee March', areas: ['hips', 'quads'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.sage, focus: 'Hip flexors, warm-up',
     steps: ['March on the spot, lifting each knee to hip height.', 'Swing your arms as you march.', 'Pick up the pace once you feel warm.'],
     tips: ['Stand tall; do not lean back.', 'Hold a wall if you wobble.'] },
-  { id: 'buttkicks', name: 'Heel Flicks', areas: ['quads'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.dusk, focus: 'Quads · warm-up',
+  { id: 'buttkicks', name: 'Heel Flicks', areas: ['quads'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.dusk, focus: 'Quads, warm-up',
     steps: ['Jog gently on the spot.', 'Flick each heel up toward your seat.', 'Keep the knees pointing down.'],
     tips: ['Light and quick; no need to touch your seat.', 'Walk it instead of jogging if space is tight.'] },
   { id: 'armcircles', name: 'Arm Circles', areas: ['shoulders', 'chest'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: true, dynamic: true, sides: null, circle: C.teal, focus: 'Shoulders',
@@ -1353,19 +1369,19 @@ const STRETCHES = [
   { id: 'torsotwist', name: 'Standing Torso Twists', areas: ['back'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: null, circle: C.clay, focus: 'Mid and lower back',
     steps: ['Stand with feet hip-width apart, arms relaxed.', 'Turn your chest to one side, letting the arms swing.', 'Turn to the other side and keep a steady rhythm.'],
     tips: ['Turn from the middle of the back; keep the hips facing mostly forward.', 'Start small and let the turn grow.'] },
-  { id: 'anklerock', name: 'Knee-to-Wall Ankle Rocks', areas: ['calves'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: LR, circle: C.sand, focus: 'Ankles · calves',
+  { id: 'anklerock', name: 'Knee-to-Wall Ankle Rocks', areas: ['calves'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, dynamic: true, sides: LR, circle: C.sand, focus: 'Ankles, calves',
     steps: ['Face a wall with one foot a hand-width away from it.', 'Keep the heel down and rock the knee forward to touch the wall.', 'Rock back and repeat in a steady rhythm.'],
     tips: ['Skating needs a lot of forward ankle bend; this prepares it.', 'Move the foot back a little once it gets easy.'] },
-  { id: 'inchworm', name: 'Inchworm', areas: ['hamstrings', 'shoulders', 'back'], kind: 'body', level: 'intermediate', pos: 'floor', balance: false, overhead: false, dynamic: true, sides: null, circle: C.plum, focus: 'Hamstrings · shoulders',
+  { id: 'inchworm', name: 'Inchworm', areas: ['hamstrings', 'shoulders', 'back'], kind: 'body', level: 'intermediate', pos: 'floor', balance: false, overhead: false, dynamic: true, sides: null, circle: C.plum, focus: 'Hamstrings, shoulders',
     steps: ['From standing, fold forward and put your hands on the floor.', 'Walk your hands out to a plank.', 'Walk your feet up toward your hands and stand up. Repeat.'],
     tips: ['Bend your knees as much as you need to.', 'Keep your hips level in the plank.'] },
-  { id: 'groinhold', name: 'Standing Groin Stretch', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: LR, circle: C.rose, focus: 'Groin · inner thigh',
+  { id: 'groinhold', name: 'Standing Groin Stretch', areas: ['hips'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: LR, circle: C.rose, focus: 'Groin, inner thigh',
     steps: ['Stand with feet wide.', 'Bend one knee and shift your weight over it, keeping the other leg straight.', 'Hold where you feel the inside of the straight leg.'],
     tips: ['Hands on the bent knee or a wall for support.', 'Groin strains are common in hockey; never bounce this one.'] },
-  { id: 'ankledf', name: 'Wall Ankle Stretch', areas: ['calves'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: LR, circle: C.teal, focus: 'Ankles · lower calf',
+  { id: 'ankledf', name: 'Wall Ankle Stretch', areas: ['calves'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: LR, circle: C.teal, focus: 'Ankles, lower calf',
     steps: ['Face a wall with one foot close to it, the other behind.', 'Keep the front heel down and bend that knee toward the wall.', 'Hold where you feel the lower calf and ankle.'],
     tips: ['Skate boots hold the ankle stiff; this gives it back some range.', 'Hands on the wall for balance.'] },
-  { id: 'postwall', name: 'Wall Posture Reset', areas: ['back', 'shoulders', 'chest'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.sage, focus: 'Upright posture · upper back',
+  { id: 'postwall', name: 'Wall Posture Reset', areas: ['back', 'shoulders', 'chest'], kind: 'body', level: 'beginner', pos: 'standing', balance: false, overhead: false, sides: null, circle: C.sage, focus: 'Upright posture, upper back',
     steps: ['Stand with your back to a wall, heels a little away from it.', 'Rest your head, upper back and seat against the wall.', 'Open your arms out low, palms forward, and breathe slowly.'],
     tips: ['Undoes the bent-over skating posture after a game.', 'Do not force your head back.'] },
   { id: 'hiplunge', name: 'Half-Kneeling Hip Flexor', areas: ['hips', 'quads'], kind: 'body', level: 'beginner', pos: 'kneeling', balance: false, overhead: false, sides: LR, circle: C.clay, focus: 'Hip flexors after skating',
@@ -1508,44 +1524,55 @@ const ROUTINES = [
   // Existing stretches only. "Harder" means only: more stretches, longer holds, or a stretch the library already rates at a
   // higher level. Each Why line names the areas worked (from the stretches' own area tags) and how the step differs from
   // the one before. No category of their own (cat: 'ladder' is not in CATEGORIES). Review before publishing. ----
-  { id: 'ladder-hips-1', title: 'Hips 1', cat: 'ladder', ladder: 'hips', step: 1, why: 'Hips and quads · the first step: three stretches, 30-second holds',
+  { id: 'ladder-hips-1', title: 'Hips 1', cat: 'ladder', ladder: 'hips', step: 1, why: 'Hips and quads; the first step: three stretches, 30-second holds',
     desc: 'Step 1 of the Hips ladder: three beginner holds.', items: [['butterfly', 30], ['figure4', 30], ['lunge', 30]] },
-  { id: 'ladder-hips-2', title: 'Hips 2', cat: 'ladder', ladder: 'hips', step: 2, why: 'Hips, quads and back · one more stretch than Hips 1 (Happy Baby)',
+  { id: 'ladder-hips-2', title: 'Hips 2', cat: 'ladder', ladder: 'hips', step: 2, why: 'Hips, quads and back; one more stretch than Hips 1 (Happy Baby)',
     desc: 'Step 2 of the Hips ladder: Hips 1 plus Happy Baby.', items: [['butterfly', 30], ['figure4', 30], ['lunge', 30], ['happybaby', 30]] },
-  { id: 'ladder-hips-3', title: 'Hips 3', cat: 'ladder', ladder: 'hips', step: 3, why: 'Hips, quads and back · one more stretch than Hips 2 (Standing Groin Stretch)',
+  { id: 'ladder-hips-3', title: 'Hips 3', cat: 'ladder', ladder: 'hips', step: 3, why: 'Hips, quads and back; one more stretch than Hips 2 (Standing Groin Stretch)',
     desc: 'Step 3 of the Hips ladder: Hips 2 plus the Standing Groin Stretch.', items: [['butterfly', 30], ['figure4', 30], ['lunge', 30], ['groinhold', 30], ['happybaby', 30]] },
-  { id: 'ladder-hips-4', title: 'Hips 4', cat: 'ladder', ladder: 'hips', step: 4, why: 'Hips, quads and back · the same five stretches as Hips 3, held 45 seconds instead of 30',
+  { id: 'ladder-hips-4', title: 'Hips 4', cat: 'ladder', ladder: 'hips', step: 4, why: 'Hips, quads and back; the same five stretches as Hips 3, held 45 seconds instead of 30',
     desc: 'Step 4 of the Hips ladder: the Hips 3 stretches with longer holds.', items: [['butterfly', 45], ['figure4', 45], ['lunge', 45], ['groinhold', 45], ['happybaby', 45]] },
-  { id: 'ladder-hips-5', title: 'Hips 5', cat: 'ladder', ladder: 'hips', step: 5, why: 'Hips, quads and back · Pigeon (rated intermediate in the library) in place of Figure Four, and Frog (intermediate) added',
+  { id: 'ladder-hips-5', title: 'Hips 5', cat: 'ladder', ladder: 'hips', step: 5, why: 'Hips, quads and back; Pigeon (rated intermediate in the library) in place of Figure Four, and Frog (intermediate) added',
     desc: 'Step 5 of the Hips ladder: six stretches, two of them intermediate.', items: [['butterfly', 45], ['pigeon', 45], ['lunge', 45], ['groinhold', 45], ['frog', 45], ['happybaby', 45]] },
-  { id: 'ladder-hips-6', title: 'Hips 6', cat: 'ladder', ladder: 'hips', step: 6, why: 'Hips, quads and back · the same six stretches as Hips 5, held 60 seconds instead of 45',
+  { id: 'ladder-hips-6', title: 'Hips 6', cat: 'ladder', ladder: 'hips', step: 6, why: 'Hips, quads and back; the same six stretches as Hips 5, held 60 seconds instead of 45',
     desc: 'Step 6 of the Hips ladder: the Hips 5 stretches with longer holds.', items: [['butterfly', 60], ['pigeon', 60], ['lunge', 60], ['groinhold', 60], ['frog', 60], ['happybaby', 60]] },
-  { id: 'ladder-hips-7', title: 'Hips 7', cat: 'ladder', ladder: 'hips', step: 7, why: 'Hips, quads and back · Lizard Lunge (rated advanced in the library) in place of Low Lunge, and Couch Stretch (advanced) added',
+  { id: 'ladder-hips-7', title: 'Hips 7', cat: 'ladder', ladder: 'hips', step: 7, why: 'Hips, quads and back; Lizard Lunge (rated advanced in the library) in place of Low Lunge, and Couch Stretch (advanced) added',
     desc: 'Step 7 of the Hips ladder: seven stretches, two of them advanced.', items: [['butterfly', 60], ['pigeon', 60], ['lizard', 60], ['couch', 60], ['groinhold', 60], ['frog', 60], ['happybaby', 60]] },
 
-  { id: 'ladder-back-1', title: 'Back 1', cat: 'ladder', ladder: 'back', step: 1, why: 'Back and hips · the first step: three stretches, 30-second holds',
+  { id: 'ladder-back-1', title: 'Back 1', cat: 'ladder', ladder: 'back', step: 1, why: 'Back and hips; the first step: three stretches, 30-second holds',
     desc: 'Step 1 of the Back ladder: three beginner holds.', items: [['catcow', 30], ['seatedtwist', 30], ['child', 30]] },
-  { id: 'ladder-back-2', title: 'Back 2', cat: 'ladder', ladder: 'back', step: 2, why: 'Back, chest and hips · one more stretch than Back 1 (Sphinx)',
+  { id: 'ladder-back-2', title: 'Back 2', cat: 'ladder', ladder: 'back', step: 2, why: 'Back, chest and hips; one more stretch than Back 1 (Sphinx)',
     desc: 'Step 2 of the Back ladder: Back 1 plus Sphinx.', items: [['catcow', 30], ['sphinx', 30], ['seatedtwist', 30], ['child', 30]] },
-  { id: 'ladder-back-3', title: 'Back 3', cat: 'ladder', ladder: 'back', step: 3, why: 'Back, chest, shoulders and hips · one more stretch than Back 2 (Thread the Needle)',
+  { id: 'ladder-back-3', title: 'Back 3', cat: 'ladder', ladder: 'back', step: 3, why: 'Back, chest, shoulders and hips; one more stretch than Back 2 (Thread the Needle)',
     desc: 'Step 3 of the Back ladder: Back 2 plus Thread the Needle.', items: [['catcow', 30], ['sphinx', 30], ['seatedtwist', 30], ['thread', 30], ['child', 30]] },
-  { id: 'ladder-back-4', title: 'Back 4', cat: 'ladder', ladder: 'back', step: 4, why: 'Back, chest, shoulders and hips · the same five stretches as Back 3, held 45 seconds instead of 30',
+  { id: 'ladder-back-4', title: 'Back 4', cat: 'ladder', ladder: 'back', step: 4, why: 'Back, chest, shoulders and hips; the same five stretches as Back 3, held 45 seconds instead of 30',
     desc: 'Step 4 of the Back ladder: the Back 3 stretches with longer holds.', items: [['catcow', 45], ['sphinx', 45], ['seatedtwist', 45], ['thread', 45], ['child', 45]] },
-  { id: 'ladder-back-5', title: 'Back 5', cat: 'ladder', ladder: 'back', step: 5, why: 'Back, chest, shoulders and hips · one more stretch than Back 4: Puppy Pose (rated intermediate in the library)',
+  { id: 'ladder-back-5', title: 'Back 5', cat: 'ladder', ladder: 'back', step: 5, why: 'Back, chest, shoulders and hips; one more stretch than Back 4: Puppy Pose (rated intermediate in the library)',
     desc: 'Step 5 of the Back ladder: six stretches, one of them intermediate.', items: [['catcow', 45], ['sphinx', 45], ['seatedtwist', 45], ['thread', 45], ['puppy', 45], ['child', 45]] },
 
-  { id: 'ladder-shoulders-1', title: 'Shoulders 1', cat: 'ladder', ladder: 'shoulders', step: 1, why: 'Shoulders and chest · the first step: three stretches, 30-second holds',
+  { id: 'ladder-shoulders-1', title: 'Shoulders 1', cat: 'ladder', ladder: 'shoulders', step: 1, why: 'Shoulders and chest; the first step: three stretches, 30-second holds',
     desc: 'Step 1 of the Shoulders ladder: three standing beginner holds.', items: [['crossbody', 30], ['doorway', 30], ['chestclasp', 30]] },
-  { id: 'ladder-shoulders-2', title: 'Shoulders 2', cat: 'ladder', ladder: 'shoulders', step: 2, why: 'Shoulders, chest and neck · one more stretch than Shoulders 1 (Levator Release)',
+  { id: 'ladder-shoulders-2', title: 'Shoulders 2', cat: 'ladder', ladder: 'shoulders', step: 2, why: 'Shoulders, chest and neck; one more stretch than Shoulders 1 (Levator Release)',
     desc: 'Step 2 of the Shoulders ladder: Shoulders 1 plus Levator Release.', items: [['levator', 30], ['crossbody', 30], ['doorway', 30], ['chestclasp', 30]] },
-  { id: 'ladder-shoulders-3', title: 'Shoulders 3', cat: 'ladder', ladder: 'shoulders', step: 3, why: 'Shoulders, chest, neck and back · one more stretch than Shoulders 2 (Thread the Needle)',
+  { id: 'ladder-shoulders-3', title: 'Shoulders 3', cat: 'ladder', ladder: 'shoulders', step: 3, why: 'Shoulders, chest, neck and back; one more stretch than Shoulders 2 (Thread the Needle)',
     desc: 'Step 3 of the Shoulders ladder: Shoulders 2 plus Thread the Needle.', items: [['levator', 30], ['crossbody', 30], ['doorway', 30], ['chestclasp', 30], ['thread', 30]] },
-  { id: 'ladder-shoulders-4', title: 'Shoulders 4', cat: 'ladder', ladder: 'shoulders', step: 4, why: 'Shoulders, chest, neck and back · the same five stretches as Shoulders 3, held 45 seconds instead of 30',
+  { id: 'ladder-shoulders-4', title: 'Shoulders 4', cat: 'ladder', ladder: 'shoulders', step: 4, why: 'Shoulders, chest, neck and back; the same five stretches as Shoulders 3, held 45 seconds instead of 30',
     desc: 'Step 4 of the Shoulders ladder: the Shoulders 3 stretches with longer holds.', items: [['levator', 45], ['crossbody', 45], ['doorway', 45], ['chestclasp', 45], ['thread', 45]] },
-  { id: 'ladder-shoulders-5', title: 'Shoulders 5', cat: 'ladder', ladder: 'shoulders', step: 5, why: 'Shoulders, chest, neck and back · one more stretch than Shoulders 4: Puppy Pose (rated intermediate in the library)',
+  { id: 'ladder-shoulders-5', title: 'Shoulders 5', cat: 'ladder', ladder: 'shoulders', step: 5, why: 'Shoulders, chest, neck and back; one more stretch than Shoulders 4: Puppy Pose (rated intermediate in the library)',
     desc: 'Step 5 of the Shoulders ladder: six stretches, one of them intermediate.', items: [['levator', 45], ['crossbody', 45], ['doorway', 45], ['chestclasp', 45], ['thread', 45], ['puppy', 45]] },
 ];
 // Stage 24: the ladders, in the order Explore shows them. Steps are the routines with the matching `ladder`, by `step`.
+// Stage 35: multi-day series, built only from existing routines, one routine a day. Progress comes from History (see
+// seriesProgress in app.js); nothing is locked and missing a day never resets anything. Every day is a beginner-only
+// routine (review, Stage 35: no Pigeon, Frog or Half Split, and no "Splits" titles in a general series).
+const SERIES = [
+  { id: 'desk7', name: '7-day desk series', days: ['neck-unknot', 'office-short', 'desk-reset', 'posture-short', 'office-medium', 'desk-reset', 'office-longer'],
+    blurb: 'One short routine a day for the neck, shoulders, chest and back, at a desk or standing.' },
+  { id: 'hipsham7', name: '7-day hips and hamstrings', days: ['run-cooldown', 'office-longer', 'first-light', 'stride-reset', 'run-cooldown', 'first-light', 'run-recovery'],
+    blurb: 'One routine a day for the hips and hamstrings.' },
+  { id: 'basics14', name: '14-day full-body basics', days: ['first-light', 'desk-reset', 'back-ease', 'quick-hips', 'posture-short', 'lights-out', 'office-longer', 'office-medium', 'stride-reset', 'posture-medium', 'first-light', 'back-ease', 'run-cooldown', 'lights-out'],
+    blurb: 'One routine a day across the whole body, from morning to evening routines.' },
+];
 const LADDERS = [
   { id: 'hips', name: 'Hips', blurb: 'Seven steps for the hips. Each is a little longer or harder than the one before; start with any step.' },
   { id: 'back', name: 'Back', blurb: 'Five steps for the back. Each is a little longer or harder than the one before; start with any step.' },
@@ -1563,6 +1590,10 @@ const ANALYTICS_CONFIG = {
   uiHost: 'https://us.posthog.com',    // EU cloud project: 'https://eu.posthog.com'
   // Pinned build with session replay bundled in, so it loads no other scripts.
   library: 'https://cdn.jsdelivr.net/npm/posthog-js@1.438.21/dist/array.full.no-external.js',
+  // Hardening: Subresource Integrity, so a changed copy of the library is refused (analytics then simply stays off).
+  // Computed from the pinned copy in tests/vendor/posthog-js (same version and file). Confirm it against the CDN before a
+  // real key is added (the CDN couldn't be reached from the build machine).
+  libraryIntegrity: 'sha384-eykfU5R5JF8yRnmsWjzfKCBfNQpebNpV3Rt80aCiUKvzhzl9crkQjuQYC2tYqLMd',
 };
 
 // ---------- Analytics (PostHog) ----------
@@ -1592,7 +1623,7 @@ const Analytics = {
     if (navigator.onLine === false) { addEventListener('online', () => { if (this.enabled) this.load(); }, { once: true }); return; }
     this.loading = true;
     const s = document.createElement('script');
-    s.src = ANALYTICS_CONFIG.library; s.async = true; s.crossOrigin = 'anonymous';
+    s.src = ANALYTICS_CONFIG.library; s.async = true; s.crossOrigin = 'anonymous'; if (ANALYTICS_CONFIG.libraryIntegrity) s.integrity = ANALYTICS_CONFIG.libraryIntegrity; // hardening: SRI
     s.onload = () => this.start();
     s.onerror = () => { this.loading = false; this.queue = []; addEventListener('online', () => { if (this.enabled) this.load(); }, { once: true }); };
     document.head.appendChild(s);
@@ -1695,7 +1726,8 @@ for (const k of Object.keys(SOUND_DEFAULTS)) { const d = SOUND_DEFAULTS[k], v = 
 const savePrefs = () => { try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) {} };
 
 const Sound = {
-  ctx: null, nodes: [], timers: [], log: [], busyUntil: 0, speechToken: 0,
+  logPush(x) { this.log.push(x); if (this.log.length > 2000) this.log.splice(0, this.log.length - 2000); }, // hardening: capped
+  ctx: null, nodes: [], timers: [], log: [], speechToken: 0, // log: what played (tests read it); kept to the last 2,000 entries
   // Must run inside a tap. iOS only allows audio after a user gesture.
   unlock() {
     try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {} // play even with the ring/silent switch on (Safari 16.4+)
@@ -1717,13 +1749,12 @@ const Sound = {
     this.nodes = [];
     this.speechToken++; // Stage 28: guidance cut off here is not counted as read
     try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
-    this.busyUntil = 0;
-    this.log.push({ k: 'stop', t: performance.now() });
+    this.logPush({ k: 'stop', t: performance.now() });
   },
   // tones: [freq, gain, decaySeconds]
   tone(parts, dur, vol, kind, type = 'sine') {
     this.stopAll();
-    if (!this.ready()) { this.log.push({ k: kind, t: performance.now(), muted: true }); return; }
+    if (!this.ready()) { this.logPush({ k: kind, t: performance.now(), muted: true }); return; }
     const c = this.ctx, t = c.currentTime + 0.005;
     vol = Math.max(0.0001, vol);
     const gain = c.createGain(); gain.connect(c.destination);
@@ -1734,8 +1765,8 @@ const Sound = {
       o.connect(og); og.connect(gain); o.start(t); o.stop(t + dur + 0.02);
       this.nodes.push({ src: o, gain });
     });
-    this.busyUntil = performance.now() + dur * 1000;
-    this.log.push({ k: kind, t: performance.now(), dur: dur * 1000, vol });
+
+    this.logPush({ k: kind, t: performance.now(), dur: dur * 1000, vol });
   },
   chime(which) { // the end chime sits a fourth lower. Chime style applies to start and end; the switch chime stays Soft.
     const f = which === 'end' ? 659.3 : which === 'switch' ? 783.99 : 880; // start A5, switch sides G5, end E5
@@ -1749,7 +1780,7 @@ const Sound = {
     if (!window.speechSynthesis) return;
     try {
       const u = new SpeechSynthesisUtterance(text); u.rate = 1; u.lang = 'en-US'; u.volume = prefs.voiceVol;
-      speechSynthesis.speak(u); this.log.push({ k: 'voice', t: performance.now(), text, vol: prefs.voiceVol });
+      speechSynthesis.speak(u); this.logPush({ k: 'voice', t: performance.now(), text, vol: prefs.voiceVol });
     } catch (e) {}
   },
   // Stage 28, "Coach reads guidance": the stretch's own instruction lines, one utterance each, queued behind whatever is
@@ -1761,7 +1792,7 @@ const Sound = {
     lines.forEach((text, k) => { try {
       const u = new SpeechSynthesisUtterance(text); u.rate = COACH_RATE; u.lang = 'en-US'; u.volume = prefs.voiceVol;
       u.onend = () => { if (token === this.speechToken && onLine) onLine(k); };
-      speechSynthesis.speak(u); this.log.push({ k: 'coach', t: performance.now(), text, rate: COACH_RATE, vol: prefs.voiceVol });
+      speechSynthesis.speak(u); this.logPush({ k: 'coach', t: performance.now(), text, rate: COACH_RATE, vol: prefs.voiceVol });
     } catch (e) {} });
   },
   stopSpeech() { this.speechToken++; try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} },
@@ -1826,7 +1857,7 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
 };
-const CHEV = '<svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>';
+const CHEV = '<svg aria-hidden="true" class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>';
 
 // Every picture in the app is drawn here, from the current color settings.
 function art(st, mirror) {
@@ -1854,7 +1885,7 @@ function savedTimes(r) {
   if (!saved) { // move Stage 4 saves across, keeping only values that differ from the suggestion
     const old = store.get('meflex.times.' + r.id, {});
     saved = Object.fromEntries(r.items.filter(([id, sug]) => +old[id] && +old[id] !== sug).map(([id]) => [id, +old[id]]));
-    store.set(timesKey(r), saved);
+    if (Object.keys(saved).length) store.set(timesKey(r), saved); // hardening: no empty key written just by looking at a routine
   }
   return saved;
 }
@@ -1873,11 +1904,11 @@ const QUICK_S = 240; // quick routine: 4 minutes or less
 const isQuick = (r) => routineSecs(r) <= QUICK_S;
 
 // ---------- Navigation ----------
-const SCREENS = ['home', 'explore', 'list', 'library', 'history', 'saved', 'settings', 'routine', 'player', 'info', 'done', 'setup', 'hockey', 'builder', 'ladder'];
+const SCREENS = ['home', 'explore', 'list', 'library', 'history', 'saved', 'settings', 'routine', 'player', 'info', 'done', 'setup', 'hockey', 'builder', 'ladder', 'series'];
 // Stage 20: tabs are Home, Explore, Library, History, Saved. Settings is not a tab: it opens from the profile icon on Home,
 // has its own Back control, and keeps the tab bar with the tab it was opened from marked current (as iPhone apps do).
 const tabOf = (id) => id === 'settings' ? TABBED[settingsFrom] || 'home' : TABBED[id];
-const TABBED = { home: 'home', explore: 'explore', list: 'explore', hockey: 'explore', ladder: 'explore', library: 'library', history: 'history', saved: 'saved' };
+const TABBED = { home: 'home', explore: 'explore', list: 'explore', hockey: 'explore', ladder: 'explore', series: 'explore', library: 'library', history: 'history', saved: 'saved' };
 let current = 'home';
 function show(id) {
   SCREENS.forEach(s => { $(s).hidden = s !== id; });
@@ -1888,6 +1919,12 @@ function show(id) {
   Analytics.quiet(!!(cur && cur.r.youth && (['routine', 'player', 'done'].includes(id) || (id === 'info' && ['routine', 'player'].includes(infoFrom)))));
   requestAnimationFrame(() => placeBubble(currentTabButton())); // Stage 27: the bubble sits under the current tab
   document.querySelectorAll('#tabbar button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === tabOf(id) ? 'page' : 'false'));
+  // Hardening (WCAG 2.4.3): if focus was left on the screen that just closed (or nowhere), move it to the new screen's
+  // heading, else its first control, so keyboard and VoiceOver users don't start again from the top of nothing.
+  // Callers that focus something specific afterwards still win.
+  const a = document.activeElement; if (!a || a === document.body || a.closest('[hidden]')) { const scr = $(id), h = scr && (scr.querySelector('h1') || scr.querySelector('h2'));
+    const t = h && h.getClientRects().length ? h : scr && [...scr.querySelectorAll('button, input, select, a[href]')].find(e => e.getClientRects().length && !e.disabled);
+    if (t) { if (t === h && !h.hasAttribute('tabindex')) h.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); } }
 }
 function openTab(b) {
   const t = b.dataset.tab;
@@ -1910,7 +1947,7 @@ const TAB_CANCEL_PX = 60;
 const tabButtons = () => [...document.querySelectorAll('#tabbar button[data-tab]')];
 function placeBubble(b) {
   const bub = $('tabBubble'); if (!b || !b.offsetWidth) { bub.style.opacity = '0'; return; }
-  bub.style.opacity = '1'; bub.style.left = b.offsetLeft + 'px'; bub.style.width = b.offsetWidth + 'px';
+  bub.style.opacity = '1'; bub.style.width = b.offsetWidth + 'px'; bub.style.transform = `translateX(${b.offsetLeft}px)`; // hardening: transform only (tabs share one width)
 }
 const currentTabButton = () => tabButtons().find(b => b.getAttribute('aria-current') === 'page');
 const tabAt = (x) => tabButtons().find(b => { const r = b.getBoundingClientRect(); return x >= r.left && x < r.right; });
@@ -1936,8 +1973,9 @@ $('tabbar').addEventListener('pointercancel', (e) => endTabDrag(e, false));
 addEventListener('resize', () => placeBubble(currentTabButton()));
 // Shared rows: any element with data-routine / data-stretch / data-area / data-cat is a link.
 document.addEventListener('click', (e) => {
-  const el = e.target.closest('[data-routine],[data-stretch],[data-area],[data-cat],[data-ladder],[data-tight]'); if (!el) return;
+  const el = e.target.closest('[data-routine],[data-stretch],[data-area],[data-cat],[data-ladder],[data-tight],[data-series]'); if (!el) return;
   if (el.dataset.ladder) return openLadder(el.dataset.ladder);
+  if (el.dataset.series) return openSeries(el.dataset.series);
   if (el.dataset.routine) openRoutine(el.dataset.routine, current, el.dataset.rec !== undefined ? REC[+el.dataset.rec] : el.dataset.desc !== undefined ? DESC[+el.dataset.desc] : null);
   else if (el.dataset.stretch) openInfo(BY_ID[el.dataset.stretch], false, current, false);
   else if (el.dataset.area) openList('area', el.dataset.area);
@@ -1948,9 +1986,9 @@ document.addEventListener('click', (e) => {
 function routineRow(r) {
   const items = itemsOf(r);
   return `<li><button class="row" data-routine="${r.id}"><span class="thumb">${art(items[0].st)}</span>
-    <span class="label"><span class="n">${esc(r.title)}</span><span class="sub">${fmtMin(secsOf(items))} · ${esc(catOf(r).name)}</span></span>${CHEV}</button></li>`;
+    <span class="label"><span class="n">${esc(r.title)}</span><span class="sub">${fmtMin(secsOf(items))}, ${esc(catOf(r).name)}</span></span>${CHEV}</button></li>`;
 }
-const tagLine = (st) => [LEVELS[st.level], POSITIONS[st.pos], st.dynamic && 'moving', st.sides && 'each side', st.balance && 'balance'].filter(Boolean).join(' · ');
+const tagLine = (st) => [LEVELS[st.level], POSITIONS[st.pos], st.dynamic && 'moving', st.sides && 'each side', st.balance && 'balance'].filter(Boolean).join(', ');
 function stretchRow(st) {
   return `<li><button class="row" data-stretch="${st.id}"><span class="thumb">${art(st)}</span>
     <span class="label"><span class="n">${esc(st.name)}</span><span class="sub">${tagLine(st)}</span></span>${CHEV}</button></li>`;
@@ -1964,23 +2002,24 @@ function recCard(x, i, compact) {
   const items = itemsOf(x.r, x.plan ? x.plan.items : undefined);
   // data-private: replay records each personalised card only as an empty box (its routine id is not recorded either)
   return `<button class="card${compact ? ' compact' : ''}" data-routine="${x.r.id}" data-rec="${i}" data-private><span class="cover">${art(items[0].st)}</span>
-    <span class="cardtext"><span class="n">${esc(x.r.title)}</span><span class="sub">${fmtMin(secsOf(items))} · ${items.length} stretches</span>
+    <span class="cardtext"><span class="n">${esc(x.r.title)}</span><span class="sub">${fmtMin(secsOf(items))}, ${items.length} stretches</span>
     <span class="why" data-private><span class="whylabel">Why this routine</span>${esc(x.why)}</span></span>${compact ? CHEV : ''}</button>`;
 }
 function renderHome() {
   try { renderHomeTip(); } catch (e) {} // Stage 31
   try { renderPlan(); } catch (e) {} // Stage 34
-  const recs = recommendations(); REC = recs.map(x => x.plan);
+  let recs = recommendations(); if (!recs.length) recs = ['first-light', 'desk-reset', 'back-ease'].map(id => ({ plan: null, r: R(id), why: R(id).why || catOf(R(id)).blurb })); // hardening: never a blank Home
+  REC = recs.map(x => x.plan);
   $('homeDate').textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
   $('recHead').textContent = hasRoutineAnswers() ? 'Recommended for you' : 'Recommended';
-  $('recPrimary').innerHTML = recCard(recs[0], 0, false) + `<button class="cta" id="homeStart">Start · ${fmtMin(secsOf(itemsOf(recs[0].r, recs[0].plan ? recs[0].plan.items : undefined)))}</button>`;
+  $('recPrimary').innerHTML = recCard(recs[0], 0, false) + `<button class="cta" id="homeStart">Start (${fmtMin(secsOf(itemsOf(recs[0].r, recs[0].plan ? recs[0].plan.items : undefined)))})</button>`;
   $('homeStart').onclick = () => { openRoutine(recs[0].r.id, 'home', recs[0].plan); begin(); };
   $('recMore').innerHTML = recs.slice(1).map((x, i) => recCard(x, i + 1, true)).join(''); wireCarousel($('recMore'));
   renderHomeProgress(); renderHomeHeader();
 }
 // Home header (Stage 18): weekly streak (flame) and the week dots; the profile icon opens Settings for now.
 function renderHomeHeader() {
-  const h = store.get(HIST_KEY, []), goal = look.goal, s = weeklyStreak(h, goal), days = progressStats(h, goal).week.days;
+  const h = histGet(), goal = look.goal, s = weeklyStreak(h, goal), days = progressStats(h, goal).week.days;
   $('homeStreakN').textContent = s.current; $('homeStreak').classList.toggle('lit', s.current > 0);
   $('homeStreak').setAttribute('aria-label', s.current > 0 ? `Weekly streak: ${s.current} week${s.current === 1 ? '' : 's'}. Open History` : `No weekly streak yet. ${streakMessage(s, goal)} Open History`);
   $('homeDots').innerHTML = weekDotsHTML(days); $('homeDots').setAttribute('aria-label', weekDotsLabel(days));
@@ -2017,7 +2056,7 @@ $('setBack').onclick = () => { const to = SCREENS.includes(settingsFrom) ? setti
   ({ home: renderHome, explore: renderExplore, library: renderLibrary, history: renderHistory, saved: renderSaved })[to]?.(); show(to); };
 // Compact progress: this week against the goal, and the 4-week consistency. Tapping it opens History.
 function renderHomeProgress() {
-  const h = store.get(HIST_KEY, []), goal = look.goal, el = $('homeProgress');
+  const h = histGet(), goal = look.goal, el = $('homeProgress');
   if (!h.length) {
     el.innerHTML = `<span class="pgtext"><b>Your week starts with your first routine</b><small>Weekly goal: ${goal} day${goal === 1 ? '' : 's'}</small></span>${CHEV}`;
     el.setAttribute('aria-label', 'No sessions yet. Open History'); return;
@@ -2052,6 +2091,7 @@ function renderExplore() {
     (a, b) => routineSecs(a) - routineSecs(b)).map(routineRow).join('');
   wireCarousel($('quickList'));
   $('ladderCards').innerHTML = LADDERS.map(l => `<li>${ladderCard(l)}</li>`).join('');
+  $('seriesCards').innerHTML = SERIES.map(s => `<li>${seriesCard(s)}</li>`).join(''); // Stage 35
   $('areaChips').innerHTML = AREAS.map(a => `<button class="chip" data-area="${a.id}">${a.name}</button>`).join('');
   $('tightChips').innerHTML = TIGHT.map(([id, name]) => `<button class="chip" data-tight="${id}">${name}</button>`).join(''); // Stage 33
   $('catGrid').innerHTML = CATEGORIES.map(c => {
@@ -2116,7 +2156,7 @@ function openList(kind, id) {
     const a = AREAS.find(x => x.id === id); title = a.name;
     sts = STRETCHES.filter(s => s.areas.includes(id));
     rs = ROUTINES.filter(r => !r.ladder && r.items.some(([sid]) => BY_ID[sid].areas.includes(id))); // ladder steps are listed under Ladders
-    sub = `${rs.length} routines · ${sts.length} stretches`;
+    sub = `${rs.length} routines, ${sts.length} stretches`;
   } else {
     const c = CATEGORIES.find(x => x.id === id); title = c.name; sub = c.blurb;
     rs = ROUTINES.filter(r => r.cat === id);
@@ -2140,23 +2180,22 @@ $('listBack').onclick = () => { renderExplore(); show('explore');
 // routines themselves are not. Viewing ladders sends no analytics.
 const ladderSteps = (id) => ROUTINES.filter(r => r.ladder === id).sort((a, b) => a.step - b.step);
 function ladderProgress(id) {
-  const steps = ladderSteps(id), had = new Set(store.get(HIST_KEY, []).map(h => h && h.id));
+  const steps = ladderSteps(id), had = new Set(histGet().map(h => h && h.id));
   const done = steps.map(r => had.has(r.id)), next = done.indexOf(false);
   return { steps, done, next: next < 0 ? null : next + 1, all: next < 0 };
 }
 // Recommended and Describe consider only each ladder's current step (the first not yet done), so steps never crowd them.
 const ladderEligible = (r) => !r.ladder || ladderProgress(r.ladder).next === r.step;
-const listAnd = (a) => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
 function ladderSummary(id) { // the text equivalent, e.g. "Hips, step 3 of 7, steps 1 and 2 done"
   const l = LADDERS.find(x => x.id === id), p = ladderProgress(id), n = p.steps.length, d = p.done.map((v, i) => v ? i + 1 : 0).filter(Boolean);
   if (p.all) return `${l.name}, all ${n} steps done`;
-  return `${l.name}, step ${p.next} of ${n}, ` + (d.length ? `step${d.length > 1 ? 's' : ''} ${listAnd(d)} done` : 'no steps done yet');
+  return `${l.name}, step ${p.next} of ${n}, ` + (d.length ? `step${d.length > 1 ? 's' : ''} ${joinAnd(d)} done` : 'no steps done yet');
 }
-const LADDER_ICON = '<svg viewBox="0 0 24 24"><path d="M7 3v18M17 3v18M7 7h10M7 12h10M7 17h10"/></svg>';
+const LADDER_ICON = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3v18M17 3v18M7 7h10M7 12h10M7 17h10"/></svg>';
 function ladderCard(l) {
   const p = ladderProgress(l.id), n = p.steps.length;
   return `<button class="hockeycard laddercard" data-ladder="${l.id}"><span class="hk" aria-hidden="true">${LADDER_ICON}</span>
-    <span><span aria-hidden="true"><b>${esc(l.name)}</b><small>${n} steps · <span data-private class="lprog">${p.all ? 'All steps done' : 'Step ' + p.next + ' next'}</span></small></span><span class="sr" data-private>${esc(ladderSummary(l.id))}</span></span>${CHEV}</button>`;
+    <span><span aria-hidden="true"><b>${esc(l.name)}</b><small>${n} steps, <span data-private class="lprog">${p.all ? 'All steps done' : 'Step ' + p.next + ' next'}</span></small></span><span class="sr" data-private>${esc(ladderSummary(l.id))}</span></span>${CHEV}</button>`;
 }
 let LADDER_OPEN = null;
 function openLadder(id) { LADDER_OPEN = id; renderLadder(); show('ladder'); $('ladder').querySelector('.scroll').scrollTop = 0; }
@@ -2164,15 +2203,54 @@ function renderLadder() {
   const l = LADDERS.find(x => x.id === LADDER_OPEN); if (!l) return;
   const p = ladderProgress(l.id);
   $('ladderTitle').textContent = l.name + ' ladder'; $('ladderSub').textContent = l.blurb;
-  $('ladderProg').innerHTML = `<span aria-hidden="true">${p.all ? 'All steps done. Every step stays open to play again.' : `Step ${p.next} of ${p.steps.length} is next · ${p.done.filter(Boolean).length} done`}</span><span class="sr">${esc(ladderSummary(l.id))}</span>`;
+  $('ladderProg').innerHTML = `<span aria-hidden="true">${p.all ? 'All steps done. Every step stays open to play again.' : `Step ${p.next} of ${p.steps.length} is next, ${p.done.filter(Boolean).length} done`}</span><span class="sr">${esc(ladderSummary(l.id))}</span>`;
   $('ladderSteps').innerHTML = p.steps.map((r, i) => {
     const items = itemsOf(r), state = p.done[i] ? 'done' : p.next === i + 1 ? 'next' : '';
     return `<li><button class="row lstep" data-routine="${r.id}"><span class="thumb lnum" aria-hidden="true">${r.step}</span>
       <span class="label"><span class="n">${esc(r.title)} <span class="lmark ${state}" data-private>${state === 'done' ? '<span aria-hidden="true">✓</span><span class="sr">, done</span>' : state === 'next' ? 'Next' : ''}</span></span>
-      <span class="sub">${fmtTotal(secsOf(items))} · ${items.length} stretches</span><span class="why">${esc(r.why)}</span></span>${CHEV}</button></li>`;
+      <span class="sub">${fmtTotal(secsOf(items))}, ${items.length} stretches</span><span class="why">${esc(r.why)}</span></span>${CHEV}</button></li>`;
   }).join('');
 }
 $('ladderBack').onclick = () => { renderExplore(); show('explore'); };
+
+// ---------- Series (Stage 35) ----------
+// A series is one existing routine a day for 7 or 14 days. Progress comes from History only (no new stored data). A routine
+// can appear on more than one day, so History is read in time order and each session moves the series on only if it is
+// the next day's routine: day N is done once its routine has been recorded after day N-1 was. Nothing is ever locked,
+// missing a day never resets or counts against anyone ("Pick up where you left off"), and there are no promises about
+// results or timeframes. Progress is personal (data-private); viewing series sends no analytics. Series add nothing to
+// Recommended: every day is an ordinary routine that already competes there on its own merits, so no extra day is pushed.
+function seriesProgress(id) {
+  const s = SERIES.find(x => x.id === id); if (!s) return { s: null, done: 0, total: 0, all: false, next: null }; // unknown id: nothing to show (review, Stage 35)
+  // History is stored newest first: reverse it so sessions with the same time keep the order they were recorded in
+  const h = histGet().filter(x => x && x.id && Number.isFinite(x.at)).slice().reverse().sort((a, b) => a.at - b.at);
+  let n = 0; for (const x of h) { if (n < s.days.length && x.id === s.days[n]) n++; }
+  return { s, done: n, total: s.days.length, all: n >= s.days.length, next: n >= s.days.length ? null : n + 1 };
+}
+function seriesSummary(id) {
+  const p = seriesProgress(id);
+  return p.all ? `${p.s.name}, all ${p.total} days done` : p.done ? `${p.s.name}, ${p.done} of ${p.total} days done, day ${p.next} next` : `${p.s.name}, not started, ${p.total} days`;
+}
+const SERIES_ICON = '<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>';
+function seriesCard(s) {
+  const p = seriesProgress(s.id);
+  return `<button class="hockeycard laddercard" data-series="${s.id}"><span class="hk" aria-hidden="true">${SERIES_ICON}</span>
+    <span><span aria-hidden="true"><b>${esc(s.name)}</b><small>${p.total} days, <span data-private class="lprog">${p.all ? 'All days done' : p.done ? 'Day ' + p.next + ' next' : 'Not started'}</span></small></span><span class="sr" data-private>${esc(seriesSummary(s.id))}</span></span>${CHEV}</button>`;
+}
+let SERIES_OPEN = null;
+function openSeries(id) { SERIES_OPEN = id; renderSeries(); show('series'); $('series').querySelector('.scroll').scrollTop = 0; $('seriesTitle').focus({ preventScroll: true }); }
+function renderSeries() {
+  const p = seriesProgress(SERIES_OPEN); if (!p.s) return; const s = p.s;
+  $('seriesTitle').textContent = s.name; $('seriesSub').textContent = s.blurb;
+  $('seriesProg').textContent = p.all ? `All ${p.total} days done. Every day stays open to play again.` : p.done ? `${p.done} of ${p.total} days done. Pick up where you left off: day ${p.next}.` : `${p.total} days, one routine a day. Start with day 1 whenever you like.`;
+  const nextR = p.all ? null : R(s.days[p.next - 1]);
+  $('seriesGo').hidden = !nextR; if (nextR) { $('seriesGo').textContent = `${p.done ? 'Pick up where you left off' : 'Start day 1'}: ${nextR.title}`; $('seriesGo').dataset.routine = nextR.id; }
+  $('seriesDays').innerHTML = s.days.map((id, i) => { const r = R(id), items = itemsOf(r), state = i < p.done ? 'done' : i === p.done ? 'next' : '';
+    return `<li><button class="row lstep" data-routine="${r.id}"${state === 'next' ? ' aria-current="step"' : ''}><span class="thumb lnum" aria-hidden="true">${i + 1}</span>
+      <span class="label"><span class="n"><span class="sr">Day ${i + 1}: </span>${esc(r.title)}<span class="lmark ${state}" data-private>${state === 'done' ? '<span aria-hidden="true"> ✓</span><span class="sr">, done</span>' : state === 'next' ? '<span class="sr">,</span> Next' : ''}</span></span>
+      <span class="sub">${fmtTotal(secsOf(items))}, ${items.length} stretches</span></span>${CHEV}</button></li>`; }).join('');
+}
+$('seriesBack').onclick = () => { renderExplore(); show('explore'); const f = SERIES_OPEN && document.querySelector(`#explore [data-series="${SERIES_OPEN}"]`); if (f) f.focus(); };
 
 // ---------- Library ----------
 // Library: filter by equipment and difficulty; grouped by equipment.
@@ -2188,7 +2266,7 @@ function renderLibrary() {
     return sts.length ? `<h2 class="sec">${name} <span>${sts.length}</span></h2><ul class="rows">${sts.map(stretchRow).join('')}</ul>` : '';
   }).join('') : '<p class="empty">No exercises match both filters.</p>';
   const needs = STRETCHES.filter(s => !s.figure);
-  $('libNeedsSum').textContent = `Need a reference photo · ${needs.length}`;
+  $('libNeedsSum').textContent = `Need a reference photo (${needs.length})`;
   $('libNeedsList').innerHTML = needs.map(s => `<li>${esc(s.name)} <span>${POSITIONS[s.pos]}</span></li>`).join('');
 }
 document.querySelector('#library .filters').addEventListener('click', (e) => {
@@ -2198,10 +2276,22 @@ document.querySelector('#library .filters').addEventListener('click', (e) => {
 
 // ---------- History ----------
 const HIST_KEY = 'meflex.history';
-function recordSession(r, secs) {
-  const h = store.get(HIST_KEY, []);
+// Hardening: History is read through one function. Only well-formed entries come back (a string id, a real date from
+// 2020 to a day from now, a sensible length), so damaged storage can't break Home, History, ladders or series, or make
+// the weekly-streak walk run for seconds. Parsed once per stored value (it is read many times per render).
+let HIST_CACHE = { raw: null, list: [] };
+const histOk = (x) => x && typeof x === 'object' && typeof x.id === 'string' && x.id && Number.isFinite(x.at) && x.at >= Date.UTC(2020, 0, 1) && x.at <= Date.now() + 864e5 && Number.isFinite(x.secs) && x.secs >= 0 && x.secs <= 86400;
+function histGet() {
+  let raw = null; try { raw = localStorage.getItem(HIST_KEY); } catch (e) {}
+  if (raw === HIST_CACHE.raw) return HIST_CACHE.list.slice();
+  let v = []; try { v = raw ? JSON.parse(raw) : []; } catch (e) {}
+  const list = Array.isArray(v) ? v.filter(histOk).map(x => ({ ...x, title: typeof x.title === 'string' ? x.title : '' })) : [];
+  HIST_CACHE = { raw, list }; return list.slice();
+}
+function recordSession(r, secs) { // true when it was saved (hardening: a full device no longer claims it saved)
+  const h = histGet();
   h.unshift({ id: r.id, title: r.title, at: Date.now(), secs: Math.round(secs) });
-  store.set(HIST_KEY, h.slice(0, 1000));
+  return storeTry(HIST_KEY, h.slice(0, 1000));
 }
 function dayLabel(d) {
   const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -2214,7 +2304,7 @@ function dayLabel(d) {
 $('histBrowse').onclick = () => { renderExplore(); show('explore'); };
 
 // ---------- Routine screen ----------
-const MINUS = '<svg viewBox="0 0 14 14"><path d="M2.5 7h9"/></svg>', PLUS = '<svg viewBox="0 0 14 14"><path d="M2.5 7h9M7 2.5v9"/></svg>';
+const MINUS = '<svg aria-hidden="true" viewBox="0 0 14 14"><path d="M2.5 7h9"/></svg>', PLUS = '<svg aria-hidden="true" viewBox="0 0 14 14"><path d="M2.5 7h9M7 2.5v9"/></svg>';
 let cur = null, routineFrom = 'home';
 let REC = [];
 // plan: a tailored version from Recommended (same routine id), or null for the routine as designed.
@@ -2232,13 +2322,13 @@ function openRoutine(id, from, plan = null) {
   cur.edited = false; // Stage 17: swaps and removals last for this visit only (saving comes in Stage 22)
   renderRoutineList(); renderRoutine(); show('routine'); $('routine').querySelector('.scroll').scrollTop = 0;
 }
-const SWAP_ICON = '<svg viewBox="0 0 24 24"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/></svg>';
+const SWAP_ICON = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/></svg>';
 function renderRoutineList() {
   const plan = cur.plan;
   const note = (it) => it.swappedFrom ? `Instead of ${esc(it.swappedFrom.name)}` : !plan ? '' : plan.from[it.st.id] === 'added' ? 'Added for your focus' : plan.from[it.st.id] ? `Instead of ${esc(BY_ID[plan.from[it.st.id]].name)}` : '';
   $('rList').innerHTML = cur.items.map((it, i) => `<li>
     <span class="thumb">${art(it.st, false)}</span>
-    <button class="label link" data-stretch="${it.st.id}"><span class="n">${esc(it.st.name)}</span>${it.st.sides || note(it) ? `<span class="sub">${[it.st.sides && 'Each side', note(it)].filter(Boolean).join(' · ')}</span>` : ''}</button>
+    <button class="label link" data-stretch="${it.st.id}"><span class="n">${esc(it.st.name)}</span>${it.st.sides || note(it) ? `<span class="sub">${[it.st.sides && 'Each side', note(it)].filter(Boolean).join(', ')}</span>` : ''}</button>
     <span class="stepper" role="group" aria-label="${esc(it.st.name)} time">
       <button data-i="${i}" data-d="-1" aria-label="Shorter">${MINUS}</button>
       <output id="secs-${i}" aria-live="polite"></output>
@@ -2248,7 +2338,7 @@ function renderRoutineList() {
   $('rEdited').hidden = !cur.edited; $('rSaveCopy').hidden = !cur.edited || !!cur.r.custom || !!cur.r.youth; // Stage 29: keep this visit's changes as your own
 }
 function renderRoutine() {
-  $('rMeta').textContent = `${fmtTotal(secsOf(cur.items))} · ${cur.items.length} stretches`;
+  $('rMeta').textContent = `${fmtTotal(secsOf(cur.items))}, ${cur.items.length} stretches`;
   cur.items.forEach((it, i) => {
     $('secs-' + i).textContent = fmt(it.secs * 1000);
     $('rList').querySelector(`[data-i="${i}"][data-d="-1"]`).disabled = it.secs <= MIN_S;
@@ -2296,7 +2386,7 @@ function openSwap(i, ctx = 'routine') {
   $('swapRemove').disabled = last; $('swapRemove').setAttribute('aria-label', 'Remove stretch, ' + it.st.name); $('swapRemoveNote').hidden = !last;
   $('swapSheet').hidden = false; $('swapSheet').querySelector('.panel').scrollTop = 0; $('swapCancel').focus();
 }
-const closeSwap = () => { $('swapSheet').hidden = true; const b = swapBtn(swapIndex); if (b) b.focus(); swapIndex = -1; };
+const closeSwap = () => { $('swapSheet').hidden = true; syncSheetInert(); const b = swapBtn(swapIndex); if (b) b.focus(); swapIndex = -1; };
 $('rList').addEventListener('click', (e) => { const b = e.target.closest('[data-swap]'); if (b) openSwap(+b.dataset.swap); });
 $('swapList').addEventListener('click', (e) => {
   const b = e.target.closest('[data-swapto]'); if (!b || swapIndex < 0) return;
@@ -2308,10 +2398,10 @@ $('swapList').addEventListener('click', (e) => {
   const nb = $('rList').querySelector(`[data-swap="${i}"]`); if (nb) nb.focus();
 });
 $('swapRemove').onclick = () => {
-  if (swapIndex >= 0 && swapCtx === 'builder') { const i = swapIndex, st = BY_ID[B.ids[i]]; B.ids.splice(i, 1); $('swapSheet').hidden = true; swapIndex = -1; renderBuilder(); bMsg(`Removed ${st.name}.`);
+  if (swapIndex >= 0 && swapCtx === 'builder') { const i = swapIndex, st = BY_ID[B.ids[i]]; B.ids.splice(i, 1); $('swapSheet').hidden = true; syncSheetInert(); swapIndex = -1; renderBuilder(); bMsg(`Removed ${st.name}.`);
     const nb = $('bList').querySelector('[data-bswap]'); (nb || $('bSearch')).focus(); return; }
   if (swapIndex < 0 || cur.items.length <= 1) return; // a routine keeps at least one stretch
-  cur.items.splice(swapIndex, 1); cur.edited = true; $('swapSheet').hidden = true; swapIndex = -1; renderRoutineList(); renderRoutine();
+  cur.items.splice(swapIndex, 1); cur.edited = true; $('swapSheet').hidden = true; syncSheetInert(); swapIndex = -1; renderRoutineList(); renderRoutine();
   const nb = $('rList').querySelector('[data-swap]'); if (nb) nb.focus();
 };
 $('swapCancel').onclick = closeSwap;
@@ -2325,6 +2415,7 @@ $('rBack').onclick = () => {
   if (routineFrom === 'saved') renderSaved();
   if (routineFrom === 'library') renderLibrary();
   if (routineFrom === 'ladder') renderLadder();
+  if (routineFrom === 'series') { renderSeries(); setTimeout(() => ($('seriesGo').hidden ? $('seriesTitle') : $('seriesGo')).focus({ preventScroll: true }), 0); } // Stage 35: VoiceOver lands back on the series
   show(routineFrom);
 };
 
@@ -2392,7 +2483,7 @@ const bHold = (id) => (B.mode === 'copy' && B.times[id]) || holdFor(id); // a co
 const bSecs = () => B.ids.reduce((a, id) => a + bHold(id) * (BY_ID[id].sides ? 2 : 1), 0);
 const bDirty = () => B.mode !== 'new' && JSON.stringify([B.name.trim(), B.ids]) !== B.orig;
 function bMsg(t) { $('bMsg').textContent = t; }
-const BACK_ICON = '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
+const BACK_ICON = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
 function leaveEdit() { if (B.mode === 'new') return; Object.assign(B, STASH || { name: '', ids: [], area: 'all', q: '' }, { mode: 'new', editId: null, orig: null, fromId: null, times: {} }); STASH = null; }
 function openBuilder() { leaveEdit(); bMsg(''); renderBuilder(); show('builder'); $('builder').querySelector('.scroll').scrollTop = 0; }
 function openCopy() { // Stage 29: Customize
@@ -2418,7 +2509,7 @@ function renderBuilder() {
   $('bDelete').hidden = !edit;
   $('bName').value = B.name; $('bCount').textContent = `${B.name.length} / ${NAME_MAX}`;
   const n = B.ids.length;
-  $('bTotal').textContent = n ? `Total ${fmtTotal(bSecs())} · ${n} stretch${n === 1 ? '' : 'es'}` : 'Total 0 min · no stretches yet';
+  $('bTotal').textContent = n ? `Total ${fmtTotal(bSecs())}, ${n} stretch${n === 1 ? '' : 'es'}` : 'Total 0 min, no stretches yet';
   $('bList').classList.toggle('editing', edit);
   // Stage 29: every row has a drag handle (no visible arrows), two hidden-until-focused "Move up/down" buttons for VoiceOver
   // and keyboard (disabled at the ends), the existing Swap (same sheet as the routine page) and Remove.
@@ -2427,7 +2518,7 @@ function renderBuilder() {
       <button class="icon bmove sr" data-bdown="${i}" aria-label="Move ${nm} down"${i === n - 1 ? ' disabled' : ''}>Down</button>`;
     return `<li data-i="${i}"><button class="bhandle" data-bdrag="${i}" aria-label="Reorder ${nm}, position ${i + 1} of ${n}" aria-describedby="bDragHelp" aria-pressed="false">${GRIP_ICON}</button>
       <span class="thumb">${art(st)}</span><span class="label"><span class="n">${nm}</span><span class="sub">${fmtTotal(h)}${st.sides ? ' each side' : ''}</span></span>
-      ${moves}<button class="icon bswap" data-bswap="${i}" aria-label="Swap stretch, ${nm}" aria-haspopup="dialog">${SWAP_ICON}</button><button class="icon brem" data-brem="${i}" aria-label="Remove ${nm}"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button></li>`; }).join('');
+      ${moves}<button class="icon bswap" data-bswap="${i}" aria-label="Swap stretch, ${nm}" aria-haspopup="dialog">${SWAP_ICON}</button><button class="icon brem" data-brem="${i}" aria-label="Remove ${nm}"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button></li>`; }).join('');
   $('bEmpty').hidden = n > 0;
   const ok = B.name.trim() && n; $('bSave').classList.toggle('notready', !ok); // still a normal button: tapping it says what is missing
   renderBuilderResults();
@@ -2438,7 +2529,7 @@ function renderBuilderResults() {
   const hits = STRETCHES.filter(s => (B.area === 'all' || s.areas.includes(B.area)) && (!q || [s.name, s.focus, ...s.areas.map(a => (AREAS.find(x => x.id === a) || {}).name || a)].join(' ').toLowerCase().includes(q)));
   $('bResults').innerHTML = hits.length ? hits.map(s => { const added = B.ids.includes(s.id);
     return `<li><div class="row brow"><span class="thumb">${art(s)}</span><span class="label"><span class="n">${esc(s.name)}</span><span class="sub">${esc(s.focus)}</span></span>
-      <button class="icon badd${added ? ' on' : ''}" data-badd="${s.id}" aria-label="${added ? esc(s.name) + ' added' : 'Add ' + esc(s.name)}"${full && !added ? ' data-full' : ''}>${added ? '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>' : '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>'}</button></div></li>`; }).join('')
+      <button class="icon badd${added ? ' on' : ''}" data-badd="${s.id}" aria-label="${added ? esc(s.name) + ' added' : 'Add ' + esc(s.name)}"${full && !added ? ' data-full' : ''}>${added ? '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>' : '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>'}</button></div></li>`; }).join('')
     : '<li class="empty">No stretches match. Try another word or area.</li>';
 }
 $('bName').addEventListener('input', () => { B.name = $('bName').value.slice(0, NAME_MAX); $('bCount').textContent = `${B.name.length} / ${NAME_MAX}`;
@@ -2550,14 +2641,14 @@ $('bBack').onclick = () => {
   if (B.mode !== 'new') { if (bDirty()) { $('discardSheet').hidden = false; $('discardKeep').focus(); } else exitEdit(); return; }
   renderLibrary(); show('library');
 };
-$('discardKeep').onclick = () => { $('discardSheet').hidden = true; $('bBack').focus(); };
-$('discardGo').onclick = () => { $('discardSheet').hidden = true; exitEdit(); };
+$('discardKeep').onclick = () => { $('discardSheet').hidden = true; syncSheetInert(); $('bBack').focus(); };
+$('discardGo').onclick = () => { $('discardSheet').hidden = true; syncSheetInert(); exitEdit(); };
 $('bDelete').onclick = () => { $('delTitle').textContent = `Delete “${R(B.editId).title}”?`; $('delSheet').hidden = false; $('delKeep').focus(); };
-$('delKeep').onclick = () => { $('delSheet').hidden = true; $('bDelete').focus(); };
+$('delKeep').onclick = () => { $('delSheet').hidden = true; syncSheetInert(); $('bDelete').focus(); };
 $('delGo').onclick = () => {
   const r = R(B.editId), name = r ? r.title : '';
-  if (!deleteMine(B.editId)) { $('delSheet').hidden = true; bMsg(STORE_FAIL); return; }
-  $('delSheet').hidden = true; leaveEdit(); bMsg(''); renderLibrary(); show('library'); $('library').querySelector('.scroll').scrollTop = 0; libNote(`Deleted “${name}”.`, true);
+  if (!deleteMine(B.editId)) { $('delSheet').hidden = true; syncSheetInert(); bMsg(STORE_FAIL); return; }
+  $('delSheet').hidden = true; syncSheetInert(); leaveEdit(); bMsg(''); renderLibrary(); show('library'); $('library').querySelector('.scroll').scrollTop = 0; libNote(`Deleted “${name}”.`, true);
 };
 ['discardSheet', 'delSheet', 'nameSheet'].forEach(id => $(id).addEventListener('click', (e) => { if (e.target === $(id)) $(id).hidden = true; }));
 function libNote(t, undo = false) { $('libMsg').textContent = t; $('libUndo').hidden = !undo; }
@@ -2589,7 +2680,7 @@ $('rSaveCopy').onclick = () => {
   openNameSheet(ids, `${cur.r.title} (mine)`.slice(0, NAME_MAX), `${ids.length} stretch${ids.length === 1 ? '' : 'es'} as shown, in this order, with these hold times. It’s added to My routines and Saved; “${cur.r.title}” stays as it is.`,
     { times: Object.fromEntries(cur.items.map(it => [it.st.id, it.secs])), bookmark: true, back: 'rSaveCopy' });
 };
-$('saCancel').onclick = () => { $('nameSheet').hidden = true; const b = $(SA.back); if (b) b.focus(); };
+$('saCancel').onclick = () => { $('nameSheet').hidden = true; syncSheetInert(); const b = $(SA.back); if (b) b.focus(); };
 $('saName').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('saSave').click(); } });
 $('saSave').onclick = () => {
   const name = $('saName').value.trim().slice(0, NAME_MAX), ids = ($('nameSheet').dataset.ids || '').split(',').filter(id => BY_ID[id]);
@@ -2597,7 +2688,7 @@ $('saSave').onclick = () => {
   if (!ids.length) { $('saMsg').textContent = 'There are no stretches to save.'; return; }
   const id = saveMine(name, ids); if (!id) { $('saMsg').textContent = STORE_FAIL; return; }
   if (SA.times) copyTimes(id, ids, SA.times); if (SA.bookmark) setSaved(id, true);
-  $('nameSheet').hidden = true; routineFrom = SA.bookmark ? 'saved' : 'library'; openRoutine(id, routineFrom); $('rSaveMsg').textContent = SA.bookmark ? `Saved “${name}” to My routines and Saved.` : `Saved to My routines.`;
+  $('nameSheet').hidden = true; syncSheetInert(); routineFrom = SA.bookmark ? 'saved' : 'library'; openRoutine(id, routineFrom); $('rSaveMsg').textContent = SA.bookmark ? `Saved “${name}” to My routines and Saved.` : `Saved to My routines.`;
 };
 
 // ---------- Saved routines (Stage 20) ----------
@@ -2612,7 +2703,7 @@ const isSaved = (id) => savedEntries().some(x => x.id === id);
 function setSaved(id, on) {
   const list = savedEntries().filter(x => x.id !== id && routineById(x.id));
   if (on) list.unshift({ id, at: Date.now() });
-  store.set(SAVED_KEY, list);
+  return storeTry(SAVED_KEY, list); // hardening: report a failed save
 }
 function renderSaved() {
   const rs = savedEntries().map(x => routineById(x.id)).filter(Boolean);
@@ -2624,7 +2715,7 @@ function renderSaveBtn() {
   const on = !!cur && isSaved(cur.r.id), b = $('rSave');
   b.classList.toggle('on', on); b.setAttribute('aria-label', on ? 'Remove from saved' : 'Save routine');
 }
-$('rSave').onclick = () => { const on = !isSaved(cur.r.id); setSaved(cur.r.id, on); renderSaveBtn(); $('rSaveMsg').textContent = on ? 'Saved' : 'Removed from saved'; };
+$('rSave').onclick = () => { const on = !isSaved(cur.r.id), ok = setSaved(cur.r.id, on); renderSaveBtn(); $('rSaveMsg').textContent = !ok ? STORE_FAIL : on ? 'Saved' : 'Removed from saved'; };
 
 // ---------- Player ----------
 // The clock is the device clock (Date.now), not counted frames, so holds keep their true length
@@ -2646,16 +2737,21 @@ function nextPhase(i, phase) {
   return { i: i + 1, phase: 'hold' };
 }
 const P = { i: 0, phase: 'hold', remaining: 0, swLeft: 0, endAt: 0, running: false, raf: 0, lastFrame: 0, lastSec: 0, active: 0, runFrom: 0, held: new Set(), recorded: false };
-const ICON_PAUSE = '<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1.3"/><rect x="14" y="5" width="4" height="14" rx="1.3"/></svg>';
-const ICON_PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5.2v13.6a1 1 0 0 0 1.5.86l11-6.8a1 1 0 0 0 0-1.72l-11-6.8A1 1 0 0 0 8 5.2z"/></svg>';
+const ICON_PAUSE = '<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1.3"/><rect x="14" y="5" width="4" height="14" rx="1.3"/></svg>';
+const ICON_PLAY = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.2v13.6a1 1 0 0 0 1.5.86l11-6.8a1 1 0 0 0 0-1.72l-11-6.8A1 1 0 0 0 8 5.2z"/></svg>';
 const holdMs = (i) => STEPS[i].it.secs * 1000;
 const isSecondSide = (i) => i > 0 && STEPS[i].si === STEPS[i - 1].si; // step i is the other side of the step before it
-let wakeLock = null;
+let wakeLock = null, wakeAsk = null;
 async function keepAwake(on) {
   try {
-    if (on && !wakeLock && navigator.wakeLock && !document.hidden) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); }
-    if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; }
-  } catch (e) { wakeLock = null; }
+    // Hardening: clear the handle before awaiting release, so a skip (off then on in the same tick) asks for a new lock;
+    // and a request in flight is shared, so two never overlap.
+    if (!on) { const l = wakeLock; wakeLock = null; if (l) await l.release(); return; }
+    if (wakeLock || wakeAsk || !navigator.wakeLock || document.hidden) return;
+    wakeAsk = navigator.wakeLock.request('screen'); const l = await wakeAsk; wakeAsk = null;
+    if (!P || !P.running) { l.release(); return; } // stopped while asking
+    wakeLock = l; l.addEventListener('release', () => { if (wakeLock === l) wakeLock = null; });
+  } catch (e) { wakeLock = null; wakeAsk = null; }
 }
 
 // Show step i, ready to hold.
@@ -2711,7 +2807,7 @@ function switchCue() {
 const UPNEXT_MS = 5000;
 const upNextStep = () => { const n = STEPS[P.i + 1]; return P.phase === 'hold' && n && n.si !== STEPS[P.i].si && P.remaining <= UPNEXT_MS ? n : null; };
 let upNextKey = '', nextIconKey = '';
-const ICON_NEXT = '<svg viewBox="0 0 24 24"><path d="M6 5.5l9 6.5-9 6.5zM18 5v14"/></svg>', ICON_CHECK = '<svg viewBox="0 0 24 24"><path d="M4.5 12.5l5 5L19.5 7"/></svg>';
+const ICON_NEXT = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 5.5l9 6.5-9 6.5zM18 5v14"/></svg>', ICON_CHECK = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5L19.5 7"/></svg>';
 function render() {
   const st = STEPS[P.i], sw = P.phase === 'switch', cd = P.phase === 'count', gap = P.phase === 'gap';
   const secLeft = Math.max(1, Math.ceil(P.swLeft / 1000));
@@ -2722,7 +2818,7 @@ function render() {
   if (sw) $('time').innerHTML = '<span class="sw">Switch sides</span>';
   else if (cd) $('time').innerHTML = '<span class="sw">Get ready</span>';
   else $('time').textContent = fmt(grace ? holdMs(P.i) * (sideK(P.i) === 0 ? 2 : 1) : P.remaining + (sideK(P.i) === 0 ? holdMs(P.i) : 0)); // two-sided: the whole stretch
-  $('side').textContent = sw ? `${st.side} in ${secLeft}` : grace ? (st.side || '') : st.s.dynamic ? (st.side ? `${st.side} · keep moving` : 'Keep moving') : (st.side || '');
+  $('side').textContent = sw ? `${st.side} in ${secLeft}` : grace ? (st.side || '') : st.s.dynamic ? (st.side ? `${st.side}, keep moving` : 'Keep moving') : (st.side || '');
   $('cdNum').hidden = !cd; if (cd) $('cdNum').textContent = secLeft;
   $('art').classList.toggle('dim', cd);
   $('graceBubble').hidden = !grace; if (grace) $('graceBubble').textContent = secLeft;
@@ -2768,7 +2864,7 @@ function frame() {
     if (!n) { if (prefs.chime) Sound.chime('end'); P.phase = 'end'; finish(true); return; }
     if (n.phase === 'switch') { switchCue(); beginSwitch(n.i, now); }
     else if (n.phase === 'gap') { if (prefs.chime) Sound.chime('end'); beginWait(n.i, 'gap', now); }
-    else { if (prefs.chime) Sound.chime('end'); load(n.i); P.runFrom = now; Sound.after(prefs.chime ? 1000 : 0, () => cueHold(P.i)); }
+    else { if (prefs.chime) Sound.chime('end'); load(n.i); P.runFrom = now; P.cuePending = true; Sound.after(prefs.chime ? 1000 : 0, () => cueHold(P.i)); } // hardening: remember the queued cue, in case Pause drops it
   }
   if (P.running) P.raf = requestAnimationFrame(frame);
 }
@@ -2817,10 +2913,10 @@ function finish(keepEndChime) {
   if (!keepEndChime) Sound.stopAll();
   const secs = Math.min(P.active / 1000, secsOf(cur.items)); // never more than the routine's own length (e.g. phone left locked)
   const saved = secs >= 10 && !P.recorded; // skipping straight through is not a session; one play is recorded at most once
-  if (saved) { P.recorded = true; recordSession(cur.r, secs); }
+  let stored = true; if (saved) { P.recorded = true; stored = recordSession(cur.r, secs); }
   if (saved && !cur.r.youth && !cur.r.custom) Analytics.track('routine_completed', { routine_id: cur.r.id, duration_seconds: Math.round(secs) }); // same 10-second rule as history; youth routines send nothing
-  $('doneText').textContent = `${cur.r.title} · ${fmtTotal(secs)}`;
-  $('doneSaved').textContent = saved ? 'Saved to your history.' : 'Under 10 seconds, so not saved to history.';
+  $('doneText').textContent = `${cur.r.title}, ${fmtTotal(secs)}`;
+  $('doneSaved').textContent = !saved ? 'Under 10 seconds, so not saved to history.' : stored ? 'Saved to your history.' : 'Couldn’t save to your history on this device just now; its storage may be full.';
   renderDone(saved, P.held.size, cur.items.length);
   show('done');
 }
@@ -2846,6 +2942,7 @@ function coachSay(i, from, secs) {
   Sound.coach(fit, (k) => { if (COACH.i === i) COACH.next = from + k + 1; });
 }
 function cueHold(i) {
+  P.cuePending = false;
   const st = STEPS[i];
   if (!prefs.coach || !window.speechSynthesis || isSecondSide(i)) return cueStart(st); // exactly as before
   // The same sequence as cueStart (start chime, then the name and side if Voice is on), with the guidance queued
@@ -2878,7 +2975,8 @@ function begin() {
 // stretch's position in the routine, from 0 (the "1 of 6" counter minus one).
 const elapsedSecs = () => Math.round((P.active + (P.running && P.phase === 'hold' ? Date.now() - P.runFrom : 0)) / 1000);
 const trackAbandon = (opts) => cur.r.youth || cur.r.custom ? null : Analytics.track('routine_abandoned', { routine_id: cur.r.id, step_index: STEPS[P.i].si, seconds_elapsed: elapsedSecs() }, opts);
-function close() { trackAbandon(); coachStop(); Sound.stopAll(); setRunning(false); show('routine'); renderRoutine(); }
+// hardening: renamed from close(), which shadowed window.close
+function closePlayer() { trackAbandon(); coachStop(); Sound.stopAll(); setRunning(false); show('routine'); renderRoutine(); }
 function jump(i) {
   Sound.stopAll();
   const was = P.running;
@@ -2889,12 +2987,12 @@ function jump(i) {
 }
 
 $('startBtn').onclick = begin;
-$('closeBtn').onclick = close;
+$('closeBtn').onclick = closePlayer;
 // ---------- Finish screen (Stage 18) ----------
 // Sessions are recorded automatically when a routine finishes (10-second rule). "Added to your week" is therefore a
 // confirmation, not a second write: tapping it never records anything.
 function renderDone(saved, done, total) {
-  const h = store.get(HIST_KEY, []), goal = look.goal, w = progressStats(h, goal).week, s = weeklyStreak(h, goal);
+  const h = histGet(), goal = look.goal, w = progressStats(h, goal).week, s = weeklyStreak(h, goal);
   $('doneCount').textContent = `${done} of ${total}`;
   $('doneWeek').textContent = `${w.doneDays} of ${goal}`;
   $('doneDots').innerHTML = weekDotsHTML(w.days); $('doneDots').setAttribute('aria-label', weekDotsLabel(w.days));
@@ -2907,7 +3005,7 @@ $('doneBtn').onclick = () => { Sound.stopAll(); openRoutine(cur.r.id, undefined,
 $('doneHistory').onclick = () => { Sound.stopAll(); renderHistory(); show('history'); };
 $('playBtn').onclick = () => {
   if (P.running) setRunning(false);
-  else setRunning(true, { cue: P.phase === 'hold' && P.remaining >= holdMs(P.i) - 50 }); // chime only if the hold hasn't begun yet
+  else setRunning(true, { cue: P.phase === 'hold' && (P.remaining >= holdMs(P.i) - 50 || P.cuePending) }); // chime only if the hold hasn't begun yet, or its queued cue was cut off by Pause (hardening)
 };
 // Next during the countdown or a between-stretch pause ends the wait at once and starts that stretch.
 $('nextBtn').onclick = () => jump(P.phase === 'count' || P.phase === 'gap' ? P.i : P.i + 1);
@@ -2921,7 +3019,7 @@ const CAUTION_POS = [['kneeling', st => st.pos === 'kneeling', 'Kneeling'], ['fl
 const cautionFlags = (st) => CAUTION_POS.filter(([, has]) => has(st));
 function cautionItems(st) {
   const out = [], pos = cautionFlags(st).map(([, , label]) => label);
-  if (pos.length) out.push('Positions: ' + pos.join(' · '));
+  if (pos.length) out.push('Positions: ' + pos.join(', '));
   if (st.tips.includes(SAFETY)) out.push(SAFETY);
   if (out.length) out.push(FEEL_NOTE); // Stage 32: wherever Caution shows, the plain line on how a stretch should feel
   return out;
@@ -2967,9 +3065,26 @@ $('infoBack').onclick = () => { show(infoFrom); if (infoFrom === 'player' && res
 const sheet = $('soundSheet');
 function syncSheet() { ['chime', 'tick', 'voice', 'coach'].forEach(k => { $('opt-' + k).checked = !!prefs[k] && (k !== 'coach' || !!window.speechSynthesis); });
   if (!window.speechSynthesis) { $('opt-coach').disabled = true; $('opthelp-coach').textContent = 'This browser can’t read aloud, so this is off.'; } }
-$('soundBtn').onclick = () => { syncSheet(); sheet.hidden = false; };
-$('sheetDone').onclick = () => { sheet.hidden = true; };
-sheet.addEventListener('click', (e) => { if (e.target === sheet) sheet.hidden = true; });
+$('soundBtn').onclick = () => { syncSheet(); sheet.hidden = false; $('opt-chime').focus(); }; // hardening: focus moves into the sheet
+$('sheetDone').onclick = () => { sheet.hidden = true; syncSheetInert(); $('soundBtn').focus(); };
+sheet.addEventListener('click', (e) => { if (e.target === sheet) $('sheetDone').click(); });
+
+// ---------- Sheets: one rule for every dialog (hardening, WCAG audit) ----------
+// While any sheet is open, the screen behind it and the tab bar are inert (Tab and VoiceOver stay in the sheet), and
+// Escape presses the sheet's own Cancel/Done (each already returns focus to the button that opened it).
+const SHEET_CANCEL = { soundSheet: 'sheetDone', swapSheet: 'swapCancel', restoreSheet: 'rsCancel', discardSheet: 'discardKeep', delSheet: 'delKeep', nameSheet: 'saCancel', resetSheet: 'resetCancel' };
+let SHEET_OPENER = null, SHEET_WAS_OPEN = false;
+function syncSheetInert() { const open = [...document.querySelectorAll('.sheet')].some(s => !s.hidden);
+  if (open && !SHEET_WAS_OPEN) SHEET_OPENER = SHEET_FOCUS_BEFORE; // the control that opened it
+  SCREENS.forEach(id => { const el = $(id); if (el) el.inert = open && id === current; }); $('tabbar').inert = open;
+  if (!open && SHEET_WAS_OPEN) { const a = document.activeElement; // the screen is live again: give focus back if the closing code couldn't
+    if ((!a || a === document.body || a.closest('[hidden]') || a.closest('.sheet')) && SHEET_OPENER && SHEET_OPENER.isConnected && SHEET_OPENER.getClientRects().length) SHEET_OPENER.focus({ preventScroll: true }); }
+  SHEET_WAS_OPEN = open; }
+let SHEET_FOCUS_BEFORE = null; document.addEventListener('focusin', (e) => { if (!e.target.closest('.sheet')) SHEET_FOCUS_BEFORE = e.target; });
+new MutationObserver(syncSheetInert).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['hidden'] });
+document.addEventListener('keydown', (e) => { if (e.key !== 'Escape') return; const s = [...document.querySelectorAll('.sheet')].find(x => !x.hidden); if (!s || !SHEET_CANCEL[s.id]) return;
+  if (s.id === 'swapSheet' || s.id === 'restoreSheet') return; // these two already handle Escape themselves
+  e.preventDefault(); e.stopPropagation(); $(SHEET_CANCEL[s.id]).click(); }, true);
 ['chime', 'tick', 'voice', 'coach'].forEach(k => $('opt-' + k).addEventListener('change', (e) => {
   prefs[k] = e.target.checked; savePrefs();
   if (!prefs[k]) Sound.stopAll();
@@ -2982,7 +3097,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === ' ') { e.preventDefault(); $('playBtn').click(); }
   else if (e.key === 'ArrowRight') $('nextBtn').click();
   else if (e.key === 'ArrowLeft') $('prevBtn').click();
-  else if (e.key === 'Escape') close();
+  else if (e.key === 'Escape') closePlayer();
 });
 // Going to the background: silence everything and drop anything queued, so nothing
 // fires in a burst on return. Coming back: the next frame catches the clock up silently.
@@ -3124,11 +3239,12 @@ $('set-analytics').addEventListener('change', (e) => Analytics.setEnabled(e.targ
 // Reset app: clears setup answers, history, routine times and settings on this device (every meflex.* key
 // except the analytics choice, so a reset never quietly switches analytics back on), then reloads into setup.
 $('resetAppBtn').onclick = () => { $('resetSheet').hidden = false; $('resetCancel').focus(); };
-$('resetCancel').onclick = () => { $('resetSheet').hidden = true; };
-$('resetSheet').addEventListener('click', (e) => { if (e.target === $('resetSheet')) $('resetSheet').hidden = true; });
+$('resetCancel').onclick = () => { $('resetSheet').hidden = true; syncSheetInert(); $('resetAppBtn').focus(); }; // hardening: focus back to the button
+$('resetSheet').addEventListener('click', (e) => { if (e.target === $('resetSheet')) $('resetCancel').click(); });
 $('resetConfirm').onclick = () => {
   Sound.stopAll();
   try { Object.keys(localStorage).filter(k => k.startsWith('meflex.') && k !== ANALYTICS_PREF_KEY).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+  try { ['meflex.undoRestore', 'meflex.afterRestore'].forEach(k => sessionStorage.removeItem(k)); } catch (e) {} // hardening: no Undo of a restore after Reset
   location.reload();
 };
 
@@ -3217,13 +3333,13 @@ function historyStats(hist, goal, now = new Date()) {
   return { active: s.current, longest: s.longest, days: days.size, last: last ? { title: last.title, when: relDay(last.at, now), at: last.at } : null, streak: s };
 }
 function renderTiles() {
-  const h = store.get(HIST_KEY, []), t = historyStats(h, look.goal);
+  const h = histGet(), t = historyStats(h, look.goal);
   const tile = (key, label, value, sub, zero, aria) => `<li class="tile2${zero ? ' zero' : ''}" id="tile-${key}"><span class="sr">${esc(aria)}</span><span class="tl" aria-hidden="true">${label}</span><span class="tv${key === 'last' ? ' small' : ''}" aria-hidden="true">${value}</span><span class="ts" aria-hidden="true">${sub}</span></li>`;
   const flame = (lit) => `<svg class="flame${lit ? ' lit-static' : ''}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5c-3.7 0-6.5-2.6-6.5-6.2 0-2.6 1.4-4.4 2.8-5.9.3 1.5 1 2.5 2.1 2.9C10.2 8.6 11.6 5.3 14.2 2.5c.3 3.3 4.3 5.9 4.3 11.5 0 4.6-2.9 7.5-6.5 7.5z"/></svg>`;
   $('histTiles').innerHTML =
     tile('active', 'Active streak', flame(t.active > 0) + weeksWord(t.active), t.active ? 'in a row at your goal' : 'Starts when you meet your weekly goal', !t.active,
       t.active ? `Active streak: ${weeksWord(t.active)} in a row at your goal` : 'Active streak: none yet. It starts when you meet your weekly goal') +
-    tile('longest', 'Longest streak', t.longest ? weeksWord(t.longest) : '–', t.longest ? 'your best run so far' : 'Your best run will show here', !t.longest,
+    tile('longest', 'Longest streak', t.longest ? weeksWord(t.longest) : 'None yet' /* hardening: no dash as an empty value */, t.longest ? 'your best run so far' : 'Your best run will show here', !t.longest,
       t.longest ? `Longest streak: ${weeksWord(t.longest)}` : 'Longest streak: none yet') +
     tile('days', 'Days completed', String(t.days), t.days === 1 ? 'day with a session' : 'days with a session', !t.days, `Days completed: ${t.days}`) +
     tile('last', 'Last stretch', t.last ? esc(t.last.title) : 'None yet', t.last ? t.last.when : 'Your first routine will show here', !t.last,
@@ -3232,9 +3348,9 @@ function renderTiles() {
 // Every recorded session, newest first: light rows (no pictures) so several hundred render quickly.
 function renderAllList(h) {
   const list = [...h].sort((a, b) => b.at - a.at);
-  $('allHead').textContent = `All sessions · ${list.length}`;
+  $('allHead').textContent = `All sessions (${list.length})`;
   $('allList').innerHTML = list.map(x => { const d = new Date(x.at), r = R(x.id);
-    const date = d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', ...(d.getFullYear() !== new Date().getFullYear() ? { year: 'numeric' } : {}) }) + ' · ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+    const date = d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', ...(d.getFullYear() !== new Date().getFullYear() ? { year: 'numeric' } : {}) }) + ', ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
     return `<li><button ${r ? `data-routine="${r.id}"` : 'disabled'} aria-label="${esc(x.title)}, ${esc(date)}, ${fmtTotal(x.secs)} stretched"><span class="al"><span class="an">${esc(x.title)}</span><span class="ad">${date}</span></span><span class="at">${fmtTotal(x.secs)}</span></button></li>`; }).join('');
 }
 
@@ -3244,7 +3360,7 @@ function histRow(x) {
   const r = R(x.id), cover = r ? art(BY_ID[r.items[0][0]]) : '';
   const tm = new Date(x.at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
   return `<li><button class="row" ${r ? `data-routine="${r.id}"` : 'disabled'}><span class="thumb">${cover}</span>
-    <span class="label"><span class="n">${esc(x.title)}</span><span class="sub">${tm} · ${fmtTotal(x.secs)}</span></span>${r ? CHEV : ''}</button></li>`;
+    <span class="label"><span class="n">${esc(x.title)}</span><span class="sub">${tm}, ${fmtTotal(x.secs)}</span></span>${r ? CHEV : ''}</button></li>`;
 }
 function meterMessage(m) {
   if (m.score >= TARGET) return 'On target. Nice, steady stretching.';
@@ -3252,7 +3368,7 @@ function meterMessage(m) {
   return 'Every session counts. A short routine adds a day.';
 }
 function renderHistory() {
-  const h = store.get(HIST_KEY, []), goal = look.goal;
+  const h = histGet(), goal = look.goal;
   const P_ = progressStats(h, goal);
   $('histEmpty').hidden = h.length > 0; $('histBody').hidden = !h.length;
   renderTiles();
@@ -3263,7 +3379,7 @@ function renderHistory() {
   $('wkCount').innerHTML = `<b>${w.doneDays}</b> of ${goal} day${goal === 1 ? '' : 's'}`;
   $('wkNote').textContent = w.doneDays >= goal ? 'Weekly goal reached' : 'this week';
   $('wkDots').innerHTML = w.days.map((d, i) => `<span class="wd${d.done ? ' done' : ''}${d.today ? ' today' : ''}${d.future ? ' future' : ''}" title="${d.date.toLocaleDateString(undefined, { weekday: 'long' })}${d.done ? ', stretched' : ''}"><i></i><small>${'MTWTFSS'[i]}</small></span>`).join('');
-  $('wkSub').textContent = `${w.sessions} session${w.sessions === 1 ? '' : 's'} · ${w.minutes} min · Monday to Sunday`;
+  $('wkSub').textContent = `${w.sessions} session${w.sessions === 1 ? '' : 's'}, ${w.minutes} min`;
   // Consistency meter
   const m = P_.meter, pct = Math.round(m.score * 100);
   $('mPct').textContent = pct + '%';
@@ -3408,11 +3524,20 @@ function whyLine(t, p) {
   if (t.notes.avoided.size) parts.push('no ' + [...t.notes.avoided].map(a => ({ kneeling: 'kneeling', floor: 'floor work', overhead: 'overhead', balance: 'balancing' }[a])).join(' or '));
   if (t.notes.supported) parts.push('chair & wall options');
   if (p.hold) parts.push(`${p.hold} s holds`);
-  return parts.slice(0, 4).join(' · ');
+  return parts.slice(0, 4).join(', ');
 }
 
 // The Recommended section: 3 tailored routines, or the standing defaults when setup was skipped.
-function recommendations(n = 3) { // Stage 34: n > 3 gives the starting plan more to choose from
+// Hardening (start-up): the ranked list is worked out once per state (answers, holds, History, time-of-day picks) and shared
+// by Home, the starting plan and anyone else in the same moment; the result arrays are copied, so callers can't change it.
+let REC_MEMO = { key: null, list: null };
+function recommendations(n = 3) {
+  let raw = null; try { raw = localStorage.getItem(HIST_KEY); } catch (e) {}
+  const key = JSON.stringify([profile, look.hold, raw, hasRoutineAnswers() ? 0 : new Date().getHours()]);
+  if (REC_MEMO.key !== key) REC_MEMO = { key, list: recommendationsAll() };
+  return REC_MEMO.list.slice(0, n);
+}
+function recommendationsAll(n = 99) { // Stage 34: n > 3 gives the starting plan more to choose from
   if (!hasRoutineAnswers()) {
     const h = new Date().getHours();
     const [pick, why] = h < 11 ? ['first-light', 'Good for mornings'] : h < 17 ? ['desk-reset', 'A midday reset'] : ['lights-out', 'Winds you down for bed'];
@@ -3453,7 +3578,6 @@ const SEATED = ['seated', 'sitting', 'sit', 'chair', 'wheelchair'];
 const CONTEXT = { morning: ['morning', 'wake', 'waking', 'sunrise'], evening: ['bed', 'bedtime', 'sleep', 'evening', 'night', 'tonight'],
   desk: ['desk', 'office', 'computer', 'screen', 'typing', 'laptop'], training: ['run', 'running', 'runner', 'jog', 'jogging', 'gym', 'workout', 'training', 'hike', 'hiking', 'cycling', 'ride'] };
 const NUM_WORDS = { three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, twelve: 12, fifteen: 15, twenty: 20, thirty: 30 };
-const TIME_UNITS = ['min', 'mins', 'minute', 'minutes', 'm'];
 // Ice hockey: who it is for and when (before, between, after the game, end of the night).
 const HOCKEY_WORDS = ['hockey', 'skate', 'skates', 'skating', 'skater', 'rink', 'puck', 'game', 'games', 'shift', 'shifts'];
 const HOCKEY_GROUP = { refs: ['ref', 'refs', 'referee', 'referees', 'reffing', 'official', 'officials', 'officiating', 'linesman', 'linesmen', 'umpire'],
@@ -3620,7 +3744,7 @@ function describeWhy(q, t, p) {
   if (R(t.id).dynamic) parts.push('moving warm-up');
   if (t.notes.supported) parts.push('chair & wall options');
   if (p.hold) parts.push(`${p.hold} s holds`);
-  return parts.join(' · ');
+  return parts.join(', ');
 }
 
 // ---------- UI ----------
@@ -3638,7 +3762,7 @@ function runDescribe(text) {
   $('descOut').innerHTML = `<p class="understood"><span>Understood</span>${q.understood.map(u => `<i>${esc(u)}</i>`).join('')}</p>
     <ul class="rows">${results.map((t, i) => { const items = itemsOf(R(t.id), t.items);
       return `<li><button class="row" data-routine="${t.id}" data-desc="${i}"><span class="thumb">${art(items[0].st)}</span>
-        <span class="label"><span class="n">${esc(R(t.id).title)}${i === 0 ? ' <em>Best match</em>' : ''}</span><span class="sub">${fmtMin(secsOf(items))} · ${items.length} stretches</span>
+        <span class="label"><span class="n">${esc(R(t.id).title)}${i === 0 ? ' <em>Best match</em>' : ''}</span><span class="sub">${fmtMin(secsOf(items))}, ${items.length} stretches</span>
         <span class="why"><span class="whylabel">Why this routine</span>${esc(t.why)}</span></span>${CHEV}</button></li>`; }).join('')}</ul>
     <button type="button" class="ghost descsave" id="descSave" aria-haspopup="dialog">Save as my routine</button>
     <p class="mini descsavenote">Saves the best match’s stretches, in order, to My routines.</p>`;
@@ -3655,7 +3779,7 @@ $('descInput').addEventListener('input', () => { if (!$('descInput').value.trim(
 // only on browsing screens (never on a routine, in the player, on the finish screen, in setup or while editing a
 // routine), never while a new routine or a description is typed but not saved, and reloads only when the person taps Reload. Nothing here is personal data or sent anywhere.
 const OFFLINE = { on: false, reg: null, state: 'off', waiting: false, dismissed: false, reloading: false };
-const UPD_SCREENS = ['home', 'explore', 'library', 'history', 'saved', 'settings', 'list', 'hockey', 'ladder'];
+const UPD_SCREENS = ['home', 'explore', 'library', 'history', 'saved', 'settings', 'list', 'hockey', 'ladder', 'series'];
 function offlineInit() {
   const m = document.querySelector('meta[name="meflex-sw"]');
   if (!m || !('serviceWorker' in navigator)) return;
@@ -3722,8 +3846,7 @@ function bkSnapshot() { // the person's data as it is now: key -> parsed value (
   const data = {}; bkKeys().forEach(k => { try { data[k] = JSON.parse(localStorage.getItem(k)); } catch (e) {} }); return data;
 }
 const bkAppVersion = () => { const m = document.querySelector('meta[name="meflex-version"]'); return m ? m.content : 'preview'; };
-const bkPad = (n) => String(n).padStart(2, '0');
-const bkFileName = (d = new Date()) => `meflex-backup-${d.getFullYear()}-${bkPad(d.getMonth() + 1)}-${bkPad(d.getDate())}.json`;
+const bkFileName = (d = new Date()) => `meflex-backup-${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}.json`;
 function bkMake() {
   const now = new Date();
   return { name: bkFileName(now), text: JSON.stringify({ format: BK.FORMAT, formatVersion: BK.VERSION, appVersion: bkAppVersion(), createdAt: now.toISOString(), data: bkSnapshot() }, null, 1) };
@@ -3787,7 +3910,7 @@ function bkValidate(text) {
   if (!isObj(b) || !bkSafeShape(b) || b.format !== BK.FORMAT) return no('This file is not a MeFlex backup.');
   if (b.formatVersion !== BK.VERSION) return no('This backup was made by a different version of MeFlex and can’t be restored here.');
   const at = isStr(b.createdAt, 40) ? Date.parse(b.createdAt) : NaN;
-  if (!Number.isFinite(at) || !isObj(b.data) || !isStr(b.appVersion, 40) || Object.keys(b).some(k => !['format', 'formatVersion', 'appVersion', 'createdAt', 'data'].includes(k))) return no('This backup is incomplete or damaged.');
+  if (!bkAtOk(at) || !isObj(b.data) || !isStr(b.appVersion, 40) || Object.keys(b).some(k => !['format', 'formatVersion', 'appVersion', 'createdAt', 'data'].includes(k))) return no('This backup is incomplete or damaged.');
   const keys = Object.keys(b.data);
   if (keys.some(k => !bkKeyOk(k))) return no('This backup contains something MeFlex doesn’t recognise, so it wasn’t used.');
   const bad = keys.find(k => !bkCheckValue(k, b.data[k])); if (bad) return no('This backup is incomplete or damaged.');
@@ -3833,7 +3956,7 @@ function persistAsk() { // after a user action (Start, Back up): ask once per vi
 // ---- Home Screen tip ----
 const isIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
-function tipWanted() { return isIOS() && !isStandalone() && store.get(BK.TIP_KEY, '') !== 'off' && store.get(HIST_KEY, []).length > 0; }
+function tipWanted() { return isIOS() && !isStandalone() && store.get(BK.TIP_KEY, '') !== 'off' && histGet().length > 0; }
 function renderHomeTip() { $('homeTip').hidden = !tipWanted(); }
 $('homeTipClose').onclick = () => { store.set(BK.TIP_KEY, 'off'); renderHomeTip(); $('browseAll').focus(); }; // focus moves on to the next control
 
@@ -3842,7 +3965,7 @@ function backupAge() { const at = store.get(BK.AT_KEY, 0); return at ? Math.floo
 function renderYourData() {
   if (!$('ydPersist')) return;
   const pt = persistText(); if ($('ydPersist').textContent !== pt) $('ydPersist').textContent = pt; // only when it changes (not a live region)
-  const hist = store.get(HIST_KEY, []).length, age = backupAge();
+  const hist = histGet().length, age = backupAge();
   $('ydNudge').textContent = !hist ? '' : age === null ? 'You haven’t made a backup yet.' : age > 30 ? `Your last backup was ${age} days ago.` : '';
   $('ydNudge').hidden = !$('ydNudge').textContent;
   $('ydLast').textContent = age === null ? '' : `Last backup: ${new Date(store.get(BK.AT_KEY, 0)).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}.`;
@@ -3896,7 +4019,8 @@ $('rsGo').onclick = () => {
 };
 $('ydUndo').onclick = () => {
   let u = null; try { u = JSON.parse(sessionStorage.getItem(BK.UNDO_KEY)); } catch (e) {}
-  if (!u || !isObj(u.data)) { renderYourData(); return; }
+  // hardening: the Undo copy is checked like a backup (known keys, valid values, never the analytics choice)
+  if (!u || !isObj(u.data) || !bkSafeShape(u.data) || Object.keys(u.data).some(k => !bkKeyOk(k) || !bkCheckValue(k, u.data[k]))) { try { sessionStorage.removeItem(BK.UNDO_KEY); } catch (e) {} renderYourData(); return; }
   if (!bkReplace(u.data)) { ydMsg('Couldn’t undo on this device just now. Nothing was changed.'); return; }
   try { if (isNum(u.backupAt) && u.backupAt > 0) localStorage.setItem(BK.AT_KEY, JSON.stringify(u.backupAt)); else localStorage.removeItem(BK.AT_KEY); } catch (e) {}
   try { sessionStorage.removeItem(BK.UNDO_KEY); sessionStorage.setItem('meflex.afterRestore', 'undone'); } catch (e) {}
@@ -3938,11 +4062,10 @@ function icsFold(line) {
   for (const ch of line) { const b = enc.encode(ch).length; if (n + b > limit) { out.push(cur); cur = ' '; n = 1; limit = 75; } cur += ch; n += b; }
   out.push(cur); return out.join('\r\n');
 }
-const icsPad = (n) => String(n).padStart(2, '0');
 // Floating local time (no Z, no TZID). The time comes from the chosen h:m, never read back from the Date, so a time that
 // doesn't exist on a spring-forward day (02:30) isn't moved an hour for every later week (review, Stage 32).
-const icsLocal = (d, time) => `${d.getFullYear()}${icsPad(d.getMonth() + 1)}${icsPad(d.getDate())}T${time.replace(':', '')}00`;
-const icsUtc = (d) => `${d.getUTCFullYear()}${icsPad(d.getUTCMonth() + 1)}${icsPad(d.getUTCDate())}T${icsPad(d.getUTCHours())}${icsPad(d.getUTCMinutes())}${icsPad(d.getUTCSeconds())}Z`;
+const icsLocal = (d, time) => `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}T${time.replace(':', '')}00`;
+const icsUtc = (d) => `${d.getUTCFullYear()}${pad2(d.getUTCMonth() + 1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}${pad2(d.getUTCSeconds())}Z`;
 // The first chosen day at the chosen time that is still ahead (today counts if the time hasn't passed).
 function remFirst(days, time, now = new Date()) {
   const [h, m] = time.split(':').map(Number), order = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
@@ -4023,7 +4146,7 @@ function planGet() {
 function planRec(id) { const r = R(id); if (!hasRoutineAnswers()) return { r, plan: null, why: r.why || catOf(r).blurb };
   const p = tailorPrefs(), t = tailor(r, p); return { r, plan: t, why: whyLine(t, p) }; }
 const planActive = (p, now = Date.now()) => !!p && !p.dismissed && now < p.start + PLAN_DAYS * 864e5;
-function planDone(p) { const h = store.get(HIST_KEY, []); return p.ids.map(id => h.some(x => x.id === id && x.at >= p.start)); }
+function planDone(p) { const h = histGet(); return p.ids.map(id => h.some(x => x.id === id && x.at >= p.start)); }
 let PLAN_RECS = [];
 function renderPlan() {
   const box = $('homePlan'); if (!box) return;
@@ -4062,7 +4185,12 @@ const SETUP_QS = [
     options: [['kneeling', 'Kneeling'], ['floor', 'Lying on the floor'], ['overhead', 'Arms overhead'], ['balance', 'One-leg balance']] },
 ];
 const SETUP_LABELS = Object.fromEntries(SETUP_QS.map(q => [q.key, Object.fromEntries(q.options.map(([v, n]) => [v, n]))]));
-SETUP_LABELS.age['60+'] = '60+'; // Stage 32: an answer given before the ranges changed is kept and shown as it was until changed
+SETUP_LABELS.age['60+'] = '60+';
+// Hardening: drop any stored setup answer the app can't use (same rule as a restored backup), so damaged storage can't
+// lock anyone out of Settings (and so out of Reset).
+(function cleanProfile() { let changed = false;
+  for (const k of Object.keys(profile)) if (!bkProfileOk({ [k]: profile[k] })) { if (k in PROFILE_BLANK) profile[k] = Array.isArray(PROFILE_BLANK[k]) ? [] : PROFILE_BLANK[k]; else delete profile[k]; changed = true; }
+  if (changed) saveProfile(); })(); // Stage 32: an answer given before the ranges changed is kept and shown as it was until changed
 const SETUP = { i: 0, from: 'first', draft: null };
 // Stage 27: the weekly goal on the first screen (with the guide choice). The same setting, value (look.goal) and row
 // as Settings → Weekly goal; already set to the current goal (3 days unless changed), so Skip keeps it.
