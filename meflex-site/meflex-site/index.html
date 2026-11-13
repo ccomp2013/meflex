@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0E1113">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="3dface37b4b6">
+<meta name="meflex-version" content="4c2b9a4f6204">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -418,7 +418,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .tile { padding: var(--sp4); }
 .ghost { min-height: 48px; }
 #rList .label.link { min-height: var(--tap); align-content: center; }
-#setGoal { gap: var(--sp1); } /* 7 × 44px choices fit on one line at 375px */
+#setGoal, #setupGoal { gap: var(--sp1); } /* 7 × 44px choices fit on one line at 375px (also on the first setup screen, Stage 27) */
 /* ---------- Player timing (Stage 15) ---------- */
 .stage { container-type: inline-size; }
 .stage .art.dim { opacity: .22; }
@@ -429,6 +429,12 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 /* ---------- Player polish (Stage 16) ---------- */
 .stage .art { transition: opacity .3s ease; }
 .stage .art.fadein { opacity: 0; transition: none; }
+/* Stage 26: no pinch or double-tap zoom (with the viewport tag and the gesture blocking in app.js). Pan and scroll stay. */
+html, body, button, a, input, label, select, textarea, summary { touch-action: manipulation; }
+/* Stage 26: at the halfway point of a two-sided stretch the figure flips to the other side (instant with Reduce Motion). */
+@keyframes sideflip { from { transform: scaleX(-1); } to { transform: scaleX(1); } }
+.stage .art.flip { animation: sideflip .45s ease-in-out; }
+@media (prefers-reduced-motion: reduce) { .stage .art.flip { animation: none; } }
 .stage .art.old { pointer-events: none; }
 .cdnum, .bubble, .sides2, .upnext { z-index: 2; } /* above the figure and the fading old figure */
 .bubble { position: absolute; left: 50%; top: 3%; transform: translate(-50%, -50%); min-width: 32px; height: 24px; padding: 0 8px; border-radius: 12px; background: var(--ink); color: var(--bg); font-size: 14px; font-weight: 700; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums; box-shadow: 0 0 0 3px var(--bg); }
@@ -512,7 +518,20 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .tabbar { left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(8px + env(safe-area-inset-bottom, 0px)); max-width: 456px; margin: 0 auto;
   border-radius: 24px; border: 1px solid var(--line); padding: 4px; gap: 2px; background: rgba(23,27,30,.94); box-shadow: 0 8px 24px rgba(0,0,0,.45); }
 .tabbar button { min-height: 52px; border-radius: 20px; padding: 5px 0 4px; }
-.tabbar button[aria-current="page"] { color: var(--ink); background: var(--line); }
+.tabbar button[aria-current="page"] { color: var(--ink); }
+/* Stage 27: one bubble behind the current tab; it slides when a finger moves across the bar (instant with Reduce Motion). */
+.tabbar { touch-action: none; } .tabbar button { position: relative; z-index: 1; touch-action: none; }
+.tabbubble { position: absolute; top: 4px; bottom: 4px; left: 4px; width: 0; border-radius: 20px; background: var(--line); z-index: 0; opacity: 0; transition: left .22s ease, width .22s ease; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .tabbubble { transition: none; } }
+/* Stage 27: profile icons */
+#homeProfile svg.av { width: 32px; height: 32px; }
+.avopt span svg.av, #homeProfile svg.av { stroke: none; } /* shapes carry their own colours */
+.avatars { display: flex; flex-wrap: wrap; gap: 8px; }
+.avopt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.avopt span { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
+.avopt span svg { width: 40px; height: 40px; stroke: var(--ink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.avopt input:checked + span { border-color: var(--ink); }
+.avopt input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
 .tabbed .scroll { padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px)); } /* the floating bar never covers the last item */
 /* ---------- Offline (Stage 25) ---------- */
 .offlinebox { padding: 12px 14px; font-size: 15px; line-height: 1.4; } .offlinebox p { margin: 0; } .offlinebox p + p { margin-top: 6px; color: var(--muted); font-size: 14px; }
@@ -570,6 +589,19 @@ body.hasupd .tabbed .scroll { padding-bottom: calc(172px + env(safe-area-inset-b
 .libnote:has(#libMsg:empty) { display: none; }
 .editbtn { display: inline-flex; align-items: center; gap: var(--sp2); height: auto; min-height: var(--tap); padding: 0 18px; margin: 0 0 var(--sp4); }
 .editbtn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linejoin: round; }
+#rEdit + .editbtn, .editbtn + .editbtn { margin-left: var(--sp2); }
+.savecopy { width: 100%; margin-top: var(--sp2); }
+/* Stage 29: drag to reorder in the builder (handle), with hidden Move up/down buttons for VoiceOver and keyboard */
+#bList li { position: relative; touch-action: pan-y; }
+.bhandle { width: 44px; height: 44px; display: grid; place-items: center; flex: none; border-radius: 12px; color: var(--muted); touch-action: none; cursor: grab; }
+.bhandle svg { width: 20px; height: 20px; fill: currentColor; }
+.bhandle[aria-pressed="true"] { color: var(--ink); background: var(--line); }
+#bList .bmove.sr:not(:focus) { position: absolute; width: 1px; height: 1px; min-width: 0; min-height: 0; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; } /* hidden until focused */
+#bList .bmove.sr:focus { position: static; width: 44px; height: 44px; clip: auto; overflow: visible; white-space: normal; }
+#bList.dragging li { transition: transform .16s ease; }
+#bList li.lifted { z-index: 3; transition: none; background: var(--raised); box-shadow: 0 10px 28px rgba(0,0,0,.5); border-radius: 14px; }
+@media (prefers-reduced-motion: reduce) { #bList.dragging li { transition: none; } }
+.bswap svg { width: 20px; height: 20px; }
 .descsave { width: 100%; margin-top: var(--sp3); }
 .descsavenote { margin-top: 2px; }
 .sheet.top { align-items: flex-start; }
@@ -609,7 +641,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <header class="homehead">
       <div class="hrow"><h1 class="title">MeFlex</h1>
         <button class="streakchip" id="homeStreak" data-private><svg class="flame" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5c-3.7 0-6.5-2.6-6.5-6.2 0-2.6 1.4-4.4 2.8-5.9.3 1.5 1 2.5 2.1 2.9C10.2 8.6 11.6 5.3 14.2 2.5c.3 3.3 4.3 5.9 4.3 11.5 0 4.6-2.9 7.5-6.5 7.5z"/></svg><span id="homeStreakN">0</span></button>
-        <button class="icon" id="homeProfile" aria-label="Profile and settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c.8-3.6 3.7-5.6 7.2-5.6s6.4 2 7.2 5.6"/></svg></button></div>
+        <button class="icon" id="homeProfile" aria-label="Profile and settings" data-private><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c.8-3.6 3.7-5.6 7.2-5.6s6.4 2 7.2 5.6"/></svg></button></div>
       <p class="lede" id="homeDate"></p>
       <div class="wdots home" id="homeDots" role="img" data-private></div>
     </header>
@@ -733,6 +765,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <p class="bmsg" id="bMsg" role="status" aria-live="polite"></p>
     <h2 class="sec" id="bListHead">Your stretches</h2>
     <p class="btotal" id="bTotal" aria-live="polite"></p>
+    <p class="sr" id="bDragHelp">Drag to reorder. Or press Space to pick up, the Up and Down arrow keys to move, Space to drop, Escape to cancel.</p>
     <ol class="list blist" id="bList" aria-labelledby="bListHead"></ol>
     <p class="empty" id="bEmpty">No stretches yet. Add some from the list below.</p>
     <h2 class="sec">Add stretches</h2>
@@ -759,6 +792,9 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
   <div class="bar"><button class="icon" id="setBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><span></span></div>
   <div class="scroll" style="padding-top:4px">
     <h1 class="title">Settings</h1>
+    <h2 class="sec" id="avHead">Profile icon</h2>
+    <div class="avatars" id="setAvatar" role="radiogroup" aria-labelledby="avHead" data-private></div>
+    <p class="note">Shown on Home. Kept only on this device.</p>
     <h2 class="sec">Sound</h2><div class="group" id="setSound"></div>
     <p class="note">Release a slider to hear that sound. These are the same switches as the speaker button in the player.</p>
     <h2 class="sec">Colors</h2>
@@ -810,11 +846,13 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <h1 id="rTitle" data-private></h1>
     <p class="desc" id="rDesc"></p>
     <button class="ghost editbtn" id="rEdit" aria-label="Edit this routine" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-4-4L4 16v4z"/></svg>Edit</button>
+    <button class="ghost editbtn" id="rCustomize" aria-label="Customize a copy of this routine" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h9M18 7h1M5 17h3M12 17h7"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Customize</button>
     <p class="rwhy" id="rWhy" data-private hidden></p>
     <p class="youthnote" id="rYouth" hidden>Stop if anything hurts. Ask a coach or doctor.</p>
     <ul class="list" id="rList"></ul>
     <button class="reset" id="resetTimes" hidden>Reset times</button>
     <p class="note" id="rEdited" hidden>Changed for this visit only. Leave the routine to go back to the original.</p>
+    <button class="ghost savecopy" id="rSaveCopy" hidden>Save as my routine</button>
   </div>
   <div class="startbar"><button class="cta" id="startBtn">Start</button></div>
 </section>
@@ -839,7 +877,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     </div>
     <div class="name"><span id="name"></span><button class="info" id="infoBtn" aria-label="How to do this stretch"><svg viewBox="0 0 16 16"><circle cx="8" cy="3.4" r="1.4"/><rect x="6.9" y="6" width="2.2" height="7.6" rx="1.1"/></svg></button></div>
     <div class="time" id="time" aria-live="off">0:45</div>
-    <div class="side" id="side"></div>
+    <div class="side" id="side"></div><p class="sr" id="sideNote" aria-live="polite"></p>
   </div>
   <div class="controls">
     <button class="icon" id="prevBtn" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M18 5.5L9 12l9 6.5zM6 5v14"/></svg></button>
@@ -869,6 +907,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <label class="opt" for="opt-chime"><span>Chime<small>At the start and end of each stretch</small></span><input type="checkbox" id="opt-chime" role="switch"></label>
     <label class="opt" for="opt-tick"><span>Countdown ticks<small>Last 3 seconds of each stretch</small></span><input type="checkbox" id="opt-tick" role="switch"></label>
     <label class="opt" for="opt-voice"><span>Voice<small>Reads the stretch name and side</small></span><input type="checkbox" id="opt-voice" role="switch"></label>
+    <label class="opt" for="opt-coach"><span>Coach reads guidance<small id="opthelp-coach">Reads the instructions once, calmly, at the start</small></span><input type="checkbox" id="opt-coach" role="switch" aria-describedby="opthelp-coach"></label>
     <button class="ghost" id="testSound">Play test chime</button>
     <button class="cta" id="sheetDone">Done</button>
   </div>
@@ -926,7 +965,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 </div>
 <section class="screen" id="done" hidden>
   <div class="donewrap">
-  <h1>Nice work</h1>
+  <h1>Nice work!</h1>
   <p id="doneText" data-private></p>
   <div class="donecard" data-private>
     <div class="donestats"><div><b id="doneCount"></b><span>stretches done</span></div><div><b id="doneWeek"></b><span>days this week</span></div></div>
@@ -944,7 +983,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 
 
 <div class="updnote" id="updNote" role="status" hidden><span class="updtext">A new version is ready.</span><button class="updreload" id="updReload">Reload</button><button class="icon updclose" id="updClose" aria-label="Not now"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
-<nav class="tabbar" id="tabbar" aria-label="Main">
+<nav class="tabbar" id="tabbar" aria-label="Main"><span class="tabbubble" id="tabBubble" aria-hidden="true"></span>
   <button data-tab="home" aria-current="page"><svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20h-5.5v-6h-5v6H4z"/></svg>Home</button>
   <button data-tab="explore"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Explore</button>
   <button data-tab="library"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="3.25"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="3.25"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="3.25"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="3.25"/></svg>Library</button>
@@ -1551,7 +1590,7 @@ Analytics.init();
 // (chime -> voice) run strictly one after another, so sounds never overlap.
 const PREFS_KEY = 'meflex.sound';
 // One source of truth for sound: the Settings screen and the player's speaker sheet both read and write this.
-const SOUND_DEFAULTS = { chime: true, tick: false, voice: false, chimeVol: 0.8, tickVol: 0.8, voiceVol: 1, chimeStyle: 'soft' };
+const SOUND_DEFAULTS = { chime: true, tick: false, voice: false, coach: false, chimeVol: 0.8, tickVol: 0.8, voiceVol: 1, chimeStyle: 'soft' }; // coach: Stage 28
 // Chime styles, all made with the same oscillator code (no audio files). Each part: [multiple of the note, level].
 // Every style lasts at most 0.95 s, so the existing 1-second gaps (chime -> voice, end -> start) still hold.
 const CHIME_STYLES = {
@@ -1560,13 +1599,14 @@ const CHIME_STYLES = {
   wood: { name: 'Wood', parts: [[0.5, 1], [1.27, 0.3]], dur: 0.18, type: 'triangle', vol: 0.6 },
   beep: { name: 'Beep', parts: [[1, 1]], dur: 0.3, type: 'square', vol: 0.12 },
 };
+const COACH_RATE = 0.85;
 const prefs = { ...SOUND_DEFAULTS };
 try { Object.assign(prefs, JSON.parse(localStorage.getItem(PREFS_KEY) || '{}')); } catch (e) {}
 if (!CHIME_STYLES[prefs.chimeStyle]) prefs.chimeStyle = SOUND_DEFAULTS.chimeStyle;
 const savePrefs = () => { try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) {} };
 
 const Sound = {
-  ctx: null, nodes: [], timers: [], log: [], busyUntil: 0,
+  ctx: null, nodes: [], timers: [], log: [], busyUntil: 0, speechToken: 0,
   // Must run inside a tap. iOS only allows audio after a user gesture.
   unlock() {
     try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {} // play even with the ring/silent switch on (Safari 16.4+)
@@ -1576,7 +1616,7 @@ const Sound = {
       const b = this.ctx.createBuffer(1, 1, 22050), s = this.ctx.createBufferSource(); // silent kick for older iOS
       s.buffer = b; s.connect(this.ctx.destination); s.start(0);
     } catch (e) {}
-    if (prefs.voice && window.speechSynthesis && !this.voiceReady) { // iOS: first utterance must come from a tap
+    if ((prefs.voice || prefs.coach) && window.speechSynthesis && !this.voiceReady) { // iOS: first utterance must come from a tap
       try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); this.voiceReady = true; } catch (e) {}
     }
   },
@@ -1586,6 +1626,7 @@ const Sound = {
     const t = this.ctx ? this.ctx.currentTime : 0;
     this.nodes.forEach(({ src, gain }) => { try { gain.gain.cancelScheduledValues(t); gain.gain.setValueAtTime(gain.gain.value, t); gain.gain.linearRampToValueAtTime(0, t + 0.015); src.stop(t + 0.02); } catch (e) {} });
     this.nodes = [];
+    this.speechToken++; // Stage 28: guidance cut off here is not counted as read
     try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
     this.busyUntil = 0;
     this.log.push({ k: 'stop', t: performance.now() });
@@ -1622,6 +1663,19 @@ const Sound = {
       speechSynthesis.speak(u); this.log.push({ k: 'voice', t: performance.now(), text, vol: prefs.voiceVol });
     } catch (e) {}
   },
+  // Stage 28, "Coach reads guidance": the stretch's own instruction lines, one utterance each, queued behind whatever is
+  // being said (the name and side), so they never overlap; calmer and slower than the name (rate 0.85). onLine(k) is
+  // called when line k has been read in full; anything cut off by stopAll (pause, skip, close, a tick, a chime) is not.
+  coach(lines, onLine) {
+    if (!window.speechSynthesis) return;
+    const token = this.speechToken;
+    lines.forEach((text, k) => { try {
+      const u = new SpeechSynthesisUtterance(text); u.rate = COACH_RATE; u.lang = 'en-US'; u.volume = prefs.voiceVol;
+      u.onend = () => { if (token === this.speechToken && onLine) onLine(k); };
+      speechSynthesis.speak(u); this.log.push({ k: 'coach', t: performance.now(), text, rate: COACH_RATE, vol: prefs.voiceVol });
+    } catch (e) {} });
+  },
+  stopSpeech() { this.speechToken++; try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} },
   after(ms, fn) { this.timers.push(setTimeout(fn, ms)); },
 };
 // Re-arm audio on any tap: covers a reopened page (back/forward cache) and iOS
@@ -1671,6 +1725,8 @@ const saveProfile = () => { try { localStorage.setItem(PROFILE_KEY, JSON.stringi
 // ---------- Helpers ----------
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// Stage 26: no pinch zoom anywhere (iPhone Safari and the Home Screen app ignore user-scalable=no, so block its gesture events).
+['gesturestart', 'gesturechange', 'gestureend'].forEach(t => document.addEventListener(t, (e) => e.preventDefault(), { passive: false }));
 const fmt = (ms) => { const t = Math.max(0, Math.ceil(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 const fmtTotal = (t) => { t = Math.round(t); const m = Math.floor(t / 60), r = t % 60; return m && r ? `${m} min ${r} sec` : m ? `${m} min` : `${r} sec`; };
 const fmtMin = (t) => `${Math.max(1, Math.round(t / 60))} min`;
@@ -1738,14 +1794,54 @@ function show(id) {
   try { updateNotice(); } catch (e) {} // Stage 25: "A new version is ready" only on browsing screens
   // Youth routines send nothing: replay pauses while one is open (routine, player, its instructions, finish screen).
   Analytics.quiet(!!(cur && cur.r.youth && (['routine', 'player', 'done'].includes(id) || (id === 'info' && ['routine', 'player'].includes(infoFrom)))));
+  requestAnimationFrame(() => placeBubble(currentTabButton())); // Stage 27: the bubble sits under the current tab
   document.querySelectorAll('#tabbar button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === tabOf(id) ? 'page' : 'false'));
 }
-$('tabbar').addEventListener('click', (e) => {
-  const b = e.target.closest('button[data-tab]'); if (!b) return;
+function openTab(b) {
   const t = b.dataset.tab;
   if (t === 'home') renderHome(); if (t === 'explore') renderExplore(); if (t === 'library') renderLibrary(); if (t === 'history') renderHistory(); if (t === 'saved') renderSaved();
   show(t); const sc = $(t).querySelector('.scroll'); if (sc && b.getAttribute('aria-current') === 'page') sc.scrollTop = 0;
+}
+// Keyboard and VoiceOver activate a tab with a click, exactly as before. A finger or mouse is handled below.
+let tabPointerAt = 0;
+$('tabbar').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-tab]'); if (!b) return;
+  // A finger or mouse already opened the tab on pointerup; skip the click that follows it. Keyboard clicks (detail 0) always count.
+  if (e.detail > 0 && Date.now() - tabPointerAt < 800) { tabPointerAt = 0; return; }
+  openTab(b);
 });
+// Stage 27: press and slide a finger across the tab bar, as on the iPhone's own. While the finger is down the bubble
+// snaps to the tab under it; the screen changes only when the finger lifts. Moving well above or below the bar cancels
+// and the bubble goes back. A plain tap ends the same way, on the tab tapped. The bar has touch-action: none, so a
+// slide never scrolls the page behind it. The bubble moves instantly with Reduce Motion (CSS).
+const TAB_CANCEL_PX = 60;
+const tabButtons = () => [...document.querySelectorAll('#tabbar button[data-tab]')];
+function placeBubble(b) {
+  const bub = $('tabBubble'); if (!b || !b.offsetWidth) { bub.style.opacity = '0'; return; }
+  bub.style.opacity = '1'; bub.style.left = b.offsetLeft + 'px'; bub.style.width = b.offsetWidth + 'px';
+}
+const currentTabButton = () => tabButtons().find(b => b.getAttribute('aria-current') === 'page');
+const tabAt = (x) => tabButtons().find(b => { const r = b.getBoundingClientRect(); return x >= r.left && x < r.right; });
+const TAB_DRAG = { id: null, over: null, cancelled: false };
+$('tabbar').addEventListener('pointerdown', (e) => {
+  if (e.button > 0 || !e.target.closest('button[data-tab]')) return;
+  tabPointerAt = 0; TAB_DRAG.id = e.pointerId; TAB_DRAG.cancelled = false; TAB_DRAG.over = tabAt(e.clientX) || e.target.closest('button[data-tab]');
+  placeBubble(TAB_DRAG.over);
+});
+$('tabbar').addEventListener('pointermove', (e) => {
+  if (e.pointerId !== TAB_DRAG.id || TAB_DRAG.cancelled) return;
+  const r = $('tabbar').getBoundingClientRect();
+  if (e.clientY < r.top - TAB_CANCEL_PX || e.clientY > r.bottom + TAB_CANCEL_PX) { TAB_DRAG.cancelled = true; placeBubble(currentTabButton()); return; }
+  const b = tabAt(e.clientX); if (b && b !== TAB_DRAG.over) { TAB_DRAG.over = b; placeBubble(b); }
+});
+const endTabDrag = (e, lifted) => {
+  if (e.pointerId !== TAB_DRAG.id) return;
+  const b = TAB_DRAG.over, go = lifted && !TAB_DRAG.cancelled && b; TAB_DRAG.id = null;
+  if (go) { tabPointerAt = Date.now(); openTab(b); } else placeBubble(currentTabButton());
+};
+$('tabbar').addEventListener('pointerup', (e) => endTabDrag(e, true));
+$('tabbar').addEventListener('pointercancel', (e) => endTabDrag(e, false));
+addEventListener('resize', () => placeBubble(currentTabButton()));
 // Shared rows: any element with data-routine / data-stretch / data-area / data-cat is a link.
 document.addEventListener('click', (e) => {
   const el = e.target.closest('[data-routine],[data-stretch],[data-area],[data-cat],[data-ladder]'); if (!el) return;
@@ -1798,6 +1894,30 @@ $('homeStreak').onclick = () => { renderHistory(); show('history'); };
 let settingsFrom = 'home';
 function openSettings(from = current) { if (from !== 'settings' && from !== 'setup') settingsFrom = from; renderSettings(); show('settings'); $('settings').querySelector('.scroll').scrollTop = 0; }
 $('homeProfile').onclick = () => openSettings('home');
+// Stage 27: preset profile icons, drawn here in the app's colours (no image files). Kept on this device only
+// ('meflex.avatar'); never sent anywhere. 'person' is the original outline icon and stays the default.
+const AV_INK = '#0E1113';
+const AVATARS = [
+  ['person', 'Person (default)', null, ''],
+  ['sun', 'Sun', C.sand, `<circle cx="12" cy="12" r="3.6" fill="${AV_INK}"/><path d="M12 4.6v2M12 17.4v2M4.6 12h2M17.4 12h2M6.8 6.8l1.4 1.4M15.8 15.8l1.4 1.4M6.8 17.2l1.4-1.4M15.8 8.2l1.4-1.4" stroke="${AV_INK}" stroke-width="1.6" stroke-linecap="round" fill="none"/>`],
+  ['leaf', 'Leaf', C.sage, `<path d="M6.5 17.5C6.5 11 10.5 6.5 17.5 6.5c0 7-4.5 11-11 11z" fill="${AV_INK}"/><path d="M8 16l6.5-6.5" stroke="${C.sage}" stroke-width="1.3" stroke-linecap="round"/>`],
+  ['wave', 'Wave', C.teal, `<path d="M5 11c1.8-1.8 3.2-1.8 5 0s3.2 1.8 5 0 3.2-1.8 4 -.6M5 15c1.8-1.8 3.2-1.8 5 0s3.2 1.8 5 0 3.2-1.8 4-.6" stroke="${AV_INK}" stroke-width="1.8" stroke-linecap="round" fill="none"/>`],
+  ['mountain', 'Mountain', C.dusk, `<path d="M4.8 17.5l5.2-8 3.2 4.6 1.8-2.4 4.2 5.8z" fill="${AV_INK}"/>`],
+  ['moon', 'Moon', C.plum, `<path d="M14.5 5.8a6.6 6.6 0 1 0 3.8 11.6A5.4 5.4 0 0 1 14.5 5.8z" fill="${AV_INK}"/>`],
+  ['flower', 'Flower', C.rose, `<g fill="${AV_INK}"><circle cx="12" cy="7.6" r="2.4"/><circle cx="16.2" cy="10.6" r="2.4"/><circle cx="14.6" cy="15.4" r="2.4"/><circle cx="9.4" cy="15.4" r="2.4"/><circle cx="7.8" cy="10.6" r="2.4"/></g><circle cx="12" cy="12" r="1.8" fill="${C.rose}"/>`],
+  ['star', 'Star', C.clay, `<path d="M12 5.2l2 4.3 4.6.5-3.4 3.1 1 4.6L12 15.4l-4.2 2.3 1-4.6L5.4 10l4.6-.5z" fill="${AV_INK}"/>`],
+  ['heart', 'Heart', C.rose, `<path d="M12 18.2s-6.2-3.8-6.2-8.2A3.4 3.4 0 0 1 12 8.2a3.4 3.4 0 0 1 6.2 1.8c0 4.4-6.2 8.2-6.2 8.2z" fill="${AV_INK}"/>`],
+  ['smile', 'Smile', C.sand, `<circle cx="9.3" cy="10" r="1.3" fill="${AV_INK}"/><circle cx="14.7" cy="10" r="1.3" fill="${AV_INK}"/><path d="M8.3 13.6c1.9 2.6 5.5 2.6 7.4 0" stroke="${AV_INK}" stroke-width="1.7" stroke-linecap="round" fill="none"/>`],
+];
+const AV_PERSON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c.8-3.6 3.7-5.6 7.2-5.6s6.4 2 7.2 5.6"/></svg>';
+const AV_KEY = 'meflex.avatar';
+const avatarId = () => { const v = store.get(AV_KEY, 'person'); return AVATARS.some(a => a[0] === v) ? v : 'person'; };
+function avatarSvg(id) {
+  const a = AVATARS.find(x => x[0] === id) || AVATARS[0];
+  return a[2] ? `<svg class="av" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="${a[2]}" stroke="none"/>${a[3]}</svg>` : AV_PERSON;
+}
+function renderAvatar() { $('homeProfile').innerHTML = avatarSvg(avatarId()); }
+renderAvatar();
 $('setBack').onclick = () => { const to = SCREENS.includes(settingsFrom) ? settingsFrom : 'home';
   ({ home: renderHome, explore: renderExplore, library: renderLibrary, history: renderHistory, saved: renderSaved })[to]?.(); show(to); };
 // Compact progress: this week against the goal, and the 4-week consistency. Tapping it opens History.
@@ -1987,6 +2107,7 @@ function openRoutine(id, from, plan = null) {
     $('rWhy').innerHTML = `<b>${plan.label || 'Tailored to your setup'}</b>${esc(plan.why || whyLine(plan, p))}` + (p.older && !look.hold ? '<small>Holds follow ACSM’s guidance of 30–60 seconds for older adults.</small>' : ''); }
   renderSaveBtn(); $('rSaveMsg').textContent = '';
   $('rEdit').hidden = !r.custom;
+  $('rCustomize').hidden = !!r.custom || !!r.youth; // Stage 29: built-in routines can be customized into a copy (not youth ones)
   cur.edited = false; // Stage 17: swaps and removals last for this visit only (saving comes in Stage 22)
   renderRoutineList(); renderRoutine(); show('routine'); $('routine').querySelector('.scroll').scrollTop = 0;
 }
@@ -2003,7 +2124,7 @@ function renderRoutineList() {
       <button data-i="${i}" data-d="1" aria-label="Longer">${PLUS}</button>
     </span>
     <button class="icon swapbtn" data-swap="${i}" aria-label="Swap stretch, ${esc(it.st.name)}" aria-haspopup="dialog">${SWAP_ICON}</button></li>`).join('');
-  $('rEdited').hidden = !cur.edited;
+  $('rEdited').hidden = !cur.edited; $('rSaveCopy').hidden = !cur.edited || !!cur.r.custom || !!cur.r.youth; // Stage 29: keep this visit's changes as your own
 }
 function renderRoutine() {
   $('rMeta').textContent = `${fmtTotal(secsOf(cur.items))} · ${cur.items.length} stretches`;
@@ -2033,35 +2154,41 @@ $('rList').addEventListener('click', (e) => {
 // and the person's level allow.
 const SWAP_LIST_MAX = 6;
 function swapOptions(i) {
-  const old = cur.items[i].st, inRoutine = new Set(cur.items.map(it => it.st.id)), p = tailorPrefs();
+  const items = swapItems(), old = items[i].st, inRoutine = new Set(items.map(it => it.st.id)), p = tailorPrefs(), youth = swapCtx === 'routine' && cur.r.youth;
   const kinds = new Set([...p.kinds, old.kind]), maxLevel = Math.max(p.maxLevel, LEVEL_RANK[old.level]);
-  const ok = (c) => !inRoutine.has(c.id) && !!c.dynamic === !!old.dynamic && (!cur.r.youth || c.kidSteps) && kinds.has(c.kind) && LEVEL_RANK[c.level] <= maxLevel
+  const ok = (c) => !inRoutine.has(c.id) && !!c.dynamic === !!old.dynamic && (!youth || c.kidSteps) && kinds.has(c.kind) && LEVEL_RANK[c.level] <= maxLevel
     && !Object.keys(AVOID_POS).some(a => p.avoid.has(a) && c.pos === AVOID_POS[a]) && !(p.avoid.has('balance') && c.balance) && !(p.avoid.has('overhead') && c.overhead);
   return STRETCHES.map((c, k) => ({ c, k, shared: c.areas.filter(a => old.areas.includes(a)).length })).filter(x => ok(x.c))
     .sort((a, b) => (b.shared > 0) - (a.shared > 0) || b.shared - a.shared || (b.c.kind === old.kind) - (a.c.kind === old.kind) || a.k - b.k)
     .slice(0, SWAP_LIST_MAX).map(x => ({ st: x.c, shared: x.shared }));
 }
-let swapIndex = -1;
-function openSwap(i) {
-  swapIndex = i; const it = cur.items[i];
+let swapIndex = -1, swapCtx = 'routine'; // Stage 29: the same sheet serves the builder ('builder': B.ids)
+const swapItems = () => swapCtx === 'builder' ? B.ids.map(id => ({ st: BY_ID[id] })) : cur.items;
+const swapBtn = (i) => swapCtx === 'builder' ? $('bList').querySelector(`[data-bswap="${i}"]`) : $('rList').querySelector(`[data-swap="${i}"]`);
+function openSwap(i, ctx = 'routine') {
+  swapCtx = ctx; swapIndex = i; const it = swapItems()[i];
   $('swapTitle').textContent = 'Swap ' + it.st.name;
   const opts = swapOptions(i);
   $('swapList').innerHTML = opts.length ? opts.map(o => `<li><button class="row" data-swapto="${o.st.id}" aria-label="Swap in ${esc(o.st.name)}"><span class="thumb">${art(o.st)}</span>
     <span class="label"><span class="n">${esc(o.st.name)}</span><span class="sub">${esc(o.st.focus)}</span></span>${o.shared ? '<span class="same">Same area</span>' : ''}</button></li>`).join('') : '<li class="empty">No other stretches fit here.</li>';
-  const last = cur.items.length <= 1;
+  const last = swapCtx === 'routine' && cur.items.length <= 1; // the builder keeps its own rule (Save needs at least one)
   $('swapRemove').disabled = last; $('swapRemove').setAttribute('aria-label', 'Remove stretch, ' + it.st.name); $('swapRemoveNote').hidden = !last;
   $('swapSheet').hidden = false; $('swapSheet').querySelector('.panel').scrollTop = 0; $('swapCancel').focus();
 }
-const closeSwap = () => { $('swapSheet').hidden = true; const b = $('rList').querySelector(`[data-swap="${swapIndex}"]`); if (b) b.focus(); swapIndex = -1; };
+const closeSwap = () => { $('swapSheet').hidden = true; const b = swapBtn(swapIndex); if (b) b.focus(); swapIndex = -1; };
 $('rList').addEventListener('click', (e) => { const b = e.target.closest('[data-swap]'); if (b) openSwap(+b.dataset.swap); });
 $('swapList').addEventListener('click', (e) => {
   const b = e.target.closest('[data-swapto]'); if (!b || swapIndex < 0) return;
+  if (swapCtx === 'builder') { const i = swapIndex, oldId = B.ids[i], nid = b.dataset.swapto; B.ids[i] = nid; if (B.times[oldId]) B.times[nid] = B.times[oldId];
+    closeSwap(); renderBuilder(); bMsg(`Swapped ${BY_ID[oldId].name} for ${BY_ID[nid].name}.`); const nb = swapBtn(i); if (nb) nb.focus(); return; }
   const old = cur.items[swapIndex], st = BY_ID[b.dataset.swapto];
   cur.items[swapIndex] = { st, def: old.def, secs: old.def, swappedFrom: old.swappedFrom || old.st }; // same suggested time as the stretch it replaces
   cur.edited = true; const i = swapIndex; closeSwap(); renderRoutineList(); renderRoutine();
   const nb = $('rList').querySelector(`[data-swap="${i}"]`); if (nb) nb.focus();
 });
 $('swapRemove').onclick = () => {
+  if (swapIndex >= 0 && swapCtx === 'builder') { const i = swapIndex, st = BY_ID[B.ids[i]]; B.ids.splice(i, 1); $('swapSheet').hidden = true; swapIndex = -1; renderBuilder(); bMsg(`Removed ${st.name}.`);
+    const nb = $('bList').querySelector('[data-bswap]'); (nb || $('bSearch')).focus(); return; }
   if (swapIndex < 0 || cur.items.length <= 1) return; // a routine keeps at least one stretch
   cur.items.splice(swapIndex, 1); cur.edited = true; $('swapSheet').hidden = true; swapIndex = -1; renderRoutineList(); renderRoutine();
   const nb = $('rList').querySelector('[data-swap]'); if (nb) nb.focus();
@@ -2133,37 +2260,53 @@ function undoDelete() {
 // New: the draft is kept while the app is open (Back to Library loses nothing); it is not stored.
 // Edit (Stage 22): the same screen with Cancel/Save, Up/Down/Remove and Delete; a new-routine draft is set aside and
 // given back afterwards.
-const B = { mode: 'new', editId: null, orig: null, name: '', ids: [], area: 'all', q: '' };
+const B = { mode: 'new', editId: null, orig: null, name: '', ids: [], area: 'all', q: '', fromId: null, times: {} };
+// Stage 29: a third mode, 'copy': "Customize" on a built-in routine opens this screen on a COPY of what the routine page
+// shows (its stretches in order and their hold times). Saving creates a new own routine; the built-in routine is never
+// changed. Cancel with changes asks first (the Stage 22 discard question) and goes back to the routine page as it was.
 let STASH = null;
+const GRIP_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>';
 const holdFor = (id) => look.hold || suggestedHold(id);
-const bSecs = () => B.ids.reduce((a, id) => a + holdFor(id) * (BY_ID[id].sides ? 2 : 1), 0);
-const bDirty = () => B.mode === 'edit' && JSON.stringify([B.name.trim(), B.ids]) !== B.orig;
+const bHold = (id) => (B.mode === 'copy' && B.times[id]) || holdFor(id); // a copy keeps the hold times it was made with
+const bSecs = () => B.ids.reduce((a, id) => a + bHold(id) * (BY_ID[id].sides ? 2 : 1), 0);
+const bDirty = () => B.mode !== 'new' && JSON.stringify([B.name.trim(), B.ids]) !== B.orig;
 function bMsg(t) { $('bMsg').textContent = t; }
 const BACK_ICON = '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
-function leaveEdit() { if (B.mode !== 'edit') return; Object.assign(B, STASH || { name: '', ids: [], area: 'all', q: '' }, { mode: 'new', editId: null, orig: null }); STASH = null; }
+function leaveEdit() { if (B.mode === 'new') return; Object.assign(B, STASH || { name: '', ids: [], area: 'all', q: '' }, { mode: 'new', editId: null, orig: null, fromId: null, times: {} }); STASH = null; }
 function openBuilder() { leaveEdit(); bMsg(''); renderBuilder(); show('builder'); $('builder').querySelector('.scroll').scrollTop = 0; }
+function openCopy() { // Stage 29: Customize
+  const r = cur.r; if (!r || r.custom) return;
+  if (B.mode === 'new') STASH = { name: B.name, ids: B.ids.slice(), area: B.area, q: B.q };
+  const ids = [...new Set(cur.items.map(it => it.st.id))].slice(0, MINE_MAX), name = `${r.title} (mine)`.slice(0, NAME_MAX);
+  const times = Object.fromEntries(cur.items.map(it => [it.st.id, it.secs]));
+  Object.assign(B, { mode: 'copy', editId: null, fromId: r.id, name, ids, times, area: 'all', q: '', orig: JSON.stringify([name.trim(), ids]) });
+  $('bSearch').value = ''; bMsg(''); renderBuilder(); show('builder'); $('builder').querySelector('.scroll').scrollTop = 0;
+}
 function openEditor(id) {
   const r = R(id); if (!r || !r.custom) return;
-  if (B.mode !== 'edit') STASH = { name: B.name, ids: B.ids.slice(), area: B.area, q: B.q };
+  if (B.mode === 'new') STASH = { name: B.name, ids: B.ids.slice(), area: B.area, q: B.q };
   const ids = r.items.map(x => x[0]);
   Object.assign(B, { mode: 'edit', editId: id, name: r.title, ids, area: 'all', q: '', orig: JSON.stringify([r.title.trim(), ids]) });
   $('bSearch').value = ''; bMsg(''); renderBuilder(); show('builder'); $('builder').querySelector('.scroll').scrollTop = 0;
 }
 function renderBuilder() {
-  const edit = B.mode === 'edit';
-  $('bTitle').textContent = edit ? 'Edit routine' : 'New routine';
-  $('bBack').className = edit ? 'textbtn left' : 'icon'; $('bBack').innerHTML = edit ? 'Cancel' : BACK_ICON;
-  $('bBack').setAttribute('aria-label', edit ? 'Cancel editing' : 'Back to Library (your draft is kept)');
+  const edit = B.mode === 'edit', copy = B.mode === 'copy', tb = edit || copy;
+  $('bTitle').textContent = edit ? 'Edit routine' : copy ? 'Customize routine' : 'New routine';
+  $('bBack').className = tb ? 'textbtn left' : 'icon'; $('bBack').innerHTML = tb ? 'Cancel' : BACK_ICON;
+  $('bBack').setAttribute('aria-label', edit ? 'Cancel editing' : copy ? 'Cancel, keep the original as it is' : 'Back to Library (your draft is kept)');
   $('bDelete').hidden = !edit;
   $('bName').value = B.name; $('bCount').textContent = `${B.name.length} / ${NAME_MAX}`;
   const n = B.ids.length;
   $('bTotal').textContent = n ? `Total ${fmtTotal(bSecs())} · ${n} stretch${n === 1 ? '' : 'es'}` : 'Total 0 min · no stretches yet';
   $('bList').classList.toggle('editing', edit);
-  $('bList').innerHTML = B.ids.map((id, i) => { const st = BY_ID[id], h = holdFor(id), nm = esc(st.name);
-    const moves = edit ? `<button class="icon bmove" data-bup="${i}" aria-label="Move ${nm} up"${i === 0 ? ' data-edge' : ''}><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
-      <button class="icon bmove" data-bdown="${i}" aria-label="Move ${nm} down"${i === n - 1 ? ' data-edge' : ''}><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>` : '';
-    return `<li><span class="thumb">${art(st)}</span><span class="label"><span class="n">${nm}</span><span class="sub">${fmtTotal(h)}${st.sides ? ' each side' : ''}</span></span>
-      ${moves}<button class="icon brem" data-brem="${i}" aria-label="Remove ${nm}"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button></li>`; }).join('');
+  // Stage 29: every row has a drag handle (no visible arrows), two hidden-until-focused "Move up/down" buttons for VoiceOver
+  // and keyboard (disabled at the ends), the existing Swap (same sheet as the routine page) and Remove.
+  $('bList').innerHTML = B.ids.map((id, i) => { const st = BY_ID[id], h = bHold(id), nm = esc(st.name);
+    const moves = `<button class="icon bmove sr" data-bup="${i}" aria-label="Move ${nm} up"${i === 0 ? ' disabled' : ''}>Up</button>
+      <button class="icon bmove sr" data-bdown="${i}" aria-label="Move ${nm} down"${i === n - 1 ? ' disabled' : ''}>Down</button>`;
+    return `<li data-i="${i}"><button class="bhandle" data-bdrag="${i}" aria-label="Reorder ${nm}, position ${i + 1} of ${n}" aria-describedby="bDragHelp" aria-pressed="false">${GRIP_ICON}</button>
+      <span class="thumb">${art(st)}</span><span class="label"><span class="n">${nm}</span><span class="sub">${fmtTotal(h)}${st.sides ? ' each side' : ''}</span></span>
+      ${moves}<button class="icon bswap" data-bswap="${i}" aria-label="Swap stretch, ${nm}" aria-haspopup="dialog">${SWAP_ICON}</button><button class="icon brem" data-brem="${i}" aria-label="Remove ${nm}"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button></li>`; }).join('');
   $('bEmpty').hidden = n > 0;
   const ok = B.name.trim() && n; $('bSave').classList.toggle('notready', !ok); // still a normal button: tapping it says what is missing
   renderBuilderResults();
@@ -2193,15 +2336,85 @@ $('bList').addEventListener('click', (e) => {
     const i = +(up ? up.dataset.bup : down.dataset.bdown), j = up ? i - 1 : i + 1, st = BY_ID[B.ids[i]];
     if (j < 0) { bMsg(`${st.name} is already first.`); return; }
     if (j >= B.ids.length) { bMsg(`${st.name} is already last.`); return; }
-    [B.ids[i], B.ids[j]] = [B.ids[j], B.ids[i]]; renderBuilder(); bMsg(`Moved ${st.name} to position ${j + 1} of ${B.ids.length}.`);
-    $('bList').querySelector(up ? `[data-bup="${j}"]` : `[data-bdown="${j}"]`).focus(); return;
+    [B.ids[i], B.ids[j]] = [B.ids[j], B.ids[i]]; renderBuilder(); bMsg(`${st.name} moved to position ${j + 1} of ${B.ids.length}.`);
+    const f = $('bList').querySelector(up ? `[data-bup="${j}"]` : `[data-bdown="${j}"]`); (f.disabled ? $('bList').querySelector(`[data-bdrag="${j}"]`) : f).focus(); return;
   }
+  const sw = e.target.closest('[data-bswap]'); if (sw) { openSwap(+sw.dataset.bswap, 'builder'); return; }
   if (!rem) return; const st = BY_ID[B.ids[+rem.dataset.brem]];
   B.ids.splice(+rem.dataset.brem, 1); bMsg(`Removed ${st.name}.`); renderBuilder(); const nb = $('bList').querySelector('[data-brem]'); (nb || $('bSearch')).focus(); });
+// ---- Stage 29: drag and drop to reorder (all builder modes) ----
+// Pointer: press the handle (touch-action: none, so the rest of the row still scrolls the page), the row lifts and follows
+// the finger, the others make room, the list scrolls by itself near the top or bottom edge, and the row lands where it
+// is released. Reduce Motion: rows jump into place (no transition). Keyboard/VoiceOver: Space or Enter on the handle picks
+// it up, Up/Down move it, Space or Enter drops it, Escape puts everything back; the hidden Move up/down buttons also work.
+const bMoveTo = (from, to) => { const [id] = B.ids.splice(from, 1); B.ids.splice(to, 0, id); };
+const bScroll = () => $('builder').querySelector('.scroll');
+const focusHandle = (j) => { const h = $('bList').querySelector(`[data-bdrag="${j}"]`); if (h) h.focus({ preventScroll: false }); return h; };
+const DRAG = { on: false, pid: null, i: -1, rows: [], tops: [], hs: [], startY: 0, lastY: 0, startTop: 0, target: -1, raf: 0 };
+function dragLayout() {
+  const { i, rows, tops, hs } = DRAG, dy = DRAG.lastY - DRAG.startY + bScroll().scrollTop - DRAG.startTop, centre = tops[i] + hs[i] / 2 + dy;
+  let t = i;
+  for (let k = 0; k < rows.length; k++) { if (k === i) continue; const c = tops[k] + hs[k] / 2; if (k < i && centre < c) t = Math.min(t, k); if (k > i && centre > c) t = Math.max(t, k); }
+  DRAG.target = t;
+  rows.forEach((r, k) => { if (k === i) { r.style.transform = `translateY(${dy}px)`; return; }
+    const shift = i < t && k > i && k <= t ? -hs[i] : t < i && k >= t && k < i ? hs[i] : 0; r.style.transform = shift ? `translateY(${shift}px)` : ''; });
+}
+function dragTick() {
+  if (!DRAG.on) return;
+  const sc = bScroll(), r = sc.getBoundingClientRect(), top = Math.max(r.top, 0), bottom = Math.min(r.bottom, innerHeight), EDGE = 56;
+  if (DRAG.lastY < top + EDGE) sc.scrollTop -= Math.ceil((top + EDGE - DRAG.lastY) / 5);
+  else if (DRAG.lastY > bottom - EDGE) sc.scrollTop += Math.ceil((DRAG.lastY - (bottom - EDGE)) / 5);
+  dragLayout(); DRAG.raf = requestAnimationFrame(dragTick);
+}
+function dragEnd(drop) {
+  if (!DRAG.on) return; cancelAnimationFrame(DRAG.raf); DRAG.on = false;
+  DRAG.rows.forEach(r => { r.style.transform = ''; r.classList.remove('lifted'); }); $('bList').classList.remove('dragging');
+  const { i, target } = DRAG, st = BY_ID[B.ids[i]], moved = drop && target !== i;
+  if (moved) { bMoveTo(i, target); renderBuilder(); bMsg(`${st.name} moved to position ${target + 1} of ${B.ids.length}.`); }
+  focusHandle(moved ? target : i);
+}
+$('bList').addEventListener('pointerdown', (e) => {
+  const h = e.target.closest('[data-bdrag]'); if (!h || e.button > 0 || DRAG.on) return;
+  const rows = [...$('bList').children]; if (rows.length < 2) return;
+  e.preventDefault(); try { h.setPointerCapture(e.pointerId); } catch (err) {}
+  const i = +h.dataset.bdrag;
+  Object.assign(DRAG, { on: true, pid: e.pointerId, i, rows, tops: rows.map(r => r.offsetTop), hs: rows.map(r => r.offsetHeight), startY: e.clientY, lastY: e.clientY, startTop: bScroll().scrollTop, target: i });
+  $('bList').classList.add('dragging'); rows[i].classList.add('lifted'); DRAG.raf = requestAnimationFrame(dragTick);
+});
+$('bList').addEventListener('pointermove', (e) => { if (DRAG.on && e.pointerId === DRAG.pid) DRAG.lastY = e.clientY; });
+$('bList').addEventListener('pointerup', (e) => { if (DRAG.on && e.pointerId === DRAG.pid) dragEnd(true); });
+$('bList').addEventListener('pointercancel', (e) => { if (DRAG.on && e.pointerId === DRAG.pid) dragEnd(false); });
+const GRAB = { i: -1, orig: null };
+$('bList').addEventListener('keydown', (e) => {
+  const h = e.target.closest('[data-bdrag]'); if (!h) return;
+  const i = +h.dataset.bdrag, n = B.ids.length, st = BY_ID[B.ids[i]];
+  if (GRAB.i >= 0 && GRAB.i !== i) { GRAB.i = -1; GRAB.orig = null; } // focus moved to another handle: the earlier one stays where it is
+  if (e.key === ' ' || e.key === 'Enter') {
+    e.preventDefault();
+    if (GRAB.i < 0) { GRAB.i = i; GRAB.orig = B.ids.slice(); h.setAttribute('aria-pressed', 'true'); bMsg(`${st.name} picked up, position ${i + 1} of ${n}. Up and Down arrows move it, Space drops it, Escape cancels.`); }
+    else { GRAB.i = -1; GRAB.orig = null; renderBuilder(); focusHandle(i); bMsg(`${st.name} dropped at position ${i + 1} of ${n}.`); }
+    return;
+  }
+  if (GRAB.i < 0) return;
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+    e.preventDefault(); const j = i + (e.key === 'ArrowUp' ? -1 : 1);
+    if (j < 0 || j >= n) { bMsg(`${st.name} is already ${j < 0 ? 'first' : 'last'}.`); return; }
+    bMoveTo(i, j); GRAB.i = j; renderBuilder(); const nh = focusHandle(j); if (nh) nh.setAttribute('aria-pressed', 'true'); bMsg(`${st.name} moved to position ${j + 1} of ${n}.`); return;
+  }
+  if (e.key === 'Escape') {
+    e.preventDefault(); e.stopPropagation(); const back = GRAB.orig.indexOf(B.ids[i]); B.ids = GRAB.orig; GRAB.i = -1; GRAB.orig = null;
+    renderBuilder(); focusHandle(back); bMsg(`Reorder cancelled. ${st.name} is back at position ${back + 1} of ${n}.`);
+  }
+});
 $('bSave').onclick = () => {
   const name = B.name.trim();
   if (!name) { bMsg('Give your routine a name to save it.'); $('bName').focus(); return; }
   if (!B.ids.length) { bMsg('Add at least one stretch to save it.'); $('bSearch').focus(); return; }
+  if (B.mode === 'copy') { // Stage 29: a new own routine; the built-in routine is not touched
+    const ids = B.ids.slice(0, MINE_MAX), id = saveMine(name.slice(0, NAME_MAX), ids); if (!id) { bMsg(STORE_FAIL); return; }
+    copyTimes(id, ids, B.times); setSaved(id, true); leaveEdit(); bMsg('');
+    routineFrom = 'saved'; openRoutine(id, 'saved'); $('rSaveMsg').textContent = `Saved “${name}” to My routines and Saved.`; return;
+  }
   if (B.mode === 'edit') {
     const id = B.editId;
     if (!updateMine(id, name.slice(0, NAME_MAX), B.ids.slice(0, MINE_MAX))) { bMsg(R(id) ? STORE_FAIL : 'This routine is no longer on this device.'); return; }
@@ -2211,9 +2424,9 @@ $('bSave').onclick = () => {
   B.name = ''; B.ids = []; B.q = ''; B.area = 'all'; bMsg('');
   renderLibrary(); show('library'); $('library').querySelector('.scroll').scrollTop = 0; libNote(`Saved “${name}” to My routines.`);
 };
-function exitEdit() { const id = B.editId; leaveEdit(); bMsg(''); if (R(id)) openRoutine(id); else { renderLibrary(); show('library'); } }
+function exitEdit() { const copy = B.mode === 'copy', id = B.editId; leaveEdit(); bMsg(''); if (copy) { show('routine'); $('rCustomize').focus(); return; } if (R(id)) openRoutine(id); else { renderLibrary(); show('library'); } }
 $('bBack').onclick = () => {
-  if (B.mode === 'edit') { if (bDirty()) { $('discardSheet').hidden = false; $('discardKeep').focus(); } else exitEdit(); return; }
+  if (B.mode !== 'new') { if (bDirty()) { $('discardSheet').hidden = false; $('discardKeep').focus(); } else exitEdit(); return; }
   renderLibrary(); show('library');
 };
 $('discardKeep').onclick = () => { $('discardSheet').hidden = true; $('bBack').focus(); };
@@ -2230,25 +2443,40 @@ function libNote(t, undo = false) { $('libMsg').textContent = t; $('libUndo').hi
 $('libUndo').onclick = () => { const e = undoDelete(); if (!e) { libNote(STORE_FAIL); return; } renderLibrary(); libNote(`Restored “${e.name}”.`); };
 $('libCreate').onclick = () => { libNote(''); openBuilder(); };
 $('rEdit').onclick = () => openEditor(cur.r.id);
+$('rCustomize').onclick = openCopy;
+// Stage 29: an own routine made from a built-in one keeps the hold times it was made with (stored like times you set on
+// any routine page: only those that differ from the default hold).
+function copyTimes(id, ids, times) { const t = {}; ids.forEach(s => { const v = +times[s]; if (v >= MIN_S && v <= MAX_S && v !== holdFor(s)) t[s] = v; }); store.set('meflex.times2.' + id, t); }
 
 // Stage 22: save a Describe result as your own routine. Uses the best match's stretches in its order; they take the
 // default hold (look.hold or each stretch's suggested hold), not the result's tailored times. The typed description
 // is never stored or sent: only the name and the stretch ids are saved.
+const SA = { times: null, bookmark: false, back: 'descSave' };
+function openNameSheet(ids, name, note, opts = {}) {
+  $('nameSheet').dataset.ids = ids.join(','); $('saName').value = name; $('saMsg').textContent = ''; $('saNote').textContent = note;
+  Object.assign(SA, { times: opts.times || null, bookmark: !!opts.bookmark, back: opts.back || 'descSave' });
+  $('nameSheet').hidden = false; $('saName').focus(); $('saName').select();
+}
 function openSaveAs() {
   const t = DESC[0]; if (!t) return;
   const ids = [...new Set(t.items.map(x => x[0]).filter(id => BY_ID[id]))].slice(0, MINE_MAX);
-  $('nameSheet').dataset.ids = ids.join(','); $('saName').value = 'My routine'; $('saMsg').textContent = '';
-  $('saNote').textContent = `${ids.length} stretch${ids.length === 1 ? '' : 'es'} from “${R(t.id).title}”, in the same order. They use your default hold, so the length can differ from this result.`;
-  $('nameSheet').hidden = false; $('saName').focus(); $('saName').select();
+  openNameSheet(ids, 'My routine', `${ids.length} stretch${ids.length === 1 ? '' : 'es'} from “${R(t.id).title}”, in the same order. They use your default hold, so the length can differ from this result.`);
 }
-$('saCancel').onclick = () => { $('nameSheet').hidden = true; const b = $('descSave'); if (b) b.focus(); };
+// Stage 29: after changing a built-in routine for this visit (Swap, Remove), keep that version as your own.
+$('rSaveCopy').onclick = () => {
+  const ids = [...new Set(cur.items.map(it => it.st.id))].slice(0, MINE_MAX);
+  openNameSheet(ids, `${cur.r.title} (mine)`.slice(0, NAME_MAX), `${ids.length} stretch${ids.length === 1 ? '' : 'es'} as shown, in this order, with these hold times. It’s added to My routines and Saved; “${cur.r.title}” stays as it is.`,
+    { times: Object.fromEntries(cur.items.map(it => [it.st.id, it.secs])), bookmark: true, back: 'rSaveCopy' });
+};
+$('saCancel').onclick = () => { $('nameSheet').hidden = true; const b = $(SA.back); if (b) b.focus(); };
 $('saName').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('saSave').click(); } });
 $('saSave').onclick = () => {
   const name = $('saName').value.trim().slice(0, NAME_MAX), ids = ($('nameSheet').dataset.ids || '').split(',').filter(id => BY_ID[id]);
   if (!name) { $('saMsg').textContent = 'Give your routine a name to save it.'; $('saName').focus(); return; }
   if (!ids.length) { $('saMsg').textContent = 'There are no stretches to save.'; return; }
   const id = saveMine(name, ids); if (!id) { $('saMsg').textContent = STORE_FAIL; return; }
-  $('nameSheet').hidden = true; routineFrom = 'library'; openRoutine(id, 'library'); $('rSaveMsg').textContent = `Saved to My routines.`;
+  if (SA.times) copyTimes(id, ids, SA.times); if (SA.bookmark) setSaved(id, true);
+  $('nameSheet').hidden = true; routineFrom = SA.bookmark ? 'saved' : 'library'; openRoutine(id, routineFrom); $('rSaveMsg').textContent = SA.bookmark ? `Saved “${name}” to My routines and Saved.` : `Saved to My routines.`;
 };
 
 // ---------- Saved routines (Stage 20) ----------
@@ -2311,11 +2539,11 @@ async function keepAwake(on) {
 
 // Show step i, ready to hold.
 function load(i, { animate = true, remaining } = {}) {
-  P.i = i; P.phase = 'hold'; const st = STEPS[i];
+  P.i = i; P.phase = 'hold'; const st = STEPS[i]; $('sideNote').textContent = ''; coachStop(); // Stage 28: guidance belongs to one hold only
   P.remaining = remaining ?? holdMs(i);
   P.endAt = Date.now() + P.remaining;
   P.lastSec = Math.ceil(P.remaining / 1000);
-  crossfade(art(st.s, st.mirror), animate);
+  if (isSecondSide(i)) sideFlip(art(st.s, st.mirror), animate); else crossfade(art(st.s, st.mirror), animate);
   $('count').textContent = `${st.si + 1} of ${cur.items.length}`;
   $('prevBtn').disabled = i === 0;
   render();
@@ -2333,10 +2561,22 @@ function crossfade(html, animate) {
     old.style.opacity = '0'; setTimeout(() => old.remove(), 340);
   } else el.innerHTML = html;
 }
+// Stage 26: the other side of a two-sided stretch. The mirrored figure goes in at once and flips over from the first side's
+// pose (purely visual, never touches the clock); instant with Reduce Motion or after a lock catch-up.
+function sideFlip(html, animate) {
+  const el = $('art'); el.parentNode.querySelectorAll('.art.old').forEach(o => o.remove());
+  el.classList.remove('flip'); el.innerHTML = html;
+  if (animate && !document.hidden && !reduceMotion()) { void el.offsetWidth; el.classList.add('flip'); setTimeout(() => el.classList.remove('flip'), 500); }
+}
+// Stage 26: a two-sided stretch is one timer circle across both sides. The first side fills the ring to halfway, the
+// 3-second "Switch sides" pause keeps it at halfway, and the second side fills the rest; the big time counts down the
+// whole stretch. Each side still holds its own full time, so stretch and routine lengths are unchanged.
+const sideK = (i) => STEPS[i].s.sides ? (isSecondSide(i) ? 1 : 0) : -1; // -1 one-sided, 0 first side, 1 second side
 // Show step i behind a wait: 'switch' (the 3-second "Switch sides" pause), 'count' (3-2-1) or 'gap' (Next: ...).
 function beginWait(i, phase, now = Date.now(), left = waitMs(phase), animate = true) {
   load(i, { animate });
   P.phase = phase; P.swLeft = left; P.endAt = now + left; P.lastSec = Math.ceil(left / 1000);
+  if (phase === 'switch') $('sideNote').textContent = `Switch sides. ${STEPS[i].side}.`; // Stage 26: said once by VoiceOver
   render();
 }
 const beginSwitch = (i, now = Date.now(), left = SWITCH_MS, animate = true) => beginWait(i, 'switch', now, left, animate);
@@ -2360,7 +2600,7 @@ function render() {
   $('time').classList.toggle('waiting', gap || cd);
   if (sw) $('time').innerHTML = '<span class="sw">Switch sides</span>';
   else if (cd) $('time').innerHTML = '<span class="sw">Get ready</span>';
-  else $('time').textContent = fmt(grace ? holdMs(P.i) : P.remaining); // grace: the next hold's full time, not running
+  else $('time').textContent = fmt(grace ? holdMs(P.i) * (sideK(P.i) === 0 ? 2 : 1) : P.remaining + (sideK(P.i) === 0 ? holdMs(P.i) : 0)); // two-sided: the whole stretch
   $('side').textContent = sw ? `${st.side} in ${secLeft}` : grace ? (st.side || '') : st.s.dynamic ? (st.side ? `${st.side} · keep moving` : 'Keep moving') : (st.side || '');
   $('cdNum').hidden = !cd; if (cd) $('cdNum').textContent = secLeft;
   $('art').classList.toggle('dim', cd);
@@ -2370,8 +2610,9 @@ function render() {
   if (uk !== upNextKey) { upNextKey = uk; $('upNext').hidden = !un; if (un) { $('upNextFig').innerHTML = art(un.s, un.mirror); $('upNext').setAttribute('aria-label', 'Up next: ' + un.s.name); } }
   const fin = P.i === STEPS.length - 1 && (P.phase === 'hold' || P.phase === 'switch'); // Next would finish the routine
   if (String(fin) !== nextIconKey) { nextIconKey = String(fin); $('nextBtn').innerHTML = fin ? ICON_CHECK : ICON_NEXT; $('nextBtn').classList.toggle('finish', fin); $('nextBtn').setAttribute('aria-label', fin ? 'Finish' : 'Next'); }
-  // the ring fills as time runs down: the hold, or the 3-2-1 countdown. Switch and grace keep an empty ring (grace uses the bubble).
-  const left = (sw || gap) ? 1 : cd ? Math.min(1, Math.max(0, P.swLeft / waitMs(P.phase))) : Math.min(1, Math.max(0, P.remaining / holdMs(P.i)));
+  // the ring fills as time runs down: the hold, or the 3-2-1 countdown. Grace keeps an empty ring (it uses the bubble); a two-sided stretch is one ring across both sides, held at halfway during Switch sides (Stage 26).
+  const k = sideK(P.i), half = (x) => k < 0 ? x : (x + (k === 0 ? 1 : 0)) / 2; // two-sided: one ring across both sides
+  const left = sw ? 0.5 : gap ? 1 : cd ? Math.min(1, Math.max(0, P.swLeft / waitMs(P.phase))) : half(Math.min(1, Math.max(0, P.remaining / holdMs(P.i))));
   $('ringFill').setAttribute('stroke-dashoffset', String(1000 * left)); // ring fills as time runs down
   $('ringFill').style.visibility = left > 0.995 ? 'hidden' : 'visible';
   $('playBtn').innerHTML = P.running ? ICON_PAUSE : ICON_PLAY;
@@ -2399,14 +2640,14 @@ function frame() {
     catchUp(now);                              // came back after time passed: jump silently
   } else if (P.phase !== 'hold') {             // countdown, switch or pause over: the hold starts now
     P.phase = 'hold'; P.remaining = holdMs(P.i); P.endAt = now + P.remaining; P.runFrom = now; P.lastSec = Math.ceil(P.remaining / 1000);
-    cueStart(STEPS[P.i]); render();
+    cueHold(P.i); render();
   } else {                                     // a hold ended
     P.active += P.endAt - P.runFrom; heldStep(P.i, P.endAt - P.runFrom);
     const n = nextPhase(P.i, 'hold');
     if (!n) { if (prefs.chime) Sound.chime('end'); P.phase = 'end'; finish(true); return; }
     if (n.phase === 'switch') { switchCue(); beginSwitch(n.i, now); }
     else if (n.phase === 'gap') { if (prefs.chime) Sound.chime('end'); beginWait(n.i, 'gap', now); }
-    else { if (prefs.chime) Sound.chime('end'); load(n.i); P.runFrom = now; Sound.after(prefs.chime ? 1000 : 0, () => cueStart(STEPS[P.i])); }
+    else { if (prefs.chime) Sound.chime('end'); load(n.i); P.runFrom = now; Sound.after(prefs.chime ? 1000 : 0, () => cueHold(P.i)); }
   }
   if (P.running) P.raf = requestAnimationFrame(frame);
 }
@@ -2441,7 +2682,8 @@ function setRunning(on, { cue = false } = {}) {
     if (P.phase === 'hold') { if (!wasRunning) P.runFrom = now; P.endAt = now + P.remaining; P.lastSec = Math.ceil(P.remaining / 1000); }
     else { P.endAt = now + P.swLeft; P.lastSec = Math.ceil(P.swLeft / 1000); }
     P.lastFrame = now; P.raf = requestAnimationFrame(frame);
-    if (cue && P.phase === 'hold') cueStart(STEPS[P.i]);
+    if (cue && P.phase === 'hold') cueHold(P.i);
+    else if (P.phase === 'hold') coachResume(); // Stage 28: carry on with any guidance that Pause cut off
   }
   else Sound.stopAll();
   keepAwake(on);
@@ -2450,7 +2692,7 @@ function setRunning(on, { cue = false } = {}) {
 function finish(keepEndChime) {
   const now = Date.now();
   if (P.running && P.phase === 'hold') { P.active += now - P.runFrom; heldStep(P.i, now - P.runFrom); }
-  P.running = false; cancelAnimationFrame(P.raf); keepAwake(false);
+  P.running = false; cancelAnimationFrame(P.raf); keepAwake(false); coachStop();
   if (!keepEndChime) Sound.stopAll();
   const secs = Math.min(P.active / 1000, secsOf(cur.items)); // never more than the routine's own length (e.g. phone left locked)
   const saved = secs >= 10 && !P.recorded; // skipping straight through is not a session; one play is recorded at most once
@@ -2462,6 +2704,44 @@ function finish(keepEndChime) {
   show('done');
 }
 // Stretches done: stretches held for at least 1 second in this play (one skipped straight past with Next is not done).
+// ---------- Stage 28: the coach reads the guidance ----------
+// Option "Coach reads guidance" (prefs.coach, off by default). At the start of a hold, after the name and side (when Voice
+// is on), the stretch's own instruction lines (the Instructions and Tips the stretch sheet shows; the simple steps and
+// youth note in a youth routine) are read once, calmly, then the coach is quiet. Two-sided stretches: only at the start
+// of the first side. Only whole lines that fit the hold are read, estimated at COACH_WPS words a second plus a short
+// pause per line, keeping the last COACH_END_S seconds quiet (ticks and the end chime). Pause cuts it off; Resume carries
+// on from the next unread line if it still fits; Previous, Next, Switch sides, closing and the end of the hold stop it.
+const COACH_WPS = 2.2, COACH_GAP_S = 0.5, COACH_END_S = 4, NAME_WPS = 2.6;
+const COACH = { i: -1, lines: [], next: 0, until: 0, token: -1 };
+const coachSecs = (t, wps = COACH_WPS) => t.trim().split(/\s+/).length / wps + COACH_GAP_S;
+function coachLinesFor(step) {
+  const st = step.s, kid = cur && cur.r.youth && st.kidSteps;
+  return [...(kid || st.steps), ...(kid ? [YOUTH_NOTE] : st.tips.filter(t => t !== SAFETY))];
+}
+function coachFit(lines, secs) { const out = []; let t = 0; for (const l of lines) { t += coachSecs(l); if (t > secs) break; out.push(l); } return out; }
+function coachSay(i, from, secs) {
+  const fit = coachFit(COACH.lines.slice(from), secs); if (!fit.length) return;
+  COACH.until = from + fit.length; COACH.token = Sound.speechToken;
+  Sound.coach(fit, (k) => { if (COACH.i === i) COACH.next = from + k + 1; });
+}
+function cueHold(i) {
+  const st = STEPS[i];
+  if (!prefs.coach || !window.speechSynthesis || isSecondSide(i)) return cueStart(st); // exactly as before
+  // The same sequence as cueStart (start chime, then the name and side if Voice is on), with the guidance queued
+  // straight after the name in the same step, so nothing can come between them and they never overlap.
+  const name = st.side ? `${st.s.name}. ${st.side}.` : `${st.s.name}.`;
+  const lead = prefs.chime ? 1 : 0, nameS = prefs.voice ? coachSecs(name, NAME_WPS) : 0;
+  COACH.i = i; COACH.lines = coachLinesFor(st); COACH.next = 0; COACH.until = 0;
+  const budget = holdMs(i) / 1000 - lead - nameS - COACH_END_S;
+  const go = () => { if (prefs.voice) Sound.say(name); if (COACH.i === i && P.running && P.i === i && P.phase === 'hold') coachSay(i, 0, budget); };
+  if (prefs.chime) { Sound.chime('start'); Sound.after(1000, go); } else { if (!prefs.voice) Sound.stopAll(); go(); }
+}
+function coachResume() {
+  if (!prefs.coach || COACH.i !== P.i || COACH.next >= COACH.lines.length) return;
+  coachSay(P.i, COACH.next, P.remaining / 1000 - COACH_END_S);
+}
+// Cut the guidance off only if it is still the one speaking (nothing else has used the channel since it started).
+function coachStop() { if (COACH.i >= 0 && COACH.token === Sound.speechToken && COACH.next < COACH.until) Sound.stopSpeech(); COACH.i = -1; }
 function heldStep(i, ms) { if (ms >= 1000 && STEPS[i]) P.held.add(STEPS[i].si); } // at least 1 s of holding
 function begin() {
   Sound.unlock();
@@ -2477,7 +2757,7 @@ function begin() {
 // stretch's position in the routine, from 0 (the "1 of 6" counter minus one).
 const elapsedSecs = () => Math.round((P.active + (P.running && P.phase === 'hold' ? Date.now() - P.runFrom : 0)) / 1000);
 const trackAbandon = (opts) => cur.r.youth || cur.r.custom ? null : Analytics.track('routine_abandoned', { routine_id: cur.r.id, step_index: STEPS[P.i].si, seconds_elapsed: elapsedSecs() }, opts);
-function close() { trackAbandon(); Sound.stopAll(); setRunning(false); show('routine'); renderRoutine(); }
+function close() { trackAbandon(); coachStop(); Sound.stopAll(); setRunning(false); show('routine'); renderRoutine(); }
 function jump(i) {
   Sound.stopAll();
   const was = P.running;
@@ -2562,14 +2842,15 @@ $('infoBack').onclick = () => { show(infoFrom); if (infoFrom === 'player' && res
 
 // ---------- Sound sheet ----------
 const sheet = $('soundSheet');
-function syncSheet() { ['chime', 'tick', 'voice'].forEach(k => { $('opt-' + k).checked = !!prefs[k]; }); }
+function syncSheet() { ['chime', 'tick', 'voice', 'coach'].forEach(k => { $('opt-' + k).checked = !!prefs[k] && (k !== 'coach' || !!window.speechSynthesis); });
+  if (!window.speechSynthesis) { $('opt-coach').disabled = true; $('opthelp-coach').textContent = 'This browser can’t read aloud, so this is off.'; } }
 $('soundBtn').onclick = () => { syncSheet(); sheet.hidden = false; };
 $('sheetDone').onclick = () => { sheet.hidden = true; };
 sheet.addEventListener('click', (e) => { if (e.target === sheet) sheet.hidden = true; });
-['chime', 'tick', 'voice'].forEach(k => $('opt-' + k).addEventListener('change', (e) => {
+['chime', 'tick', 'voice', 'coach'].forEach(k => $('opt-' + k).addEventListener('change', (e) => {
   prefs[k] = e.target.checked; savePrefs();
   if (!prefs[k]) Sound.stopAll();
-  if (k === 'voice' && prefs.voice) Sound.unlock();
+  if ((k === 'voice' || k === 'coach') && prefs[k]) Sound.unlock();
 }));
 $('testSound').onclick = () => { Sound.unlock(); Sound.chime('start'); if (prefs.voice) Sound.after(1000, () => Sound.say('Voice is on.')); };
 
@@ -2609,12 +2890,15 @@ const SOUND_ROWS = [
   ['chime', 'Chime', 'At the start and end of each stretch', 'chimeVol'],
   ['tick', 'Countdown ticks', 'Last 3 seconds of each stretch', 'tickVol'],
   ['voice', 'Voice', 'Reads the stretch name and side', 'voiceVol'],
+  // Stage 28: no volume of its own (it uses the Voice volume above)
+  ['coach', 'Coach reads guidance', 'Reads the stretch’s instructions once, calmly, at the start. Uses the voice volume.', null],
 ];
+const SPEECH_OK = !!window.speechSynthesis;
 $('setSound').innerHTML = SOUND_ROWS.map(([k, name, help, vk]) => `
   <div class="setrow">
-    <label class="opt" for="set-${k}"><span>${name}<small>${help}</small></span><input type="checkbox" id="set-${k}" role="switch"></label>
-    <div class="vol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/></svg>
-      <input type="range" id="vol-${k}" min="0" max="100" step="5" aria-label="${name} volume"><output id="volv-${k}"></output></div>
+    <label class="opt" for="set-${k}"><span>${name}<small id="help-${k}">${k === 'coach' && !SPEECH_OK ? 'This browser can’t read aloud, so this is off.' : help}</small></span><input type="checkbox" id="set-${k}" role="switch" aria-describedby="help-${k}"${k === 'coach' && !SPEECH_OK ? ' disabled' : ''}></label>
+    ${vk ? `<div class="vol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/></svg>
+      <input type="range" id="vol-${k}" min="0" max="100" step="5" aria-label="${name} volume"><output id="volv-${k}"></output></div>` : ''}
     ${k === 'chime' ? `<p class="setlabel" id="chimeStyleLabel">Chime style</p><div class="segs" id="setChimeStyle" role="radiogroup" aria-labelledby="chimeStyleLabel">${Object.entries(CHIME_STYLES).map(([v, s]) =>
       `<label class="seg"><input type="radio" name="chimeStyle" id="chimeStyle-${v}" value="${v}"><span>${s.name}</span></label>`).join('')}</div>` : ''}
   </div>`).join('');
@@ -2625,7 +2909,12 @@ $('setLook').innerHTML =
   swatchGroup('hair', 'Hair', v => `background:${v}`) +
   swatchGroup('outfit', 'Outfit', ([t, b]) => `background:linear-gradient(135deg, ${t} 50%, ${b} 50%)`) +
   swatchGroup('circle', 'Background circle', v => v === 'mixed' ? '' : `background:${v}`);
-$('setGoal').innerHTML = OPTIONS.goal.map(([v, name], i) => `<label class="seg"><input type="radio" name="goal" id="goal-${i}" value="${i}" aria-label="${v} day${v === 1 ? '' : 's'} a week"><span>${name}</span></label>`).join('');
+// The weekly goal row; Stage 27 reuses it on the first setup screen (prefix 'sgoal', same value look.goal).
+const goalSegs = (p) => OPTIONS.goal.map(([v, name], i) => `<label class="seg"><input type="radio" name="${p}" id="${p}-${i}" value="${i}" aria-label="${v} day${v === 1 ? '' : 's'} a week"><span>${name}</span></label>`).join('');
+$('setGoal').innerHTML = goalSegs('goal');
+// Stage 27: profile icon picker (radio inputs, so arrow keys and VoiceOver work as for every other choice here).
+$('setAvatar').innerHTML = AVATARS.map(([id, name]) => `<label class="avopt"><input type="radio" name="avatar" id="av-${id}" value="${id}" aria-label="${name}"><span>${avatarSvg(id)}</span></label>`).join('');
+$('setAvatar').addEventListener('change', (e) => { store.set(AV_KEY, e.target.value); renderAvatar(); });
 $('setGap').innerHTML = OPTIONS.gap.map(([v, name], i) => `<label class="seg"><input type="radio" name="gap" id="gap-${i}" value="${i}" aria-label="${v ? v + (v === 1 ? ' second' : ' seconds') + ' head start' : 'No head start'}"><span>${name}</span></label>`).join('');
 $('setHold').innerHTML = OPTIONS.hold.map(([v, name], i) => `<label class="seg"><input type="radio" name="hold" id="hold-${i}" value="${i}"><span>${name}</span></label>`).join('');
 
@@ -2636,16 +2925,18 @@ function renderPreview() {
 function renderSettings() {
   try { renderOfflineNote(); } catch (e) {} // Stage 25
   SOUND_ROWS.forEach(([k, , , vk]) => {
-    $('set-' + k).checked = !!prefs[k];
+    $('set-' + k).checked = !!prefs[k] && (k !== 'coach' || SPEECH_OK);
+    $('set-' + k).closest('.setrow').classList.toggle('off', !prefs[k]);
+    if (!vk) return;
     $('vol-' + k).value = Math.round(prefs[vk] * 100);
     $('volv-' + k).textContent = Math.round(prefs[vk] * 100) + '%';
-    $('vol-' + k).closest('.setrow').classList.toggle('off', !prefs[k]);
   });
   $('chimeStyle-' + prefs.chimeStyle).checked = true;
   ['skin', 'hair', 'outfit'].forEach(k => { $(`${k}-${look[k]}`).checked = true; });
   $(`circle-${OPTIONS.circle.findIndex(([v]) => v === look.circle)}`).checked = true;
   $(`hold-${OPTIONS.hold.findIndex(([v]) => v === look.hold)}`).checked = true;
   $(`goal-${OPTIONS.goal.findIndex(([v]) => v === look.goal)}`).checked = true;
+  $('av-' + avatarId()).checked = true;
   $(`gap-${OPTIONS.gap.findIndex(([v]) => v === look.gap)}`).checked = true;
   $('set-countdown').checked = look.countdown;
   renderPreview();
@@ -2657,8 +2948,9 @@ SOUND_ROWS.forEach(([k, name, , vk]) => {
   $('set-' + k).addEventListener('change', (e) => {
     prefs[k] = e.target.checked; savePrefs(); renderSettings();
     if (!prefs[k]) Sound.stopAll();
-    if (k === 'voice' && prefs.voice) Sound.unlock();
+    if ((k === 'voice' || k === 'coach') && prefs[k]) Sound.unlock(); // a tap: lets iPhone Safari speak later
   });
+  if (!vk) return;
   const sl = $('vol-' + k);
   sl.addEventListener('pointerdown', () => Sound.unlock());   // a touch is a user gesture: arm audio
   sl.addEventListener('input', () => { prefs[vk] = sl.value / 100; $('volv-' + k).textContent = sl.value + '%'; savePrefs(); });
@@ -3306,6 +3598,12 @@ const SETUP_QS = [
 ];
 const SETUP_LABELS = Object.fromEntries(SETUP_QS.map(q => [q.key, Object.fromEntries(q.options.map(([v, n]) => [v, n]))]));
 const SETUP = { i: 0, from: 'first', draft: null };
+// Stage 27: the weekly goal on the first screen (with the guide choice). The same setting, value (look.goal) and row
+// as Settings → Weekly goal; already set to the current goal (3 days unless changed), so Skip keeps it.
+const SETUP_GOAL = () => `<h2 class="sec" id="setupGoalHead">Weekly goal</h2>
+    <div class="segs" id="setupGoal" role="radiogroup" aria-label="Weekly goal, days a week">${goalSegs('sgoal')}</div>
+    <p class="qsub">Days a week you aim to stretch. You can change it anytime in Settings.</p>`;
+$('setupBody').addEventListener('change', (e) => { if (e.target.name === 'sgoal') { look.goal = OPTIONS.goal[+e.target.value][0]; saveLook(); } });
 
 function openSetup(from) {
   SETUP.from = from; SETUP.i = 0;
@@ -3331,7 +3629,8 @@ function renderSetup() {
     <div class="opts" role="${q.type === 'one' ? 'radiogroup' : 'group'}" aria-labelledby="setupQ">${q.options.map(([val, name, help], k) =>
       `<button class="optbtn" role="${q.type === 'one' ? 'radio' : 'checkbox'}" aria-checked="${on(val)}" data-k="${k}">
         <span><b>${name}</b>${help ? `<small>${help}</small>` : ''}</span><i aria-hidden="true"></i></button>`).join('')}</div>
-    <p class="qnote" id="setupNote" aria-live="polite">${q.note ? q.note(v) : ''}</p>`;
+    <p class="qnote" id="setupNote" aria-live="polite">${q.note ? q.note(v) : ''}</p>${q.key === 'guide' ? SETUP_GOAL() : ''}`;
+  if (q.key === 'guide') $(`sgoal-${OPTIONS.goal.findIndex(([g]) => g === look.goal)}`).checked = true;
   $('setupNext').textContent = answered(q, v) ? 'Next' : (q.key === 'avoid' ? 'Nothing to avoid' : 'Skip this question');
 }
 $('setupBody').addEventListener('click', (e) => {
