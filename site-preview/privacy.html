@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy policy, MeFlex</title>
+<meta name="description" content="Draft privacy policy for MeFlex: everything stays on your device, no accounts, no data selling.">
+<meta name="theme-color" content="#0E1113">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<header class="top">
+  <p class="preview-strip">Preview. This page is a draft and is not the finished website.</p>
+  <div class="wrap">
+    <a class="brand" href="index.html">MeFlex</a>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="support.html">Support</a></li>
+        <li><a href="privacy.html" aria-current="page">Privacy</a></li>
+        <li><a href="terms.html">Terms</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap narrow">
+    <div class="draft" role="note" aria-label="Draft notice">
+      <p><strong>DRAFT for Chris to approve. Not legal advice.</strong> This page was written from what the MeFlex code does today. It has not been checked by a lawyer and should be before MeFlex Stretch Coach is sold or listed in the App Store. Text in [square brackets] is a placeholder.</p>
+    </div>
+    <h1>Privacy policy</h1>
+    <p class="muted">Last updated: [Placeholder: date]</p>
+    <p class="lead">MeFlex keeps your stretching on your phone. There are no accounts, we run no servers that hold your data, and we never sell anything about you.</p>
+    <p>This policy covers the MeFlex app (the web app and the iPhone app, MeFlex Stretch Coach) and this website, made by [Placeholder: owner name] (“we”, “us”).</p>
+
+    <h2>What MeFlex keeps, and where</h2>
+    <p>Everything below is stored only on your device. We cannot see it.</p>
+    <ul>
+      <li><strong>In the web app:</strong> your browser’s local storage on that phone or computer.</li>
+      <li><strong>In the iPhone app:</strong> the same local storage, plus a copy in the app’s own iOS storage (Preferences) on your iPhone, so your data survives if iOS clears the web storage.</li>
+    </ul>
+    <p>What is kept:</p>
+    <ul>
+      <li><strong>Your setup answers</strong>, if you give them: which figure guides you, your age range, how flexible you feel, the body areas you want to work on, your equipment, how long you like to stretch, and positions you would rather avoid. Every question can be skipped. They are used only to suggest routines and hold times.</li>
+      <li><strong>Your history:</strong> which routine you finished, when, and for how long. Used for your weekly goal, streak, calendar and Consistency meter. The newest 1,000 sessions are kept.</li>
+      <li><strong>Your routines and settings:</strong> routines you build, routines you keep in Saved, your hold times, sound and display settings, your profile icon, your weekly goal, your starting plan and your reminder choice (which days and time).</li>
+      <li><strong>Text you type</strong> in “Describe your routine” is read on your device to find matching routines. It is not stored or sent anywhere.</li>
+    </ul>
+
+    <h2>Reminders</h2>
+    <p>In the web app, reminders are a calendar file that you add to your own calendar; your calendar app then reminds you. In the iPhone app, reminders are local notifications scheduled on your iPhone, and iOS asks for your permission first. In both cases nothing is sent to us.</p>
+
+    <h2>Backups you make</h2>
+    <p>Settings can make a backup file of the data above. You choose where to save or share it (for example the Files app or an email). That service’s own privacy terms then apply. MeFlex never uploads a backup. Backup files are plain, readable text, so keep them somewhere you trust.</p>
+    <p>When you restore a backup, MeFlex keeps a copy of your data from just before the restore, so that “Undo the restore” can put it back. That copy is kept in the browser’s sessionStorage on your device, is never sent anywhere, and is removed when you close the app.</p>
+
+    <h2>What leaves your device</h2>
+    <h3>Loading the app</h3>
+    <p>The web app is hosted on GitHub Pages, run by GitHub, Inc. Like any website host, GitHub receives your IP address and basic browser details when your device fetches the app. The web app also loads its typeface from Google Fonts, so Google receives the same kind of request. The iPhone app is downloaded from Apple and does not contact Google Fonts. We do not receive or control these logs. Once the web app has been opened with a signal, it can open offline without contacting anyone.</p>
+
+    <h3>Anonymous usage statistics (optional)</h3>
+    <p><strong>Today this is switched off:</strong> no analytics key has been added to the app, so the PostHog library is not downloaded and nothing is sent. This section applies only once a key is added.</p>
+    <p><strong>Once a key is added, it is on by default.</strong> Usage statistics, with masked session replay, start without you doing anything. You can switch them off at any time in Settings → Privacy, “Share anonymous usage data”.</p>
+    <p>When it is on, MeFlex first downloads the PostHog library from jsDelivr (cdn.jsdelivr.net), a third-party service that delivers code files. Like any web host, jsDelivr receives your IP address and basic browser details with that request. The iPhone app downloads the library the same way.</p>
+    <p>MeFlex then sends anonymous usage data to PostHog, an analytics service hosted in [Placeholder: the United States or the European Union]. What is sent is four kinds of event:</p>
+    <ol>
+      <li>the app was opened;</li>
+      <li>a built-in routine was started (which routine);</li>
+      <li>a built-in routine was finished (which routine, and how many seconds of stretching);</li>
+      <li>a built-in routine was closed early (which routine, which stretch it was on, and how many seconds in).</li>
+    </ol>
+    <p>Along with these, PostHog receives:</p>
+    <ul>
+      <li><strong>Standard device properties</strong> that PostHog adds to every event, such as operating system, browser, device type, screen size and language, and a random ID made on your device, so visits from the same device can be counted together. MeFlex removes the page address, referrer and time zone before sending.</li>
+      <li><strong>Session replay</strong>, a recording of how the screens were used (described below).</li>
+      <li><strong>Your IP address</strong>, which reaches PostHog with each request, as it does with any web service. MeFlex switches off PostHog’s location lookup from the IP address. [Placeholder: whether our PostHog project is set to discard IP addresses.]</li>
+    </ul>
+    <p>How long PostHog keeps this: [Placeholder: retention period for events and for replays]. Your rights over this data and how to use them: [Placeholder: access and deletion requests]. Transfers to other countries: [Placeholder: where PostHog stores data and the basis for any transfer].</p>
+    <p>About session replay: every piece of text on screen is masked, anything typed is hidden, and your setup answers, history and the describe box show only as blank boxes. Replay pauses while a youth routine is open, and the youth routines and routines you build yourself send no events.</p>
+    <p><strong>Never sent:</strong> your setup answers, your history, your own routines or their names, anything you type, your backups, your name, email or precise location.</p>
+    <p>You can switch this off at any time in Settings, Privacy, “Share anonymous usage data”. Restoring defaults or resetting the app never switches it back on.</p>
+
+    <h3>This website</h3>
+    <p>This website has no scripts, no cookies and no analytics. The home page has two switched-off sign-up boxes that send nothing; they are not connected yet. The site’s host may keep standard server logs: [Placeholder: name of the host for this website].</p>
+
+    <h2>Selling and sharing</h2>
+    <p>We never sell data and never use it for advertising. We hold none of your personal data, so there is nothing for us to hand over. We may share totals from the anonymous statistics (for example how many routines were finished in a month) that cannot identify anyone.</p>
+
+    <h2>Your choices</h2>
+    <ul>
+      <li><strong>See your data:</strong> History, Saved, your routines and Settings show what MeFlex keeps, and a backup file holds your history, setup answers, routines, Saved, settings, reminder choice and starting plan.</li>
+      <li><strong>Take it with you:</strong> make a backup in Settings.</li>
+      <li><strong>Delete it:</strong> Settings, Start over, “Reset app and show setup again” deletes your history, setup answers, your own routines, Saved, routine times, settings, the reminder choice and other MeFlex data on that device. It keeps your analytics choice, so a reset never switches analytics back on (and PostHog’s random ID, if analytics has run, also stays). In the web app it does not remove a calendar event you already added; delete that in your calendar app. In the iPhone app it also empties the iOS copy, cancels reminders and clears cached backup and calendar files. Deleting the iPhone app, or removing the web app and clearing Safari’s website data, also deletes it. We cannot recover deleted data unless you kept a backup.</li>
+    </ul>
+    <p>Your iPhone can clear a website’s stored data after a long time without use. Making a backup now and then is the safest way to keep your history.</p>
+
+    <h2>Children</h2>
+    <p>MeFlex is meant for adults and teenagers. Its youth hockey routines are meant to be used with a parent, guardian or coach. MeFlex does not ask for a name, email or birthday. [Placeholder: age wording to be confirmed.]</p>
+
+    <h2>Changes and questions</h2>
+    <p>If this policy changes, the date at the top changes too. If a change means more data leaves your device, the app will say so first. Questions: [Placeholder: support email address], or see the <a href="support.html">support page</a>.</p>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <nav aria-label="Footer">
+      <ul>
+        <li><a href="index.html">MeFlex home</a></li>
+        <li><a href="support.html">Support and questions</a></li>
+        <li><a href="privacy.html">Privacy policy</a></li>
+        <li><a href="terms.html">Terms of use</a></li>
+      </ul>
+    </nav>
+    <p>MeFlex Stretch Coach. Stretching should feel like mild discomfort, never pain. MeFlex is a general fitness tool, not medical advice.</p>
+  </div>
+</footer>
+</body>
+</html>
