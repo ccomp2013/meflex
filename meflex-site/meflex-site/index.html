@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="4488a24a8cc9">
+<meta name="meflex-version" content="14ca7853c4ea">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -239,6 +239,7 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus { outl
 .remdays { display: grid; grid-template-columns: repeat(auto-fit, minmax(max(44px, 3em), 1fr)); gap: 4px; font-size: .875rem; }
 .remday { min-height: 44px; min-width: 0; border-radius: 12px; border: 1.5px solid var(--line); color: var(--ink); font-size: 1em; font-weight: 600; }
 .remday[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+#safetyBtn { width: 100%; height: auto; min-height: 48px; padding-block: 10px; margin-top: var(--sp3); }
 .remtime > span { font-size: var(--fs-xs); font-weight: 500; color: var(--muted); }
 #player.paused .time { opacity: .6; }
 .remtime { display: flex; align-items: center; justify-content: space-between; min-height: 48px; margin-top: 10px; }
@@ -614,6 +615,8 @@ body.hasupd .tabbed .scroll { padding-bottom: calc(172px + env(safe-area-inset-b
 .skip { min-width: var(--tap); }
 </style>
 <style>
+/* Apple-readiness item 6: the to-do list of stretches still needing a reference photo is never shown to people (website and iPhone app); it stays in the preview and test pages */
+#libNeeds { display: none !important; }
 /* The page fills the whole screen, under the status bar and home indicator; content keeps clear of them. */
 :root { --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px); }
 html { height: 100%; background: #0E1113; }
@@ -742,7 +745,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <h1 class="title">Ice hockey</h1>
     <p class="lede">Moving warm-ups before you skate, still holds after. Focus: hips, groin, hamstrings, low back, shoulders, calves and ankles, and skating posture.</p>
     <div id="hockeyBody"></div>
-    <p class="reviewnote">These routines are general guidance. Before sharing them with a team or league, have a certified athletic trainer or physical therapist review them.</p>
+    <p class="reviewnote">General guidance, not medical advice. A stretch should feel like mild discomfort, never pain.</p>
   </div>
 </section>
 <section class="screen tabbed" id="library" hidden>
@@ -861,10 +864,12 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <p class="note">Stored only on this device. Never sent anywhere.</p>
     <button class="ghost" id="profileEdit" style="width:100%">Change answers</button>
     <h2 class="sec">Privacy</h2>
-    <div class="group"><label class="opt" for="set-analytics" style="border-top:0"><span>Share anonymous usage data<small>Which routines you start, finish or stop early, plus screen recordings with all text hidden. Never your name, email or location.</small></span><input type="checkbox" id="set-analytics" role="switch"></label></div>
+    <p class="note" id="privNone" hidden>MeFlex collects nothing: no usage data and no recordings. Everything you do stays on this device.</p>
+    <div class="group" id="privGroup"><label class="opt" for="set-analytics" style="border-top:0"><span>Share anonymous usage data<small>Which routines you start, finish or stop early, plus screen recordings with all text hidden. Never your name, email or location.</small></span><input type="checkbox" id="set-analytics" role="switch"></label></div>
+    <button class="ghost" id="safetyBtn" aria-haspopup="dialog">Privacy and safety</button>
     <button class="ghost" id="restoreBtn">Restore defaults</button>
     <p class="restoremsg" id="restoreMsg" aria-live="polite"></p>
-    <p class="note" style="text-align:center;margin-inline:auto">Restores sound, colors, timing, default hold and weekly goal. Your routine times, history and privacy choice stay.</p>
+    <p class="note" style="text-align:center;margin-inline:auto">Restores sound, colors, timing, default hold and weekly goal. Your routine times and history stay.</p>
     <section id="offlineSec" aria-labelledby="offlineHead" data-web-only hidden>
       <h2 class="sec" id="offlineHead">Offline</h2>
       <div class="group offlinebox"><p id="offlineState" aria-live="polite"></p><p id="offlineNow" hidden>You’re offline right now. Everything still works.</p></div>
@@ -873,7 +878,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     </section>
     <section id="yourData" aria-labelledby="ydHead" data-private>
       <h2 class="sec" id="ydHead">Your data</h2>
-      <p class="note">History, your routines, Saved and your settings are kept only in this browser on this phone. A backup is a file you keep yourself; it never leaves your phone unless you share it.</p>
+      <p class="note" id="ydWhere">History, your routines, Saved and your settings are kept only in this browser on this phone. A backup is a file you keep yourself; it never leaves your phone unless you share it.</p>
       <p class="ydstate" id="ydPersist"></p>
       <p class="ydnudge" id="ydNudge" hidden></p>
       <button class="ghost wide" id="ydBackup">Back up my data</button>
@@ -905,6 +910,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <div class="meta" id="rMeta"></div>
     <h1 id="rTitle" data-private></h1>
     <p class="desc" id="rDesc"></p>
+    <p class="note healthline" id="rHealth" hidden>General guidance, not medical advice. If you’re pregnant, injured or unsure, check with a doctor first.</p>
     <button class="ghost editbtn" id="rEdit" aria-label="Edit this routine" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-4-4L4 16v4z"/></svg>Edit</button>
     <button class="ghost editbtn" id="rCustomize" aria-label="Customize a copy of this routine" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h9M18 7h1M5 17h3M12 17h7"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Customize</button>
     <p class="rwhy" id="rWhy" data-private hidden></p>
@@ -1024,6 +1030,15 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
   </div>
 </div>
 
+<div class="sheet" id="safetySheet" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="safetyTitle" aria-describedby="safetyHealth safetyPrivacy">
+    <div class="grab"></div>
+    <h2 id="safetyTitle" tabindex="-1">Privacy and safety</h2>
+    <p class="resettext" id="safetyHealth"><b>Health notice.</b> MeFlex is general stretching guidance, not medical advice. A stretch should feel like mild discomfort, never pain; ease off if it hurts. If you’re pregnant, injured, have a health condition or are unsure, check with a doctor first.</p>
+    <p class="resettext" id="safetyPrivacy"></p>
+    <button class="cta" id="safetyDone">Done</button>
+  </div>
+</div>
 <div class="sheet" id="resetSheet" hidden>
   <div class="panel" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle" aria-describedby="resetText">
     <div class="grab"></div>
@@ -1481,7 +1496,7 @@ const BY_ID = Object.fromEntries(STRETCHES.map(s => [s.id, s]));
 
 const CATEGORIES = [
   { id: 'morning', name: 'Morning', blurb: 'Wake the body up' },
-  { id: 'desk', name: 'Desk breaks', blurb: 'Undo the screen slouch' },
+  { id: 'desk', name: 'Desk breaks', blurb: 'Neck, shoulders and chest for desk days' },
   { id: 'training', name: 'After training', blurb: 'Cool down tight legs' },
   { id: 'evening', name: 'Evening', blurb: 'Slow down before bed' },
   { id: 'band', name: 'Band work', blurb: 'Deeper holds with a band' },
@@ -1504,13 +1519,13 @@ const ROUTINES = [
     items: [['chintuck', 20], ['necktilt', 20], ['levator', 20]] },
   { id: 'stride-reset', title: 'Stride Reset', cat: 'training', desc: 'A cool-down for runners and walkers: quads, calves, hip flexors and hamstrings.',
     items: [['quad', 40], ['calf', 40], ['lunge', 40], ['fold', 45], ['figure4', 40]] },
-  { id: 'back-ease', title: 'Back Ease', cat: 'evening', desc: 'Gentle floor holds that take pressure off the lower back.',
+  { id: 'back-ease', title: 'Back Ease', cat: 'evening', desc: 'Gentle floor holds for the lower back.',
     items: [['kneeschest', 60], ['twist', 45], ['child', 60], ['cobra', 40], ['catcow', 45]] },
   { id: 'lights-out', title: 'Lights Out', cat: 'evening', desc: 'Four long, quiet holds to settle down before sleep.',
     items: [['butterfly', 75], ['twist', 60], ['kneeschest', 60], ['child', 75]] },
   { id: 'quick-hips', title: 'Quick Hips', cat: 'desk', desc: 'Three hip openers for a short break.',
     items: [['lunge', 30], ['figure4', 30], ['butterfly', 30]] },
-  { id: 'band-hamstrings', title: 'Band Hamstrings', cat: 'band', desc: 'Contract-relax (PNF) holds with a long band to gain hamstring and inner-thigh range.',
+  { id: 'band-hamstrings', title: 'Band Hamstrings', cat: 'band', desc: 'Contract-relax (PNF) holds with a long band for the hamstrings and inner thighs.',
     items: [['bandham', 60], ['bandadd', 50], ['passthrough', 40], ['fold', 45]] },
   { id: 'loaded-hips', title: 'Loaded Hips', cat: 'loaded', desc: 'Light weights help you sink deeper into hips, calves and lats. Go easy on the load.',
     items: [['goblet', 60], ['pullover', 45], ['calfdrop', 45], ['lunge', 45]] },
@@ -1535,7 +1550,7 @@ const ROUTINES = [
   { id: 'ref-post', title: 'Referee Post-game Cool-down', cat: 'hockey', group: 'refs', phase: 'post',
     desc: 'Standing and seated holds after a game, no floor needed: hips, groin, hamstrings, calves and back.',
     items: [['quad', 30], ['groinhold', 30], ['standfold', 40], ['ankledf', 30], ['seatedtwist', 30], ['crossbody', 30], ['postwall', 30]] },
-  { id: 'ref-recovery', title: 'Referee Post-night Recovery', cat: 'hockey', group: 'refs', phase: 'recovery',
+  { id: 'ref-recovery', title: 'Referee End-of-night Cool-down', cat: 'hockey', group: 'refs', phase: 'recovery',
     desc: 'Longer, gentle floor holds at the end of a multi-game night.',
     items: [['kneeschest', 45], ['figure4', 45], ['lyingham', 45], ['butterfly', 45], ['twist', 40], ['hiplunge', 40], ['calf', 40], ['child', 60]] },
 
@@ -1991,6 +2006,7 @@ function renderHome() {
   $('recHead').textContent = hasRoutineAnswers() ? 'Recommended for you' : 'Recommended';
   $('recPrimary').innerHTML = recCard(recs[0], 0, false) + `<button class="cta" id="homeStart">Start (${fmtMin(secsOf(itemsOf(recs[0].r, recs[0].plan ? recs[0].plan.items : undefined)))})</button>`;
   $('homeStart').onclick = () => { if (openRoutine(recs[0].r.id, 'home', recs[0].plan)) begin(); };
+  if (!store.get('meflex.healthSeen', false)) $('homeStart').insertAdjacentHTML('afterend', '<p class="note healthline" id="homeHealth">General guidance, not medical advice. If you’re pregnant, injured or unsure, check with a doctor first.</p>');
   $('recMore').innerHTML = recs.slice(1).map((x, i) => recCard(x, i + 1, true)).join(''); wireCarousel($('recMore'));
   renderHomeProgress(); renderHomeHeader();
 }
@@ -2278,6 +2294,7 @@ function renderRoutineList() {
   $('rEdited').hidden = !cur.edited; $('rSaveCopy').hidden = !cur.edited || !!cur.r.custom || !!cur.r.youth;
 }
 function renderRoutine() {
+  $('rHealth').hidden = !!store.get('meflex.healthSeen', false);
   const changed = cur.items.some(it => it.secs !== it.def);
   $('rMeta').textContent = `${(changed ? fmtTotal : fmtMin)(secsOf(cur.items))}, ${cur.items.length} stretches`;
   cur.items.forEach((it, i) => {
@@ -2836,6 +2853,7 @@ function coachResume() {
 function coachStop() { if (COACH.i >= 0 && COACH.token === Sound.speechToken && COACH.next < COACH.until) Sound.stopSpeech(); COACH.i = -1; }
 function heldStep(i, ms) { if (ms >= 1000 && STEPS[i]) P.held.add(STEPS[i].si); }
 function begin() {
+  store.set('meflex.healthSeen', true);
   Sound.unlock(); try { persistAsk(); } catch (e) {}
   STEPS = cur.items.flatMap((it, si) => (it.st.sides || [null]).map((side, k) => ({ s: it.st, it, si, side, mirror: k === 1 })));
   P.active = 0; P.running = false; P.phase = 'hold'; P.held = new Set(); P.recorded = false;
@@ -2925,7 +2943,7 @@ $('soundBtn').onclick = () => { syncSheet(); sheet.hidden = false; $('opt-chime'
 $('sheetDone').onclick = () => { sheet.hidden = true; syncSheetInert(); $('soundBtn').focus(); };
 sheet.addEventListener('click', (e) => { if (e.target === sheet) $('sheetDone').click(); });
 
-const SHEET_CANCEL = { soundSheet: 'sheetDone', swapSheet: 'swapCancel', restoreSheet: 'rsCancel', discardSheet: 'discardKeep', delSheet: 'delKeep', nameSheet: 'saCancel', resetSheet: 'resetCancel' };
+const SHEET_CANCEL = { safetySheet: 'safetyDone', soundSheet: 'sheetDone', swapSheet: 'swapCancel', restoreSheet: 'rsCancel', discardSheet: 'discardKeep', delSheet: 'delKeep', nameSheet: 'saCancel', resetSheet: 'resetCancel' };
 let SHEET_OPENER = null, SHEET_WAS_OPEN = false;
 function syncSheetInert() { const open = [...document.querySelectorAll('.sheet')].some(s => !s.hidden);
   if (open && !SHEET_WAS_OPEN) SHEET_OPENER = SHEET_FOCUS_BEFORE;
@@ -3072,8 +3090,12 @@ $('restoreBtn').onclick = () => {
 };
 
 $('set-analytics').checked = Analytics.enabled;
+$('privGroup').hidden = !Analytics.configured(); $('privNone').hidden = Analytics.configured();
 $('set-analytics').addEventListener('change', (e) => Analytics.setEnabled(e.target.checked));
 
+$('safetyBtn').onclick = () => { $('safetyPrivacy').innerHTML = '<b>Privacy.</b> Your history, routines and settings stay on this phone; MeFlex has no accounts. ' + (!Analytics.configured() ? 'MeFlex collects nothing.' : Analytics.enabled ? '“Share anonymous usage data” is on: MeFlex sends which routines you start, finish or stop early, with screen recordings that hide all text. You can switch it off above.' : '“Share anonymous usage data” is off, so MeFlex sends nothing.'); $('safetySheet').hidden = false; $('safetySheet').querySelector('.panel').scrollTop = 0; $('safetyTitle').focus({ preventScroll: true }); };
+$('safetyDone').onclick = () => { $('safetySheet').hidden = true; syncSheetInert(); $('safetyBtn').focus(); };
+$('safetySheet').addEventListener('click', (e) => { if (e.target === $('safetySheet')) $('safetyDone').click(); });
 $('resetAppBtn').onclick = () => { $('resetSheet').hidden = false; $('resetCancel').focus(); };
 $('resetCancel').onclick = () => { $('resetSheet').hidden = true; syncSheetInert(); $('resetAppBtn').focus(); };
 $('resetSheet').addEventListener('click', (e) => { if (e.target === $('resetSheet')) $('resetCancel').click(); });
@@ -3684,14 +3706,15 @@ function contextText() {
   return 'Your browser can clear saved data, for example when space runs low or when you clear browsing data.';
 }
 function persistText() {
+  if (Platform.isNativeApp()) return 'Your data is kept with the app on this phone. A backup is the only sure protection.';
   const p = !PERSIST.supported ? 'This browser doesn’t report whether it will keep MeFlex’s data.'
     : PERSIST.state === true ? 'This browser reports that MeFlex’s data is in persistent storage.'
     : PERSIST.state === false ? 'This browser hasn’t put MeFlex’s data in persistent storage.' : '';
   return [contextText(), p, 'A backup is the only sure protection.'].filter(Boolean).join(' ');
 }
-function persistCheck() { if (!PERSIST.supported) { renderYourData(); return; } navigator.storage.persisted().then(v => { PERSIST.state = !!v; renderYourData(); }).catch(() => {}); }
+function persistCheck() { if (Platform.isNativeApp()) { renderYourData(); return; } if (!PERSIST.supported) { renderYourData(); return; } navigator.storage.persisted().then(v => { PERSIST.state = !!v; renderYourData(); }).catch(() => {}); }
 function persistAsk() {
-  if (!PERSIST.supported || PERSIST.asked || PERSIST.state === true) return; PERSIST.asked = true;
+  if (Platform.isNativeApp() || !PERSIST.supported || PERSIST.asked || PERSIST.state === true) return; PERSIST.asked = true;
   navigator.storage.persist().then(v => { PERSIST.state = !!v; renderYourData(); }).catch(() => {});
 }
 
@@ -3770,6 +3793,7 @@ $('ydUndo').onclick = () => {
     : m === 'restored-noundo' ? 'Your backup was restored. This device couldn’t keep a copy for Undo.' : 'The restore was undone. Your earlier data is back.';
 })();
 persistCheck();
+if (Platform.isNativeApp()) $('ydWhere').textContent = 'History, your routines, Saved and your settings are kept only in the MeFlex app on this phone. A backup is a file you keep yourself; it never leaves your phone unless you share it.';
 if (BK.notice) setTimeout(() => { if (current === 'setup') return; openSettings('home'); ydMsg(BK.notice); $('yourData').scrollIntoView({ block: 'start' }); $('ydMsg').focus(); }, 0);
 
 const REM_KEY = 'meflex.reminder';
@@ -3905,7 +3929,7 @@ $('planClose').onclick = () => { const p = planGet(); if (p) store.set(PLAN_KEY,
 $('planAnswers').onclick = () => openSetup('settings');
 
 const PLUS_SWITCH = false;
-const PLUS_ON = () => PLUS_SWITCH || window.MEFLEX_PLUS_TEST === true;
+const PLUS_ON = () => PLUS_SWITCH;
 const PLUS_PRICES = { trialDays: 7, yearly: '$39.99 a year', monthly: '$9.99 a month' };
 const FREE_KEY = 'meflex.freeToday', FUNNEL_KEY = 'meflex.funnel';
 const plusActive = () => false;
