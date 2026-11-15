@@ -13,10 +13,11 @@
 <link rel="stylesheet" href="style.css">
 <script>(function(d){d.classList.add('js');if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))d.classList.add('motion');})(document.documentElement);</script>
 <script src="motion.js" defer></script>
-<style>.preview-strip{margin:0;padding:8px 16px;background:#D8B678;color:#0E1113;font:600 1rem/1.5 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:1000}</style>
+<style>.preview-strip{margin:0;padding:8px 16px;background:#D8B678;color:#0E1113;font:600 1rem/1.5 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:1000}.preview-page{position:relative}</style>
 </head>
 <body>
 <div class="preview-strip" role="note">Preview. This page is a draft and is not the finished website.</div>
+<div class="preview-page">
 <a class="skip" href="#main">Skip to main content</a>
 
 <header class="top">
@@ -44,8 +45,8 @@
     </div>
     <figure class="photo photo-c1" data-photo-slot="C-1">
       <picture>
-        <source type="image/avif" srcset="../shared/photos/c1-828.avif 828w, ../shared/photos/c1-1280.avif 1280w, ../shared/photos/c1-1920.avif 1920w, ../shared/photos/c1-2560.avif 2560w" sizes="100vw">
-        <source type="image/webp" srcset="../shared/photos/c1-828.webp 828w, ../shared/photos/c1-1280.webp 1280w, ../shared/photos/c1-1920.webp 1920w, ../shared/photos/c1-2560.webp 2560w" sizes="100vw">
+        <source type="image/avif" srcset="../shared/photos/c1-828.avif 828w, ../shared/photos/c1-1280.avif 1280w, ../shared/photos/c1-1920.avif 1920w, ../shared/photos/c1-2560.avif 2560w" sizes="(min-width: 700px) 53vw, 100vw">
+        <source type="image/webp" srcset="../shared/photos/c1-828.webp 828w, ../shared/photos/c1-1280.webp 1280w, ../shared/photos/c1-1920.webp 1920w, ../shared/photos/c1-2560.webp 2560w" sizes="(min-width: 700px) 53vw, 100vw">
         <img src="../shared/photos/c1-1280.webp" width="1280" height="853" fetchpriority="high" decoding="async" data-depth="0.06" data-max="20" alt="Side view of a woman in a high crescent lunge on a pink mat, arms raised, in a bright room with pale wooden walls and floor.">
       </picture>
     </figure>
@@ -64,7 +65,7 @@
       <picture>
         <source type="image/avif" srcset="../shared/photos/c2-480.avif 480w, ../shared/photos/c2-800.avif 800w, ../shared/photos/c2-1200.avif 1200w" sizes="(min-width: 960px) 23rem, 54vw">
         <source type="image/webp" srcset="../shared/photos/c2-480.webp 480w, ../shared/photos/c2-800.webp 800w, ../shared/photos/c2-1200.webp 1200w" sizes="(min-width: 960px) 23rem, 54vw">
-        <img src="../shared/photos/c2-800.webp" width="800" height="1000" loading="lazy" decoding="async" alt="A pair of white figure skates hangs by its laces from a wooden rack, with soft out-of-focus lights behind.">
+        <img src="../shared/photos/c2-800.webp" width="800" height="1000" loading="lazy" decoding="async" alt="A taped black hockey stick blade and a puck on pale, scratched ice.">
       </picture>
     </figure>
         <div class="phone">
@@ -279,5 +280,6 @@
 </footer>
 
 <script src="../shared/demo.js" defer></script>
+</div>
 </body>
 </html>

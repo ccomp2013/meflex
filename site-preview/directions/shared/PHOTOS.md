@@ -14,5 +14,5 @@ marks, no children, no generated images of people. Record each one in CREDITS.md
 | B-2 | B | Hockey story: an adult player in plain dark gear doing a standing leg swing holding the boards, no logos or numbers | 4:5 portrait |
 | B-3 | B | Desk story: a person in work clothes doing a standing side stretch next to a desk, evening office light | 4:5 portrait |
 | C-1 | C | Opening, full-bleed: soft morning light through a window onto a wooden floor with a rolled-out mat, an adult in a low lunge seen from the side, airy and bright | 3:2 landscape, at least 2400 px wide |
-| C-2 | C | Hockey story: skates hanging by their laces on a hook against a pale wall, daylight, no logos | 4:5 portrait |
+| C-2 | C | Hockey story: a quiet hockey detail in daylight, such as a stick and pucks on pale ice, no logos (replaced the figure-skates photo, Nov 15) | 4:5 portrait |
 | C-3 | C | Desk story: a calm, bright desk with a laptop and a cup, a chair pushed back, nobody in shot | 4:5 portrait |

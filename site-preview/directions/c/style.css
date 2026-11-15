@@ -92,7 +92,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .photo-c1 picture { display: block; height: 100%; }
 /* the photo is a little taller than its frame so it can drift behind it as you scroll */
 .photo-c1 img { object-position: 60% 45%; height: calc(100% + 40px); margin-top: -20px; }
-@media (min-width: 900px) {
+@media (min-width: 700px) {  /* side by side from tablet width up (Cowork, Nov 15: at 750 px the photo sat far below the text) */
   .hero { display: grid; grid-template-columns: minmax(0, 47fr) minmax(0, 53fr); align-items: stretch;
     min-height: clamp(560px, calc(100svh - 92px), 880px); }
   .hero-copy { align-self: center; padding: 3rem clamp(2rem, 4vw, 4.5rem) 4rem var(--edgeL); }
@@ -110,7 +110,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   box-shadow: 0 1px 0 rgba(20,32,41,.18), 8px 22px 26px -16px rgba(20,32,41,.45);
 }
 .shelf > * { position: relative; z-index: 1; }
-.shelf .photo-c2 img { object-position: 55% 50%; }
+.shelf .photo-c2 img { object-position: 55% 55%; }
 .shelf .photo-c3 img { object-position: 60% 55%; }
 .shelf .photo { width: 54%; max-width: 23rem; aspect-ratio: 4 / 5; border: clamp(6px, 1.2vw, 12px) solid #FAFBFB;
   box-shadow: 1px 2px 3px rgba(20,32,41,.18), 16px 26px 40px -14px rgba(20,32,41,.32); }
