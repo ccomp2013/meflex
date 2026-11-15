@@ -1,6 +1,6 @@
 /* MeFlex website, Phase 2, direction B: the home page. Six sections: the opening under the lights, the ice sheet
    (the hockey story, with the blue line painting through the five Between-games stretches), the live demo at centre
-   ice, the desk story, how it works, and what is still to come (the maker's note and the App Store sign-up, both
+   ice, a line about the everyday and desk routines, how it works, and what is still to come (the maker's note and the App Store sign-up, both
    placeholders). Motion lives in home.js and only runs when the visitor allows motion (html.motion); without
    JavaScript or with reduced motion every line is drawn and every word is visible. */
 
@@ -132,30 +132,9 @@
   .demo-stage { grid-column: 2; grid-row: 1 / 3; align-self: center; }
 }
 
-/* 4. Desk ------------------------------------------------------------------------------------------------ */
-.desk { padding: 5rem var(--gutter) 5.5rem; background: var(--night-2); border-top: 1px solid var(--line-soft); }
-.desk-grid { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 3.5rem; }
-.desk-visual { position: relative; max-width: 38rem; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .62fr); align-items: end; padding-bottom: 2rem; }
-.b3 { grid-column: 1 / 2; grid-row: 1; margin: 0; aspect-ratio: 4 / 5; border-radius: var(--r); overflow: hidden; }
-.b3 picture, .b3 img { display: block; width: 100%; height: 100%; }
-.b3 img { object-fit: cover; object-position: 30% 40%; }
-/* the phone overlaps the photo's lower right corner, fully in view */
-.phone-desk { grid-column: 1 / 3; grid-row: 1; justify-self: end; width: 48%; max-width: 250px; margin-bottom: -2rem; padding: 6px; border-radius: 34px;
-  box-shadow: inset 0 0 0 1.5px rgba(214,236,250,.3), inset 0 0 0 3px #05090D, 0 40px 60px -24px rgba(0,0,0,.85), 0 0 0 6px var(--night-2); }
-.phone-desk::before { top: 12px; height: 13px; }
-.phone-desk picture, .phone-desk img { border-radius: 28px; }
-.desk h2 { font-size: var(--fs-h2); line-height: .9; max-width: 8em; }
-.desk-lead { margin-top: 1.25rem; font-size: var(--fs-lead); color: var(--soft); max-width: 32rem; }
-.routine-dark { border-left-color: var(--ice); }
-.routine-dark > p:not(.routine-meta) { color: var(--soft); }
-.mini { list-style: none; counter-reset: m; margin: 1.1rem 0 0; padding: 0; }
-.mini li { counter-increment: m; display: flex; align-items: center; gap: .9rem; padding: .3rem 0; font: 800 1.6rem/1.05 var(--display); }
-.mini li::before { content: counter(m); flex: none; width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid; place-items: center; font-size: .95rem; box-shadow: inset 0 0 0 2px var(--muted); }
-.desk-note { margin-top: 1.75rem; color: var(--soft); max-width: 32rem; }
-@media (min-width: 960px) {
-  .desk { padding-block: 7rem; }
-  .desk-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: clamp(3rem, 7vw, 7rem); }
-}
+/* 4. Everyday and desk routines: one quiet line between the demo and How it works (hockey first, Nov 15) ------- */
+.everyday { padding: 2.5rem var(--gutter); background: var(--night-2); border-top: 1px solid var(--line-soft); }
+.everyday p { max-width: var(--max); margin: 0 auto; color: var(--soft); font-size: var(--fs-lead); }
 
 /* 5. How it works: three steps ------------------------------------------------------------------------------ */
 .how { max-width: calc(var(--max) + 2 * var(--gutter)); margin: 0 auto; padding: 5.5rem var(--gutter) 4.5rem; }
@@ -168,7 +147,7 @@
 @media (min-width: 750px) { .how-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
 /* 6. Still to come, then the close --------------------------------------------------------------------------- */
-/* one quiet row, no boxes: the maker's note waiting for Chris's words, and the sign-up drawn as switched off */
+/* one quiet row, no boxes: Chris's note (signed) and the sign-up drawn as switched off */
 .later { max-width: calc(var(--max) + 2 * var(--gutter)); margin: 0 auto; padding: 1rem var(--gutter) 6rem; overflow-wrap: break-word; }
 .later-title { font-size: 1.6rem; color: var(--soft); padding-top: 1.5rem; border-top: 1px solid var(--line); }
 .later-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem 4rem; margin-top: 1.75rem; }
@@ -176,6 +155,7 @@
 .tag { display: inline-flex; align-items: center; min-height: 1.75rem; padding: .1rem .7rem; border-radius: 99px; font: 600 var(--fs-small)/1.2 var(--text); }
 .tag-placeholder { color: var(--night); background: var(--ice); }
 .maker-text { margin-top: 1rem; font-size: var(--fs-lead); color: var(--soft); max-width: 30rem; }
+.maker-sign { margin-top: .75rem; font-weight: 600; color: var(--ink); } /* Q4 answered (Nov 15): Chris's own note, signed */
 /* the sign-up: designed as switched off, not broken. One status, said once; the field and button are drawn as
    dashed outlines */
 .store-off { margin-top: 1rem; display: flex; align-items: flex-start; gap: .6rem; color: var(--soft); max-width: 34rem; }
