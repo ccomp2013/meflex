@@ -47,6 +47,7 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .22em
 .paper { background: var(--paper); color: var(--ink); --focus: var(--spruce); }
 .night { background: var(--night); color: var(--bone); --focus: var(--pale); }
 main > section { padding-block: var(--sec-y); }
+.rink { padding-top: clamp(4rem, 7vw, 6.5rem) !important; }
 
 /* Skip link */
 .skip { position: absolute; left: 1rem; top: -6rem; z-index: 50; display: inline-flex; align-items: center; min-height: var(--tap);
@@ -124,7 +125,11 @@ h1 { font-size: clamp(3rem, 1.6rem + 6.2vw, 7.5rem); line-height: .94; font-weig
 
 /* Motion: the stage sticks while the photograph pulls back into a framed plate (transforms set by motion.js). */
 html.motion .opening { height: 130vh; height: 130svh; }
-@media (min-width: 60rem) { html.motion .opening { height: 150vh; height: 150svh; } }
+@media (min-width: 60rem) {
+  html.motion .opening { height: 135vh; height: 135svh; }
+  /* the caption belongs to the plate: it arrives once the plate has formed */
+  html.motion .plate-fig .cap { opacity: clamp(0, calc((var(--e, 0) - .6) * 3), 1); }
+}
 html.motion .stage { position: sticky; top: 0; height: 100vh; height: 100svh; min-height: 0; align-content: stretch;
   grid-template-rows: auto 1fr; padding-top: 7.25rem; padding-bottom: clamp(1rem, 3vh, 2.5rem); row-gap: clamp(1.25rem, 3vh, 2rem); }
 html.motion .plate-fig { display: flex; flex-direction: column; justify-content: center; min-height: 0; position: relative; }
@@ -199,19 +204,15 @@ html.motion .plate-fig .cap { position: relative; z-index: 2; }
 .five li::before { content: counter(five); color: var(--spruce); font: 300 clamp(2rem, 1.6rem + 1.4vw, 2.75rem)/1 var(--display);
   font-variation-settings: "opsz" 144; font-feature-settings: "onum" 1, "lnum" 0; }
 
-.programme { margin-top: clamp(4rem, 9vw, 8rem); max-width: 38rem; margin-left: auto; margin-right: clamp(0rem, 6vw, 6rem); }
-.programme-title { font-size: clamp(1.4rem, 1.15rem + .8vw, 1.85rem); font-weight: 400; line-height: 1.15; font-variation-settings: "opsz" 36; margin-bottom: .75rem; }
-.leaders { list-style: none; padding: 0; margin: 1.5rem 0; }
-.leaders li { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: .5rem; padding: .45rem 0; }
-@media (max-width: 30rem) {
-  .leaders li { display: grid; padding: .6rem 0; border-bottom: 1px solid var(--rule-paper); }
-  .leaders li:first-child { border-top: 1px solid var(--rule-paper); }
-  .l-dots { display: none; }
-}
-.l-name { font-family: var(--display); font-size: 1.2rem; font-variation-settings: "opsz" 24; }
-.l-dots { flex: 1 1 2rem; min-width: 2rem; border-bottom: 2px dotted rgba(22, 28, 25, .35); transform: none; position: relative; top: -.3em; }
-.l-time { font-style: italic; color: var(--ink-2); white-space: nowrap; }
 .aside { color: var(--ink-2); font-style: italic; }
+.also { margin-top: clamp(3rem, 6vw, 4.5rem); padding-top: 1.5rem; border-top: 1px solid var(--rule-paper); display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem 3vw; }
+.also-lede { color: var(--ink-2); max-width: 34rem; }
+.also-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: .9rem 3vw; }
+.also-list li { display: grid; }
+.l-name { font: 400 1.2rem/1.25 var(--display); font-variation-settings: "opsz" 24; }
+.l-time { font-style: italic; color: var(--ink-2); }
+@media (min-width: 40rem) { .also-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 60rem) { .also { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; } }
 
 /* ---------- 3. Demo ---------- */
 .demo-sec .mf-demo { --mf-ink: #ECE6DA; --mf-track: #3A342C; --mf-surface: #211C17; --mf-muted: #ADA594; --mf-accent: #C9785A; --mf-on-accent: #16130F;
@@ -267,16 +268,16 @@ html.motion .plate-fig .cap { position: relative; z-index: 2; }
 /* ---------- 6. App Store (switched off) ---------- */
 .store { padding-block: clamp(4rem, 8vw, 7rem) !important; }
 .store-wrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.75rem 5vw; align-items: start; }
-@media (min-width: 60rem) { .store-wrap { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .store-box { margin-top: 0 !important; } }
-.store h2 { font-size: clamp(1.6rem, 1.15rem + 1.6vw, 2.5rem); line-height: 1.12; font-weight: 360; letter-spacing: -.012em; max-width: 24ch; text-wrap: balance; }
-.store-box { margin-top: 1.75rem; padding: 1.25rem; border: 1px dashed rgba(22, 28, 25, .4); border-radius: 4px; max-width: 40rem; }
-.store-off { font-weight: 600; }
-.store-row { margin-top: 1rem; display: flex; flex-wrap: wrap; align-items: center; gap: .6rem .75rem; }
-.store-row label { flex-basis: 100%; font-size: 1rem; color: var(--ink-2); }
+@media (min-width: 60rem) { .store-wrap { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.store h2 { font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.75rem); line-height: 1.1; font-weight: 340; letter-spacing: -.014em; max-width: 22ch; text-wrap: balance; font-variation-settings: "opsz" 72; }
+.store-off { margin-top: 1rem; font-size: 1.1875rem; max-width: 34rem; }
+.store-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; padding-top: 1.25rem; border-top: 1px solid var(--rule-paper); }
+.store-row label { flex-basis: 100%; font-size: .9375rem; color: var(--ink-2); }
 .store-row input { flex: 1 1 12rem; min-width: 0; min-height: var(--tap); padding: 0 .9rem; font: inherit; color: var(--ink-2);
-  background: repeating-linear-gradient(135deg, transparent 0 8px, rgba(22, 28, 25, .05) 8px 9px), var(--paper-2); border: 1px solid rgba(22, 28, 25, .3); border-radius: 3px; cursor: not-allowed; }
+  background: transparent; border: 1px dashed rgba(22, 28, 25, .3); border-radius: 3px; cursor: not-allowed; }
 .store-row button { min-height: var(--tap); padding: 0 1.25rem; font: 600 1rem var(--text); color: var(--ink-2); background: transparent;
-  border: 1px solid rgba(22, 28, 25, .35); border-radius: 3px; cursor: not-allowed; }
+  border: 1px dashed rgba(22, 28, 25, .3); border-radius: 3px; cursor: not-allowed; }
+@media (min-width: 60rem) { .store-row { align-self: end; } }
 
 /* ---------- Footer ---------- */
 .foot { background: var(--night); color: var(--bone); padding-block: 3.5rem 4rem; --focus: var(--pale); }
