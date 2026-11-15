@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="b45224fc8841">
+<meta name="meflex-version" content="4b749ff3f646">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -671,6 +671,8 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     </form>
     <div id="searchResults" hidden><h2 class="sec">Routines</h2><ul class="rows" id="searchList"></ul><p class="empty" id="searchEmpty" hidden></p></div>
     <div id="exploreSections">
+      <h2 class="sec">Ice hockey</h2><!-- hockey first (Nov 15): the top of Explore -->
+      <button class="hockeycard" id="hockeyCard"><span class="hk" aria-hidden="true"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 3l-6.5 14.5H4.5a1.5 1.5 0 0 0 0 3h5.2L18 3"/><ellipse cx="17.5" cy="18.5" rx="3" ry="1.6"/></svg></span><span><b>Warm-ups and cool-downs</b><small>For players, youth players and referees</small></span><svg aria-hidden="true" class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <section class="describe" id="describe" data-private aria-labelledby="descHead">
         <h2 class="sec" id="descHead">Describe your routine</h2>
         <form class="descform" id="descForm" autocomplete="off">
@@ -686,8 +688,6 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
       <h2 class="sec">Quick routines<span>, 4 min or less</span></h2><span class="sr" id="quickLabel">Quick routines, 4 minutes or less, swipe sideways</span><ul class="rows carousel" id="quickList" aria-labelledby="quickLabel"></ul>
       <h2 class="sec" id="ladderHead">Ladders<span>, step by step</span></h2><ul class="ladders" id="ladderCards" aria-labelledby="ladderHead"></ul>
       <h2 class="sec" id="seriesHead">Series<span>, one a day</span></h2><ul class="ladders" id="seriesCards" role="list" aria-labelledby="seriesHead"></ul>
-      <h2 class="sec">Ice hockey</h2>
-      <button class="hockeycard" id="hockeyCard"><span class="hk" aria-hidden="true"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 3l-6.5 14.5H4.5a1.5 1.5 0 0 0 0 3h5.2L18 3"/><ellipse cx="17.5" cy="18.5" rx="3" ry="1.6"/></svg></span><span><b>Warm-ups and cool-downs</b><small>For players, youth players and referees</small></span><svg aria-hidden="true" class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <h2 class="sec">Categories</h2><div class="grid" id="catGrid"></div>
     </div>
   </div>
@@ -1871,7 +1871,7 @@ const saveLook = () => { Platform.storage.set(LOOK_KEY, JSON.stringify(look)); }
 try { const v = JSON.parse(Platform.storage.get(LOOK_KEY) || '{}'); if ('gap' in v && v.gap !== look.gap) saveLook(); } catch (e) {}
 
 const PROFILE_KEY = 'meflex.profile';
-const PROFILE_BLANK = { done: false, skipped: false, guide: null, age: null, level: null, focus: [], equipment: [], minutes: null, avoid: [] };
+const PROFILE_BLANK = { done: false, skipped: false, guide: null, hockey: [], age: null, level: null, focus: [], equipment: [], minutes: null, avoid: [] };
 const profile = { ...PROFILE_BLANK };
 try { Object.assign(profile, JSON.parse(Platform.storage.get(PROFILE_KEY) || '{}')); } catch (e) {}
 if (profile.age === '45-59') { profile.age = '45-64'; Platform.storage.set(PROFILE_KEY, JSON.stringify(profile)); }
@@ -3387,18 +3387,26 @@ function recommendations(n = 3) {
   if (REC_MEMO.key !== key) REC_MEMO = { key, list: recommendationsAll() };
   return REC_MEMO.list.slice(0, n);
 }
+const HOCKEY_ROLE_ROUTINES = { player: ['hockey-pre', 'hockey-post'], goalie: ['hockey-pre', 'hockey-post'], ref: ['ref-pre', 'ref-between', 'ref-post', 'ref-recovery'] };
+const hockeyRoles = () => (profile.hockey || []).filter(x => x !== 'none');
+const roleHockeyIds = () => [...new Set(hockeyRoles().flatMap(x => HOCKEY_ROLE_ROUTINES[x] || []))];
+const HOCKEY_WHY = { 'hockey-pre': 'For players, before the game', 'hockey-post': 'For players, after the game', 'ref-pre': 'For officials, before the game',
+  'ref-between': 'For officials, between games', 'ref-post': 'For officials, after the game', 'ref-recovery': 'For officials, at the end of the night' };
 function recommendationsAll(n = 99) {
+  const roleIds = roleHockeyIds();
   if (!hasRoutineAnswers()) {
     const h = new Date().getHours();
     const [pick, why] = h < 11 ? ['first-light', 'Good for mornings'] : h < 17 ? ['desk-reset', 'A midday reset'] : ['lights-out', 'Winds you down for bed'];
-    return [pick, 'hip-opener', 'back-ease', 'stride-reset'].filter((v, i, a) => a.indexOf(v) === i).slice(0, Math.min(n, 4))
-      .map((id, i) => ({ plan: null, r: R(id), why: i === 0 ? why : (R(id).why || catOf(R(id)).blurb) }));
+    const ids = roleIds.length ? [...roleIds, pick, 'hip-opener', 'back-ease'] : [pick, h < 17 ? 'hockey-pre' : 'hockey-post', 'hip-opener', 'back-ease', 'stride-reset'];
+    return ids.filter((v, i, a) => a.indexOf(v) === i).slice(0, Math.min(n, roleIds.length ? roleIds.length + 3 : 5))
+      .map((id) => ({ plan: null, r: R(id), why: HOCKEY_WHY[id] || (id === pick ? why : (R(id).why || catOf(R(id)).blurb)) }));
   }
   const p = tailorPrefs();
   const fits = (r) => (r.cat !== 'band' || p.kinds.has('band')) && (r.cat !== 'loaded' || (p.kinds.has('weight') && p.maxLevel === 2));
   return ROUTINES.filter(fits).filter(r => !r.youth && ladderEligible(r)).map(r => tailor(r, p)).filter(t => t.items.length >= 3)
     .map(t => ({ t, s: score(t, p) - (R(t.id).cat === 'hockey' || STAGE23_CATS.has(R(t.id).cat) || R(t.id).ladder ? 1.5 : 0)   - (p.support && R(t.id).dynamic ? 2 : 0) })).sort((a, b) => b.s - a.s).slice(0, n)
-    .map(({ t }) => ({ plan: t, r: R(t.id), why: whyLine(t, p) }));
+    .map(({ t }) => ({ plan: t, r: R(t.id), why: whyLine(t, p) }))
+    .sort((a, b) => (roleIds.includes(a.r.id) ? roleIds.indexOf(a.r.id) : 99) - (roleIds.includes(b.r.id) ? roleIds.indexOf(b.r.id) : 99));
 }
 
 const DESC_MAX = 300;
@@ -4007,6 +4015,9 @@ const SETUP_QS = [
   { key: 'guide', type: 'one', title: 'Who should guide you?', sub: 'This only changes which figure shows the stretches.',
     options: [['woman', 'Woman'], ['man', 'Man']],
     note: (v) => v === 'man' ? 'A man figure isn’t drawn yet, so stretches show as plain circles for now.' : '' },
+  { key: 'hockey', type: 'many', title: 'Do you play, officiate or tend goal?', sub: 'Choose any. Hockey routines come first on Home.', exclusive: 'none',
+    options: [['player', 'I play'], ['ref', 'I referee or officiate'], ['goalie', 'I tend goal'], ['none', 'None of these']],
+    note: (v) => v.includes('goalie') ? 'Goalie routines are coming. Until then, Home shows the players’ warm-up and cool-down.' : '' },
   { key: 'age', type: 'one', title: 'What’s your age range?', sub: 'Used to suggest suitable holds.',
     options: [['under30', 'Under 30'], ['30-44', '30–44'], ['45-64', '45–64'], ['65+', '65+']],
     note: (v) => v === '60+' ? 'Your earlier answer was 60+. Choose the range that fits now, or leave it as it is.' : '' },
@@ -4086,7 +4097,7 @@ $('setupSkip').onclick = () => leaveSetup(false);
 function renderProfileSummary() {
   const show1 = (k) => profile[k] === null || profile[k] === undefined ? 'Not set' : SETUP_LABELS[k][profile[k]];
   const showMany = (k, empty) => profile[k].length ? profile[k].map(v => SETUP_LABELS[k][v]).join(', ') : empty;
-  const rows = [['Guide', show1('guide')], ['Age', show1('age')], ['Flexibility', show1('level')], ['Focus', showMany('focus', 'Not set')],
+  const rows = [['Guide', show1('guide')], ['Hockey', showMany('hockey', 'Not set')], ['Age', show1('age')], ['Flexibility', show1('level')], ['Focus', showMany('focus', 'Not set')],
     ['Equipment', showMany('equipment', 'Not set')], ['Session', show1('minutes')], ['Avoid', showMany('avoid', 'Nothing')]];
   $('profileRows').innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('');
 }
