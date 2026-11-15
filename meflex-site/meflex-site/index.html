@@ -13,7 +13,8 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="4b749ff3f646">
+<meta name="meflex-version" content="e69d64d58bc7">
+<meta name="meflex-voice" content="voice/">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1138,6 +1139,11 @@ const Platform = (() => {
     stop() { try { vq = []; vpaused = false; if (vcur) clearTimeout(vcur.dog); if (vcur && vcur.audio) { vcur.audio.onended = vcur.audio.onerror = null; vcur.audio.pause(); } vcur = null; if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} },
     key: fnv,
     recordings: () => clips.map ? Object.keys(clips.map).length : 0,
+    web() { if (isNativeApp() || clips.map || voice.webLoading) return voice.webLoading || Promise.resolve(!!clips.map);
+      const m = document.querySelector('meta[name="meflex-voice"]'); if (!m || !m.content) return Promise.resolve(false);
+      clips.base = m.content; voice.webLoading = voice.load(true).then(ok => { if (!ok) voice.webLoading = null; return ok; }); return voice.webLoading; },
+    webLoading: null,
+    clipUrl: (text) => clips.map && clips.map[fnv(text)] ? clips.base + fnv(text) + '.m4a' : null,
     load(force = false) { if (!force && !isNativeApp()) return Promise.resolve(false);
       return fetch(clips.base + 'manifest.json').then(r => r.ok ? r.json() : null).then(j => { if (j && j.clips && typeof j.clips === 'object') { clips.map = j.clips; return true; } return false; }).catch(() => false); },
   };
@@ -1771,7 +1777,8 @@ const prefs = { ...SOUND_DEFAULTS };
 try { Object.assign(prefs, JSON.parse(Platform.storage.get(PREFS_KEY) || '{}')); } catch (e) {}
 for (const k of Object.keys(SOUND_DEFAULTS)) { const d = SOUND_DEFAULTS[k], v = prefs[k];
   if (typeof d === 'boolean' ? typeof v !== 'boolean' : typeof d === 'number' ? !(typeof v === 'number' && v >= 0 && v <= 1) : !Object.prototype.hasOwnProperty.call(CHIME_STYLES, v)) prefs[k] = d; }
-const savePrefs = () => { Platform.storage.set(PREFS_KEY, JSON.stringify(prefs)); };
+const savePrefs = () => { Platform.storage.set(PREFS_KEY, JSON.stringify(prefs)); if (prefs.voice || prefs.coach) Platform.voice.web(); };
+if (prefs.voice || prefs.coach) Platform.voice.web();
 
 const Sound = {
   logPush(x) { this.log.push(x); if (this.log.length > 2000) this.log.splice(0, this.log.length - 2000); },
@@ -2281,6 +2288,7 @@ function openRoutine(id, from, plan = null) {
   const r = R(id); if (!r) return false;
   if (!(cur && cur.r.id === id) && !plusAllows('routine', id)) return false;
   cur = { r, plan, items: itemsOf(r, plan ? plan.items : undefined) }; if (from && from !== 'routine' && from !== 'done') routineFrom = from;
+  voiceWarm(cur);
   $('rTitle').textContent = r.title; $('rDesc').textContent = r.desc;
   $('rNeeds').hidden = !r.needs; $('rNeeds').textContent = r.needs ? `You will need: ${r.needs}.` : '';
   $('rWhy').hidden = !plan;
@@ -2846,6 +2854,17 @@ const coachSecs = (t, wps = COACH_WPS) => t.trim().split(/\s+/).length / wps + C
 function coachLinesFor(step) {
   const st = step.s, kid = cur && cur.r.youth && st.kidSteps;
   return [...(kid || st.steps), ...(kid ? [YOUTH_NOTE] : st.tips.filter(t => t !== SAFETY))];
+}
+function voiceLinesFor(c) {
+  const out = new Set(), youth = c.r.youth;
+  for (const it of c.items) { const st = it.st;
+    if (prefs.voice) { if (st.sides) { st.sides.forEach(side => out.add(`${st.name}. ${side}.`)); out.add('Switch sides.'); } else out.add(`${st.name}.`); }
+    if (prefs.coach) { const kid = youth && st.kidSteps; [...(kid || st.steps), ...(kid ? [YOUTH_NOTE] : st.tips.filter(t => t !== SAFETY))].forEach(t => out.add(t)); } }
+  return [...out];
+}
+function voiceWarm(c) {
+  if (!(prefs.voice || prefs.coach)) return;
+  Platform.voice.web().then(ok => { if (!ok) return; for (const t of voiceLinesFor(c)) { const u = Platform.voice.clipUrl(t); if (u) fetch(u).catch(() => {}); } });
 }
 function coachFit(lines, secs) { const out = []; let t = 0; for (const l of lines) { t += coachSecs(l); if (t > secs) break; out.push(l); } return out; }
 function coachSay(i, from, secs) {
