@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="14ca7853c4ea">
+<meta name="meflex-version" content="b45224fc8841">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -69,7 +69,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .cta:active { filter: brightness(0.92); }
 #player .stage-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 0; gap: 0; container-type: size; }
 .stage { position: relative; width: min(82vw, 46vh, 360px); aspect-ratio: 1; max-width: 100%; flex: none; }
-@supports (width: 1cqh) { .stage { width: min(82vw, 360px, calc(100cqh - 190px)); } }
+@supports (width: 1cqh) { .stage { width: min(82vw, 360px, calc(100cqh - 190px - var(--cueRoom, 3.4rem))); } }
 .stage .ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
 .stage .ring circle { fill: none; stroke-width: 5; }
 .stage .art { position: absolute; inset: 5.5%; transition: opacity .22s ease; }
@@ -80,6 +80,10 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   height: 1.05em; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
 .time .sw { font-size: 0.46em; font-weight: 600; letter-spacing: -0.3px; color: var(--accent); }
 .side { color: var(--muted); font-size: 15px; min-height: 22px; }
+.cue { color: var(--muted); font-size: 0.9375rem; line-height: 1.35; margin: 6px auto 0; padding-inline: 16px; max-width: 34em; text-align: center;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.7em; }
+@media (max-height: 700px) { #player { --cueRoom: 1.65rem; } .cue { -webkit-line-clamp: 1; min-height: 1.35em; } }
+.needs { margin: 12px 0 16px; font-size: 15px; color: var(--ink); }
 .controls { display: flex; align-items: center; justify-content: center; gap: 48px; padding-block: 18px 22px; }
 .controls .icon { width: 56px; height: 56px; }
 .controls .icon svg { width: 28px; height: 28px; }
@@ -910,6 +914,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <div class="meta" id="rMeta"></div>
     <h1 id="rTitle" data-private></h1>
     <p class="desc" id="rDesc"></p>
+    <p class="needs" id="rNeeds" hidden></p>
     <p class="note healthline" id="rHealth" hidden>General guidance, not medical advice. If you’re pregnant, injured or unsure, check with a doctor first.</p>
     <button class="ghost editbtn" id="rEdit" aria-label="Edit this routine" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-4-4L4 16v4z"/></svg>Edit</button>
     <button class="ghost editbtn" id="rCustomize" aria-label="Customize a copy of this routine" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h9M18 7h1M5 17h3M12 17h7"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Customize</button>
@@ -943,6 +948,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
       <div class="upnext" id="upNext" role="img" hidden><span class="fig" id="upNextFig"></span><b>Up Next</b></div>
     </div>
     <div class="name"><span id="name"></span><button class="info" id="infoBtn" aria-label="How to do this stretch"><svg aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="3.4" r="1.4"/><rect x="6.9" y="6" width="2.2" height="7.6" rx="1.1"/></svg></button></div>
+    <p class="cue" id="cue"></p>
     <div class="time" id="time" aria-live="off">0:45</div>
     <div class="side" id="side"></div><p class="sr" id="sideNote" aria-live="polite"></p><p class="sr" id="playNote" aria-live="polite"></p>
   </div>
@@ -1030,6 +1036,15 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
   </div>
 </div>
 
+<div class="sheet" id="voiceSheet" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="voiceTitle" aria-describedby="voiceText">
+    <div class="grab"></div>
+    <h2 id="voiceTitle" tabindex="-1">Want a voice to tell you when to switch?</h2>
+    <p class="resettext" id="voiceText">MeFlex can say each stretch’s name, when to switch sides, and how to do it, so you don’t need to watch the screen. You can change this any time in Settings, Sound.</p>
+    <button class="cta" id="voiceYes">Yes</button>
+    <button class="ghost" id="voiceNo">Not now</button>
+  </div>
+</div>
 <div class="sheet" id="safetySheet" hidden>
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="safetyTitle" aria-describedby="safetyHealth safetyPrivacy">
     <div class="grab"></div>
@@ -1525,9 +1540,9 @@ const ROUTINES = [
     items: [['butterfly', 75], ['twist', 60], ['kneeschest', 60], ['child', 75]] },
   { id: 'quick-hips', title: 'Quick Hips', cat: 'desk', desc: 'Three hip openers for a short break.',
     items: [['lunge', 30], ['figure4', 30], ['butterfly', 30]] },
-  { id: 'band-hamstrings', title: 'Band Hamstrings', cat: 'band', desc: 'Contract-relax (PNF) holds with a long band for the hamstrings and inner thighs.',
+  { id: 'band-hamstrings', title: 'Band Hamstrings', cat: 'band', needs: 'a resistance band', desc: 'Contract-relax (PNF) holds with a long band for the hamstrings and inner thighs.',
     items: [['bandham', 60], ['bandadd', 50], ['passthrough', 40], ['fold', 45]] },
-  { id: 'loaded-hips', title: 'Loaded Hips', cat: 'loaded', desc: 'Light weights help you sink deeper into hips, calves and lats. Go easy on the load.',
+  { id: 'loaded-hips', title: 'Loaded Hips', cat: 'loaded', needs: 'light dumbbells', desc: 'Light weights help you sink deeper into hips, calves and lats. Go easy on the load.',
     items: [['goblet', 60], ['pullover', 45], ['calfdrop', 45], ['lunge', 45]] },
   { id: 'hockey-pre', title: 'Hockey Pre-game Warm-up', cat: 'hockey', group: 'players', phase: 'pre', dynamic: true,
     desc: 'Moving warm-up before you skate: hips, groin, hamstrings, ankles and shoulders, finishing in your skating stance.',
@@ -2267,6 +2282,7 @@ function openRoutine(id, from, plan = null) {
   if (!(cur && cur.r.id === id) && !plusAllows('routine', id)) return false;
   cur = { r, plan, items: itemsOf(r, plan ? plan.items : undefined) }; if (from && from !== 'routine' && from !== 'done') routineFrom = from;
   $('rTitle').textContent = r.title; $('rDesc').textContent = r.desc;
+  $('rNeeds').hidden = !r.needs; $('rNeeds').textContent = r.needs ? `You will need: ${r.needs}.` : '';
   $('rWhy').hidden = !plan;
   $('rYouth').hidden = !r.youth;
   if (plan) { const p = tailorPrefs();
@@ -2709,12 +2725,14 @@ const UPNEXT_MS = 5000;
 const upNextStep = () => { const n = STEPS[P.i + 1]; return P.phase === 'hold' && n && n.si !== STEPS[P.i].si && P.remaining <= UPNEXT_MS ? n : null; };
 let upNextKey = '', nextIconKey = '';
 const ICON_NEXT = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 5.5l9 6.5-9 6.5zM18 5v14"/></svg>', ICON_CHECK = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5L19.5 7"/></svg>';
+const cueLine = (s) => ((cur && cur.r.youth && s.kidSteps) || s.steps || [])[0] || '';
 function render() {
   const st = STEPS[P.i], sw = P.phase === 'switch', cd = P.phase === 'count', gap = P.phase === 'gap';
   const secLeft = Math.max(1, Math.ceil(P.swLeft / 1000));
   const grace = gap;
   const nameHtml = (grace ? '<span class="nextlbl">Next:</span> ' : '') + esc(st.s.name);
   if (P.nameHtml !== nameHtml || !$('name').firstChild) { P.nameHtml = nameHtml; $('name').innerHTML = nameHtml; }
+  const cue = cueLine(st.s); if (P.cue !== cue) { P.cue = cue; $('cue').textContent = cue; }
   $('time').classList.toggle('switching', sw);
   $('time').classList.toggle('waiting', gap || cd); $('player').classList.toggle('waiting', !!(gap || cd || sw));
   if (sw) $('time').innerHTML = '<span class="sw">Switch sides</span>';
@@ -2852,7 +2870,17 @@ function coachResume() {
 }
 function coachStop() { if (COACH.i >= 0 && COACH.token === Sound.speechToken && COACH.next < COACH.until) Sound.stopSpeech(); COACH.i = -1; }
 function heldStep(i, ms) { if (ms >= 1000 && STEPS[i]) P.held.add(STEPS[i].si); }
+const VOICE_OFFER_KEY = 'meflex.voiceOffer';
+const voiceOfferDue = () => !store.get(VOICE_OFFER_KEY, null) && !prefs.voice && !prefs.coach && Platform.voice.supported() && histGet().length === 0;
+function voiceOfferAnswer(yes) {
+  store.set(VOICE_OFFER_KEY, yes ? 'yes' : 'no');
+  if (yes) { prefs.voice = true; prefs.coach = true; savePrefs(); }
+  $('voiceSheet').hidden = true; syncSheetInert(); begin();
+}
+$('voiceYes').onclick = () => voiceOfferAnswer(true);
+$('voiceNo').onclick = () => voiceOfferAnswer(false);
 function begin() {
+  if (voiceOfferDue()) { $('voiceSheet').hidden = false; syncSheetInert(); $('voiceTitle').focus(); return; }
   store.set('meflex.healthSeen', true);
   Sound.unlock(); try { persistAsk(); } catch (e) {}
   STEPS = cur.items.flatMap((it, si) => (it.st.sides || [null]).map((side, k) => ({ s: it.st, it, si, side, mirror: k === 1 })));
@@ -2943,7 +2971,7 @@ $('soundBtn').onclick = () => { syncSheet(); sheet.hidden = false; $('opt-chime'
 $('sheetDone').onclick = () => { sheet.hidden = true; syncSheetInert(); $('soundBtn').focus(); };
 sheet.addEventListener('click', (e) => { if (e.target === sheet) $('sheetDone').click(); });
 
-const SHEET_CANCEL = { safetySheet: 'safetyDone', soundSheet: 'sheetDone', swapSheet: 'swapCancel', restoreSheet: 'rsCancel', discardSheet: 'discardKeep', delSheet: 'delKeep', nameSheet: 'saCancel', resetSheet: 'resetCancel' };
+const SHEET_CANCEL = { voiceSheet: 'voiceNo', safetySheet: 'safetyDone', soundSheet: 'sheetDone', swapSheet: 'swapCancel', restoreSheet: 'rsCancel', discardSheet: 'discardKeep', delSheet: 'delKeep', nameSheet: 'saCancel', resetSheet: 'resetCancel' };
 let SHEET_OPENER = null, SHEET_WAS_OPEN = false;
 function syncSheetInert() { const open = [...document.querySelectorAll('.sheet')].some(s => !s.hidden);
   if (open && !SHEET_WAS_OPEN) SHEET_OPENER = SHEET_FOCUS_BEFORE;
