@@ -78,23 +78,28 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .photo { position: relative; margin: 0; background: var(--paper-shade); overflow: hidden; }
 .photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
-/* ---------- 1. opening: the words first, then the light ---------- */
-.hero-copy { text-align: center; padding-block: clamp(1.75rem, 6vw, 5.5rem) clamp(2.5rem, 6vw, 5rem); }
+/* ---------- 1. opening: words on the paper, the photograph bleeding off the right edge ---------- */
+.hero { --edgeL: max(var(--g), calc((100vw - var(--max)) / 2)); }
+.hero-copy { padding: clamp(1.5rem, 5vw, 3rem) var(--g) clamp(2.25rem, 6vw, 3.5rem); }
 .hero h1 {
-  font-size: min(max(2.5rem, 3.6vw + 1rem), 5.25rem, 12.5vw);
-  line-height: 1.02; letter-spacing: -.012em; max-width: 15em; margin-inline: auto;
+  font-size: min(max(2.5rem, 2.6vw + 1.1rem), 4.6rem, 12.5vw);
+  line-height: 1.02; letter-spacing: -.012em; max-width: 12em;
 }
-.hero-sub { margin: 1.4rem auto 0; font-size: 1.125rem; color: var(--ink-2); max-width: 36rem; }
+.hero-sub { margin-top: 1.4rem; font-size: 1.125rem; color: var(--ink-2); max-width: 32rem; }
 .hero-act { margin-top: 1.75rem; }
-.hero-note { margin: .9rem auto 0; font-size: .9375rem; color: var(--ink-2); max-width: 30rem; }
-/* full bleed, the whole 3:2 frame where the screen allows; on a phone the crop centres on the lunge */
-.photo-c1 { width: 100%; height: min(75vw, 46svh); min-height: 15rem; }
+.hero-note { margin-top: .9rem; font-size: .9375rem; color: var(--ink-2); max-width: 28rem; }
+.photo-c1 { width: 100%; height: min(78vw, 48svh); min-height: 15rem; }
 .photo-c1 picture { display: block; height: 100%; }
 /* the photo is a little taller than its frame so it can drift behind it as you scroll */
-.photo-c1 img { object-position: 64% 50%; height: calc(100% + 40px); margin-top: -20px; }
-@media (min-width: 720px) {
-  .photo-c1 { height: min(66.667vw, 100svh); min-height: 26rem; }
-  .photo-c1 img { object-position: 50% 30%; }
+.photo-c1 img { object-position: 60% 45%; height: calc(100% + 40px); margin-top: -20px; }
+@media (min-width: 700px) {  /* side by side from tablet width up (Cowork, Nov 15: at 750 px the photo sat far below the text) */
+  .hero { display: grid; grid-template-columns: minmax(0, 47fr) minmax(0, 53fr); align-items: stretch;
+    min-height: clamp(560px, calc(100svh - 92px), 880px); }
+  .hero-copy { align-self: center; padding: 3rem clamp(2rem, 4vw, 4.5rem) 4rem var(--edgeL); }
+  .photo-c1 { height: auto; min-height: 0; }
+  .photo-c1 picture { position: absolute; inset: 0; }
+  /* crop in on the stretch and the quiet wall: a morning moment rather than the whole studio */
+  .photo-c1 img { object-position: 62% 40%; }
 }
 
 /* ---------- shelves: phones and prints standing upright on a pale ledge ---------- */
@@ -105,7 +110,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   box-shadow: 0 1px 0 rgba(20,32,41,.18), 8px 22px 26px -16px rgba(20,32,41,.45);
 }
 .shelf > * { position: relative; z-index: 1; }
-.shelf .photo-c2 img { object-position: 55% 50%; }
+.shelf .photo-c2 img { object-position: 55% 55%; }
 .shelf .photo-c3 img { object-position: 60% 55%; }
 .shelf .photo { width: 54%; max-width: 23rem; aspect-ratio: 4 / 5; border: clamp(6px, 1.2vw, 12px) solid #FAFBFB;
   box-shadow: 1px 2px 3px rgba(20,32,41,.18), 16px 26px 40px -14px rgba(20,32,41,.32); }
@@ -164,6 +169,31 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .detail { grid-template-columns: 1fr 1fr; column-gap: clamp(3rem, 7vw, 6rem); }
 }
 
+/* ---------- 4. the desk: a wide asymmetric split, the photograph as a full-height band ---------- */
+.split { position: relative; background: var(--paper-lit); overflow-x: clip; }
+.split .band { width: 100%; height: min(90vw, 30rem); }
+.split .band img { object-position: 60% 55%; }
+.split-copy { width: calc(100% - 2 * var(--g)); margin-inline: auto; padding-block: clamp(3rem, 7vw, 6rem) var(--space); max-width: 40rem; }
+.split-copy h2 { font-size: min(max(2.4rem, 2.6vw + 1.3rem), 4.4rem, 13vw); line-height: 1.04; letter-spacing: -.01em; }
+.split-copy .lead { margin-inline: 0; }
+.split-detail { display: grid; gap: 2.5rem; margin-top: 3rem; align-items: end; }
+.split-detail h3 { font-size: min(max(1.8rem, 1vw + 1.4rem), 2.4rem, 11vw); line-height: 1.1; }
+.split-detail .routine > p:not(.routine-meta) { margin-top: 1rem; color: var(--ink-2); }
+.shelf-mini { margin: 0 auto 12px; }
+.shelf-mini::after { left: -30%; right: -30%; }
+.shelf-mini .phone { width: min(11rem, 52vw); max-width: 100%; }
+.split-detail > *, .soon-inner > * { min-width: 0; }
+.more-line { margin-top: 2.5rem; color: var(--ink-2); max-width: 34rem; }
+@media (min-width: 900px) {
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .split .band { height: auto; min-height: 100%; }
+  .split .band picture { position: absolute; inset: 0; }
+  .split-copy { width: auto; max-width: 40rem; margin: 0; padding: var(--space) var(--g) var(--space) clamp(2.5rem, 6vw, 6rem); }
+}
+@media (min-width: 1100px) {
+  .split-detail { grid-template-columns: minmax(0, 1fr) 11rem; column-gap: 3rem; }
+}
+
 /* ---------- 3. the live demo, and the ring ---------- */
 .try { position: relative; padding-block: var(--space); overflow-x: clip;
   background: radial-gradient(55% 50% at 50% 48%, rgba(255,255,255,.8), rgba(255,255,255,0) 72%); }
@@ -181,10 +211,11 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .dial-ticks { stroke: rgba(20,32,41,.30); stroke-width: 3; stroke-dasharray: .35 3.65; stroke-dashoffset: -1.8; }
 .dial-track { stroke: var(--hair); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .dial-arc { stroke: var(--lake); stroke-width: .9; stroke-linecap: round; stroke-dasharray: 1 1; stroke-dashoffset: 0; }
-.dial .dial-dot { fill: var(--lake); stroke: var(--paper-lit); stroke-width: .6; }
+.dial .dial-dot { opacity: 0; fill: var(--lake); stroke: var(--paper-lit); stroke-width: .6; }
 html.motion .dial-arc { stroke-dashoffset: 1; }
 html.motion .dial-dot { opacity: 0; }
-html.motion .is-drawing .dial-dot { opacity: 1; }
+html.motion .is-drawing:not(.is-drawn) .dial-dot { opacity: 1; }
+.dial-dot { transition: opacity .6s ease; }
 html.motion .dial-ticks { transition: stroke .9s ease; }
 html.motion .is-drawn .dial-ticks { stroke: rgba(45,91,124,.55); }
 
@@ -205,6 +236,8 @@ html.motion .is-drawn .dial-ticks { stroke: rgba(45,91,124,.55); }
 .try .mf-btn.mf-play:hover { background: var(--lake-deep); }
 .try .mf-btn:focus-visible { border-radius: 999px; }
 .try .mf-still { font-size: .9375rem; }
+.try .mf-controls { flex-wrap: wrap; max-width: 100%; }
+.try .mf-btn.mf-play { min-width: min(8.5rem, calc(100% - 120px)); }
 
 .feel { margin: 3.5rem auto 0; text-align: center; font-family: var(--serif); font-style: italic; font-size: min(max(1.5rem, 1vw + 1.1rem), 2.1rem, 10vw); line-height: 1.25; max-width: 22em; }
 .try-steps { max-width: 64rem; margin: 3rem auto 0; }
@@ -222,7 +255,7 @@ html.motion .is-drawn .dial-ticks { stroke: rgba(45,91,124,.55); }
 @media (min-width: 960px) {
   /* the big dial: the ring you watched draw becomes the frame of the real timer.
      The name sits above the timer ring, the clock and the one row of buttons below it, all inside the dial. */
-  .try-stage { --S: 300px; --R: min(430px, 44vw); --P: calc(4rem + 6px); padding-bottom: max(0px, calc(var(--R) - 330px)); }
+  .try-stage { --S: 300px; --R: min(430px, 42vw); --P: calc(4rem + 6px); padding-bottom: max(0px, calc(var(--R) - 330px)); }
   .try .mf-demo { padding-top: 0; }
   .try .mf-name { grid-row: 1; height: 3rem; line-height: 3rem; margin: 0 0 1rem; }
   .try .mf-stage { grid-row: 2; margin-bottom: .75rem; }
@@ -250,33 +283,27 @@ html.motion .is-drawn .dial-ticks { stroke: rgba(45,91,124,.55); }
   .shelf-one { margin: 0 0 12px; }
 }
 
-/* ---------- 6. app store, switched off ---------- */
+/* ---------- 6. coming to the App Store: a note first, the switched-off field quiet below it ---------- */
 .soon { padding-block: var(--space); }
-.soon-inner { text-align: center; }
-.soon h2 { font-size: min(max(2rem, 1.8vw + 1.3rem), 3.4rem, 11vw); line-height: 1.08; max-width: 17em; margin-inline: auto; }
-.signup {
-  max-width: 36rem; margin: 2.25rem auto 0; padding: 1.25rem; text-align: left;
-  border: 1px dashed rgba(20,32,41,.35); border-radius: 4px;
-  background: repeating-linear-gradient(135deg, rgba(20,32,41,0) 0 9px, rgba(20,32,41,.035) 9px 10px);
-}
-.signup-status { display: flex; gap: .7rem; align-items: center; font-weight: 600; font-size: .9375rem; }
-.signup-status::before { /* a small switch, drawn in the off position */
-  content: ""; flex: none; width: 2.1rem; height: 1.2rem; border-radius: 999px; border: 1px solid rgba(20,32,41,.45);
-  background: radial-gradient(circle at .55rem 50%, rgba(20,32,41,.45) 0 .38rem, transparent .4rem); }
-.signup-row { margin-top: 1.1rem; display: grid; gap: .5rem; }
-.signup-row > * { min-width: 0; }
-.signup label { font-size: .875rem; color: var(--ink-2); }
-.signup input, .signup button { font: inherit; min-height: 48px; border-radius: 3px; max-width: 100%; }
-.signup input { width: 100%; padding: 0 .9rem; border: 1px solid rgba(20,32,41,.22); background: rgba(255,255,255,.35); color: var(--ink-2); cursor: not-allowed; }
-.signup button { padding: 0 1.25rem; border: 1px solid rgba(20,32,41,.22); background: transparent; color: rgba(20,32,41,.5); font-weight: 600; cursor: not-allowed; justify-self: start; }
-@media (min-width: 560px) {
-  .signup-row { grid-template-columns: 1fr auto; }
-  .signup label { grid-column: 1 / -1; }
-}
-.soon-now { margin-top: clamp(3.5rem, 7vw, 5.5rem); }
-.soon-now p + p { margin-top: 1.25rem; }
+.soon-inner { display: grid; gap: 3.5rem; }
+.soon h2 { font-size: min(max(2rem, 1.8vw + 1.3rem), 3.4rem, 11vw); line-height: 1.08; max-width: 15em; }
+.soon-status { margin-top: 1.25rem; display: flex; gap: .75rem; align-items: center; font-size: 1.0625rem; color: var(--ink); max-width: 32rem; }
+.soon-status::before { /* a small switch, drawn in the off position */
+  content: ""; flex: none; width: 2.1rem; height: 1.2rem; border-radius: 999px; border: 1px solid rgba(20,32,41,.5);
+  background: radial-gradient(circle at .55rem 50%, rgba(20,32,41,.5) 0 .38rem, transparent .4rem); }
+.signup { margin-top: 1.75rem; max-width: 28rem; }
+.signup label { display: block; font-size: .8125rem; color: var(--ink-2); margin-bottom: .35rem; }
+.signup-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+.signup input, .signup button { font: inherit; font-size: .9375rem; min-height: 44px; max-width: 100%; cursor: not-allowed; }
+.signup input { flex: 1 1 12rem; min-width: 0; padding: 0 .75rem; border: 0; border-bottom: 1px dashed rgba(20,32,41,.35); background: transparent; color: var(--ink-2); border-radius: 0; }
+.signup button { padding: 0 1rem; border: 1px dashed rgba(20,32,41,.3); border-radius: 999px; background: transparent; color: rgba(20,32,41,.55); }
 .soon-line { font-family: var(--serif); font-size: min(max(1.6rem, 1vw + 1.2rem), 2.2rem, 10vw); line-height: 1.15; }
+.soon-now p + p { margin-top: 1.25rem; }
 .soon-now .small { margin-top: .9rem; }
+@media (min-width: 900px) {
+  .soon-inner { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); column-gap: 4rem; align-items: end; }
+  .soon-now { padding-bottom: .25rem; border-left: 1px solid var(--hair); padding-left: 3rem; }
+}
 
 /* ---------- footer ---------- */
 .foot { border-top: 1px solid var(--hair); padding-block: 2.5rem 3rem; background: var(--paper); }
@@ -290,6 +317,6 @@ html.motion .is-drawn .dial-ticks { stroke: rgba(45,91,124,.55); }
 @media (prefers-reduced-motion: reduce) {
   [data-depth] { transform: none !important; }
   .dial-arc { stroke-dashoffset: 0 !important; }
-  .dial-dot { opacity: 1 !important; }
+  .dial-dot { opacity: 0 !important; transition: none !important; }
   .btn, .dial-ticks { transition: none !important; }
 }

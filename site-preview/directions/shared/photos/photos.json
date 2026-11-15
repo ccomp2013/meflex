@@ -1,640 +1,642 @@
 {
-  "photos": [
+ "photos": [
+  {
+   "slot": "A-1",
+   "ratio": "3:2",
+   "files": [
     {
-      "slot": "A-1",
-      "ratio": "3:2",
-      "files": [
-        {
-          "file": "a1-828.avif",
-          "width": 828,
-          "height": 552,
-          "format": "avif",
-          "bytes": 19565
-        },
-        {
-          "file": "a1-828.webp",
-          "width": 828,
-          "height": 552,
-          "format": "webp",
-          "bytes": 23842
-        },
-        {
-          "file": "a1-1280.avif",
-          "width": 1280,
-          "height": 853,
-          "format": "avif",
-          "bytes": 56017
-        },
-        {
-          "file": "a1-1280.webp",
-          "width": 1280,
-          "height": 853,
-          "format": "webp",
-          "bytes": 73670
-        },
-        {
-          "file": "a1-1920.avif",
-          "width": 1920,
-          "height": 1280,
-          "format": "avif",
-          "bytes": 164467
-        },
-        {
-          "file": "a1-1920.webp",
-          "width": 1920,
-          "height": 1280,
-          "format": "webp",
-          "bytes": 199266
-        },
-        {
-          "file": "a1-2560.avif",
-          "width": 2560,
-          "height": 1707,
-          "format": "avif",
-          "bytes": 287734
-        },
-        {
-          "file": "a1-2560.webp",
-          "width": 2560,
-          "height": 1707,
-          "format": "webp",
-          "bytes": 339308
-        }
-      ],
-      "alt": "Close-up of an adult's hands lacing a black hockey skate on a dark locker-room floor, red base-layer sleeves and leg above.",
-      "object_position_phone": "72% 50%",
-      "quiet_space_for_text": "Left 45%: plain dark blue-grey floor with a soft shadow, for a light headline.",
-      "source_page": "https://www.pexels.com/photo/a-man-putting-on-ice-skates-while-sitting-on-the-wooden-bench-in-the-locker-room-6847593/",
-      "photographer": "Tima Miroshnichenko",
-      "licence": "Pexels License (free for commercial use, no attribution required)",
-      "date_fetched": "2026-11-15",
-      "source_size": [
-        3605,
-        5407
-      ],
-      "crop_in_source": {
-        "x": 1250,
-        "y": 3807,
-        "width": 2355,
-        "height": 1570
-      },
-      "notes": "Cropped from the bottom of a portrait photo to exclude a branded pad on the bench and a small label on the other skate. Source crop is 2355 px wide, so the 2560 files are upscaled about 9%."
+     "file": "a1-828.avif",
+     "width": 828,
+     "height": 552,
+     "format": "avif",
+     "bytes": 19565
     },
     {
-      "slot": "A-2",
-      "ratio": "4:5",
-      "files": [
-        {
-          "file": "a2-480.avif",
-          "width": 480,
-          "height": 600,
-          "format": "avif",
-          "bytes": 18631
-        },
-        {
-          "file": "a2-480.webp",
-          "width": 480,
-          "height": 600,
-          "format": "webp",
-          "bytes": 25826
-        },
-        {
-          "file": "a2-800.avif",
-          "width": 800,
-          "height": 1000,
-          "format": "avif",
-          "bytes": 49500
-        },
-        {
-          "file": "a2-800.webp",
-          "width": 800,
-          "height": 1000,
-          "format": "webp",
-          "bytes": 63004
-        },
-        {
-          "file": "a2-1200.avif",
-          "width": 1200,
-          "height": 1500,
-          "format": "avif",
-          "bytes": 106894
-        },
-        {
-          "file": "a2-1200.webp",
-          "width": 1200,
-          "height": 1500,
-          "format": "webp",
-          "bytes": 143338
-        }
-      ],
-      "alt": "An empty hockey goal and a single puck on scuffed ice in a dim, empty indoor rink.",
-      "object_position_phone": "50% 60%",
-      "quiet_space_for_text": "Top third: dark netting and wall above the goal.",
-      "source_page": "https://www.pexels.com/photo/metal-bar-with-net-on-the-ice-surface-6847387/",
-      "photographer": "Tima Miroshnichenko",
-      "licence": "Pexels License (free for commercial use, no attribution required)",
-      "date_fetched": "2026-11-15",
-      "source_size": [
-        6000,
-        4000
-      ],
-      "crop_in_source": {
-        "x": 1640,
-        "y": 0,
-        "width": 3200,
-        "height": 4000
-      },
-      "notes": "Empty dim rink seen from ice level, not from the bench. Two small out-of-focus hanging flags behind the glass carry no readable marks."
+     "file": "a1-828.webp",
+     "width": 828,
+     "height": 552,
+     "format": "webp",
+     "bytes": 23842
     },
     {
-      "slot": "A-3",
-      "ratio": "4:5",
-      "files": [
-        {
-          "file": "a3-480.avif",
-          "width": 480,
-          "height": 600,
-          "format": "avif",
-          "bytes": 14589
-        },
-        {
-          "file": "a3-480.webp",
-          "width": 480,
-          "height": 600,
-          "format": "webp",
-          "bytes": 19844
-        },
-        {
-          "file": "a3-800.avif",
-          "width": 800,
-          "height": 1000,
-          "format": "avif",
-          "bytes": 30018
-        },
-        {
-          "file": "a3-800.webp",
-          "width": 800,
-          "height": 1000,
-          "format": "webp",
-          "bytes": 38564
-        },
-        {
-          "file": "a3-1200.avif",
-          "width": 1200,
-          "height": 1500,
-          "format": "avif",
-          "bytes": 55494
-        },
-        {
-          "file": "a3-1200.webp",
-          "width": 1200,
-          "height": 1500,
-          "format": "webp",
-          "bytes": 69176
-        }
-      ],
-      "alt": "A bearded man in a striped shirt types on a laptop at a dark desk beside a tall window, warm sunlight on a wooden wall.",
-      "object_position_phone": "35% 40%",
-      "quiet_space_for_text": "Upper right: plain sunlit wooden wall.",
-      "source_page": "https://www.pexels.com/photo/man-with-facial-hair-using-a-laptop-9222424/",
-      "photographer": "Ron Lach",
-      "licence": "Pexels License (free for commercial use, no attribution required)",
-      "date_fetched": "2026-11-15",
-      "source_size": [
-        5892,
-        3928
-      ],
-      "crop_in_source": {
-        "x": 1620,
-        "y": 0,
-        "width": 3142,
-        "height": 3928
-      },
-      "notes": "Seated at the desk, not the standing door-frame stretch the brief describes."
+     "file": "a1-1280.avif",
+     "width": 1280,
+     "height": 853,
+     "format": "avif",
+     "bytes": 56017
     },
     {
-      "slot": "B-1",
-      "ratio": "16:9",
-      "files": [
-        {
-          "file": "b1-828.avif",
-          "width": 828,
-          "height": 466,
-          "format": "avif",
-          "bytes": 21977
-        },
-        {
-          "file": "b1-828.webp",
-          "width": 828,
-          "height": 466,
-          "format": "webp",
-          "bytes": 28750
-        },
-        {
-          "file": "b1-1280.avif",
-          "width": 1280,
-          "height": 720,
-          "format": "avif",
-          "bytes": 42420
-        },
-        {
-          "file": "b1-1280.webp",
-          "width": 1280,
-          "height": 720,
-          "format": "webp",
-          "bytes": 54566
-        },
-        {
-          "file": "b1-1920.avif",
-          "width": 1920,
-          "height": 1080,
-          "format": "avif",
-          "bytes": 78385
-        },
-        {
-          "file": "b1-1920.webp",
-          "width": 1920,
-          "height": 1080,
-          "format": "webp",
-          "bytes": 101146
-        },
-        {
-          "file": "b1-2560.avif",
-          "width": 2560,
-          "height": 1440,
-          "format": "avif",
-          "bytes": 121958
-        },
-        {
-          "file": "b1-2560.webp",
-          "width": 2560,
-          "height": 1440,
-          "format": "webp",
-          "bytes": 155948
-        }
-      ],
-      "alt": "Low angle across the ice as a hockey player in dark gear stops hard, throwing up a spray of ice under a single light.",
-      "object_position_phone": "58% 45%",
-      "quiet_space_for_text": "Top-left: near-black arena behind the boards; the lower left is bright ice, so a headline there needs a dark gradient.",
-      "source_page": "https://www.pexels.com/photo/a-person-ice-skating-on-ice-rink-6468935/",
-      "photographer": "Tony Schnagl",
-      "licence": "Pexels License (free for commercial use, no attribution required)",
-      "date_fetched": "2026-11-15",
-      "source_size": [
-        5200,
-        3466
-      ],
-      "crop_in_source": {
-        "x": 0,
-        "y": 200,
-        "width": 5200,
-        "height": 2925
-      },
-      "notes": "Light is neutral white-grey rather than strongly blue."
+     "file": "a1-1280.webp",
+     "width": 1280,
+     "height": 853,
+     "format": "webp",
+     "bytes": 73670
     },
     {
-      "slot": "B-2",
-      "ratio": "4:5",
-      "files": [
-        {
-          "file": "b2-480.avif",
-          "width": 480,
-          "height": 600,
-          "format": "avif",
-          "bytes": 15907
-        },
-        {
-          "file": "b2-480.webp",
-          "width": 480,
-          "height": 600,
-          "format": "webp",
-          "bytes": 18686
-        },
-        {
-          "file": "b2-800.avif",
-          "width": 800,
-          "height": 1000,
-          "format": "avif",
-          "bytes": 33461
-        },
-        {
-          "file": "b2-800.webp",
-          "width": 800,
-          "height": 1000,
-          "format": "webp",
-          "bytes": 37138
-        },
-        {
-          "file": "b2-1200.avif",
-          "width": 1200,
-          "height": 1500,
-          "format": "avif",
-          "bytes": 63756
-        },
-        {
-          "file": "b2-1200.webp",
-          "width": 1200,
-          "height": 1500,
-          "format": "webp",
-          "bytes": 65176
-        }
-      ],
-      "alt": "An adult hockey player in a plain black practice jersey and white helmet steps onto the ice through the bench door, a second player behind him.",
-      "object_position_phone": "45% 45%",
-      "quiet_space_for_text": "Little: the boards at right are plain white.",
-      "source_page": "https://www.pexels.com/photo/hockey-players-entering-on-ice-rink-6468586/",
-      "photographer": "Tony Schnagl",
-      "licence": "Pexels License (free for commercial use, no attribution required)",
-      "date_fetched": "2026-11-15",
-      "source_size": [
-        3467,
-        5200
-      ],
-      "crop_in_source": {
-        "x": 1451,
-        "y": 2002,
-        "width": 1430,
-        "height": 1788
-      },
-      "notes": "No leg-swing photo exists on Pexels; this is an adult stepping onto the ice at practice. Crop excludes a faint decal on the glass; one unreadable dark reflection remains at top right."
+     "file": "a1-1920.avif",
+     "width": 1920,
+     "height": 1280,
+     "format": "avif",
+     "bytes": 164467
     },
     {
-      "slot": "B-3",
-      "ratio": "4:5",
-      "files": [
-        {
-          "file": "b3-480.avif",
-          "width": 480,
-          "height": 600,
-          "format": "avif",
-          "bytes": 12302
-        },
-        {
-          "file": "b3-480.webp",
-          "width": 480,
-          "height": 600,
-          "format": "webp",
-          "bytes": 15554
-        },
-        {
-          "file": "b3-800.avif",
-          "width": 800,
-          "height": 1000,
-          "format": "avif",
-          "bytes": 23667
-        },
-        {
-          "file": "b3-800.webp",
-          "width": 800,
-          "height": 1000,
-          "format": "webp",
-          "bytes": 28526
-        },
-        {
-          "file": "b3-1200.avif",
-          "width": 1200,
-          "height": 1500,
-          "format": "avif",
-          "bytes": 40715
-        },
-        {
-          "file": "b3-1200.webp",
-          "width": 1200,
-          "height": 1500,
-          "format": "webp",
-          "bytes": 48102
-        }
-      ],
-      "alt": "A woman in a white top sits at an office desk and stretches both arms overhead with her eyes closed; a corkboard of drawings and a bicycle behind her.",
-      "object_position_phone": "30% 40%",
-      "quiet_space_for_text": "Upper right: plain pale wall.",
-      "source_page": "https://www.pexels.com/photo/woman-stretching-her-body-while-sitting-7888730/",
-      "photographer": "RDNE Stock project",
-      "licence": "Pexels License (free for commercial use, no attribution required)",
-      "date_fetched": "2026-11-15",
-      "source_size": [
-        4133,
-        6199
-      ],
-      "crop_in_source": {
-        "x": 0,
-        "y": 1673,
-        "width": 2851,
-        "height": 3564
-      },
-      "notes": "Seated overhead stretch in warm daylight, not a standing side stretch in evening light. Crop excludes a branded marker and a desk name plate."
+     "file": "a1-1920.webp",
+     "width": 1920,
+     "height": 1280,
+     "format": "webp",
+     "bytes": 199266
     },
     {
-      "slot": "C-1",
-      "ratio": "3:2",
-      "files": [
-        {
-          "file": "c1-828.avif",
-          "width": 828,
-          "height": 552,
-          "format": "avif",
-          "bytes": 18055
-        },
-        {
-          "file": "c1-828.webp",
-          "width": 828,
-          "height": 552,
-          "format": "webp",
-          "bytes": 22422
-        },
-        {
-          "file": "c1-1280.avif",
-          "width": 1280,
-          "height": 853,
-          "format": "avif",
-          "bytes": 39235
-        },
-        {
-          "file": "c1-1280.webp",
-          "width": 1280,
-          "height": 853,
-          "format": "webp",
-          "bytes": 49916
-        },
-        {
-          "file": "c1-1920.avif",
-          "width": 1920,
-          "height": 1280,
-          "format": "avif",
-          "bytes": 80538
-        },
-        {
-          "file": "c1-1920.webp",
-          "width": 1920,
-          "height": 1280,
-          "format": "webp",
-          "bytes": 108158
-        },
-        {
-          "file": "c1-2560.avif",
-          "width": 2560,
-          "height": 1707,
-          "format": "avif",
-          "bytes": 136776
-        },
-        {
-          "file": "c1-2560.webp",
-          "width": 2560,
-          "height": 1707,
-          "format": "webp",
-          "bytes": 179702
-        }
-      ],
-      "alt": "Side view of a woman in a high crescent lunge on a pink mat, arms raised, in a bright room with pale wooden walls and floor.",
-      "object_position_phone": "64% 50%",
-      "quiet_space_for_text": "Left 45%: pale whitewashed wall, for a dark headline.",
-      "source_page": "https://www.pexels.com/photo/photo-of-person-stretching-3758030/",
-      "photographer": "Alexy Almond",
-      "licence": "Pexels License (free for commercial use, no attribution required)",
-      "date_fetched": "2026-11-15",
-      "source_size": [
-        5260,
-        3726
-      ],
-      "crop_in_source": {
-        "x": 0,
-        "y": 745,
-        "width": 4471,
-        "height": 2981
-      },
-      "notes": "High lunge, not a low lunge; the window itself is out of frame."
+     "file": "a1-2560.avif",
+     "width": 2560,
+     "height": 1707,
+     "format": "avif",
+     "bytes": 287734
     },
     {
-      "slot": "C-2",
-      "ratio": "4:5",
-      "files": [
-        {
-          "file": "c2-480.avif",
-          "width": 480,
-          "height": 600,
-          "format": "avif",
-          "bytes": 12219
-        },
-        {
-          "file": "c2-480.webp",
-          "width": 480,
-          "height": 600,
-          "format": "webp",
-          "bytes": 15854
-        },
-        {
-          "file": "c2-800.avif",
-          "width": 800,
-          "height": 1000,
-          "format": "avif",
-          "bytes": 23408
-        },
-        {
-          "file": "c2-800.webp",
-          "width": 800,
-          "height": 1000,
-          "format": "webp",
-          "bytes": 29860
-        },
-        {
-          "file": "c2-1200.avif",
-          "width": 1200,
-          "height": 1500,
-          "format": "avif",
-          "bytes": 39752
-        },
-        {
-          "file": "c2-1200.webp",
-          "width": 1200,
-          "height": 1500,
-          "format": "webp",
-          "bytes": 49362
-        }
-      ],
-      "alt": "A pair of white figure skates hangs by its laces from a wooden rack, with soft out-of-focus lights behind.",
-      "object_position_phone": "55% 50%",
-      "quiet_space_for_text": "Lower right: soft blurred wooden floor.",
-      "source_page": "https://www.pexels.com/photo/ice-skating-shoes-hanging-on-a-wooden-rack-10455856/",
-      "photographer": "freestocks.org",
-      "licence": "Pexels License (free for commercial use, no attribution required)",
-      "date_fetched": "2026-11-15",
-      "source_size": [
-        6000,
-        4000
-      ],
-      "crop_in_source": {
-        "x": 1520,
-        "y": 0,
-        "width": 3200,
-        "height": 4000
-      },
-      "notes": "Figure skates, not hockey skates; hanging on a wooden rack against a warm blurred background, not a pale wall. An embossed mark on the blade is out of focus and unreadable."
-    },
-    {
-      "slot": "C-3",
-      "ratio": "4:5",
-      "files": [
-        {
-          "file": "c3-480.avif",
-          "width": 480,
-          "height": 600,
-          "format": "avif",
-          "bytes": 8411
-        },
-        {
-          "file": "c3-480.webp",
-          "width": 480,
-          "height": 600,
-          "format": "webp",
-          "bytes": 13140
-        },
-        {
-          "file": "c3-800.avif",
-          "width": 800,
-          "height": 1000,
-          "format": "avif",
-          "bytes": 15352
-        },
-        {
-          "file": "c3-800.webp",
-          "width": 800,
-          "height": 1000,
-          "format": "webp",
-          "bytes": 24552
-        },
-        {
-          "file": "c3-1200.avif",
-          "width": 1200,
-          "height": 1500,
-          "format": "avif",
-          "bytes": 25881
-        },
-        {
-          "file": "c3-1200.webp",
-          "width": 1200,
-          "height": 1500,
-          "format": "webp",
-          "bytes": 41100
-        }
-      ],
-      "alt": "A laptop with a blank screen and a terracotta mug of black coffee on a white desk, beige curtain behind; nobody in shot.",
-      "object_position_phone": "60% 55%",
-      "quiet_space_for_text": "Lower left: plain white desk top.",
-      "source_page": "https://www.pexels.com/photo/a-cup-of-coffee-beside-a-laptop-8472496/",
-      "photographer": "Cup of Couple",
-      "licence": "Pexels License (free for commercial use, no attribution required)",
-      "date_fetched": "2026-11-15",
-      "source_size": [
-        5241,
-        7857
-      ],
-      "crop_in_source": {
-        "x": 0,
-        "y": 650,
-        "width": 5241,
-        "height": 6551
-      },
-      "notes": "No chair in shot; warm beige curtain rather than a cool window."
+     "file": "a1-2560.webp",
+     "width": 2560,
+     "height": 1707,
+     "format": "webp",
+     "bytes": 339308
     }
-  ]
+   ],
+   "alt": "Close-up of an adult's hands lacing a black hockey skate on a dark locker-room floor, red base-layer sleeves and leg above.",
+   "object_position_phone": "72% 50%",
+   "quiet_space_for_text": "Left 45%: plain dark blue-grey floor with a soft shadow, for a light headline.",
+   "source_page": "https://www.pexels.com/photo/a-man-putting-on-ice-skates-while-sitting-on-the-wooden-bench-in-the-locker-room-6847593/",
+   "photographer": "Tima Miroshnichenko",
+   "licence": "Pexels License (free for commercial use, no attribution required)",
+   "date_fetched": "2026-11-15",
+   "source_size": [
+    3605,
+    5407
+   ],
+   "crop_in_source": {
+    "x": 1250,
+    "y": 3807,
+    "width": 2355,
+    "height": 1570
+   },
+   "notes": "Cropped from the bottom of a portrait photo to exclude a branded pad on the bench and a small label on the other skate. Source crop is 2355 px wide, so the 2560 files are upscaled about 9%."
+  },
+  {
+   "slot": "A-2",
+   "ratio": "4:5",
+   "files": [
+    {
+     "file": "a2-480.avif",
+     "width": 480,
+     "height": 600,
+     "format": "avif",
+     "bytes": 18631
+    },
+    {
+     "file": "a2-480.webp",
+     "width": 480,
+     "height": 600,
+     "format": "webp",
+     "bytes": 25826
+    },
+    {
+     "file": "a2-800.avif",
+     "width": 800,
+     "height": 1000,
+     "format": "avif",
+     "bytes": 49500
+    },
+    {
+     "file": "a2-800.webp",
+     "width": 800,
+     "height": 1000,
+     "format": "webp",
+     "bytes": 63004
+    },
+    {
+     "file": "a2-1200.avif",
+     "width": 1200,
+     "height": 1500,
+     "format": "avif",
+     "bytes": 106894
+    },
+    {
+     "file": "a2-1200.webp",
+     "width": 1200,
+     "height": 1500,
+     "format": "webp",
+     "bytes": 143338
+    }
+   ],
+   "alt": "An empty hockey goal and a single puck on scuffed ice in a dim, empty indoor rink.",
+   "object_position_phone": "50% 60%",
+   "quiet_space_for_text": "Top third: dark netting and wall above the goal.",
+   "source_page": "https://www.pexels.com/photo/metal-bar-with-net-on-the-ice-surface-6847387/",
+   "photographer": "Tima Miroshnichenko",
+   "licence": "Pexels License (free for commercial use, no attribution required)",
+   "date_fetched": "2026-11-15",
+   "source_size": [
+    6000,
+    4000
+   ],
+   "crop_in_source": {
+    "x": 1640,
+    "y": 0,
+    "width": 3200,
+    "height": 4000
+   },
+   "notes": "Empty dim rink seen from ice level, not from the bench. Two small out-of-focus hanging flags behind the glass carry no readable marks."
+  },
+  {
+   "slot": "A-3",
+   "ratio": "4:5",
+   "files": [
+    {
+     "file": "a3-480.avif",
+     "width": 480,
+     "height": 600,
+     "format": "avif",
+     "bytes": 14589
+    },
+    {
+     "file": "a3-480.webp",
+     "width": 480,
+     "height": 600,
+     "format": "webp",
+     "bytes": 19844
+    },
+    {
+     "file": "a3-800.avif",
+     "width": 800,
+     "height": 1000,
+     "format": "avif",
+     "bytes": 30018
+    },
+    {
+     "file": "a3-800.webp",
+     "width": 800,
+     "height": 1000,
+     "format": "webp",
+     "bytes": 38564
+    },
+    {
+     "file": "a3-1200.avif",
+     "width": 1200,
+     "height": 1500,
+     "format": "avif",
+     "bytes": 55494
+    },
+    {
+     "file": "a3-1200.webp",
+     "width": 1200,
+     "height": 1500,
+     "format": "webp",
+     "bytes": 69176
+    }
+   ],
+   "alt": "A bearded man in a striped shirt types on a laptop at a dark desk beside a tall window, warm sunlight on a wooden wall.",
+   "object_position_phone": "35% 40%",
+   "quiet_space_for_text": "Upper right: plain sunlit wooden wall.",
+   "source_page": "https://www.pexels.com/photo/man-with-facial-hair-using-a-laptop-9222424/",
+   "photographer": "Ron Lach",
+   "licence": "Pexels License (free for commercial use, no attribution required)",
+   "date_fetched": "2026-11-15",
+   "source_size": [
+    5892,
+    3928
+   ],
+   "crop_in_source": {
+    "x": 1620,
+    "y": 0,
+    "width": 3142,
+    "height": 3928
+   },
+   "notes": "Seated at the desk, not the standing door-frame stretch the brief describes."
+  },
+  {
+   "slot": "B-1",
+   "ratio": "16:9",
+   "files": [
+    {
+     "file": "b1-828.avif",
+     "width": 828,
+     "height": 466,
+     "format": "avif",
+     "bytes": 21977
+    },
+    {
+     "file": "b1-828.webp",
+     "width": 828,
+     "height": 466,
+     "format": "webp",
+     "bytes": 28750
+    },
+    {
+     "file": "b1-1280.avif",
+     "width": 1280,
+     "height": 720,
+     "format": "avif",
+     "bytes": 42420
+    },
+    {
+     "file": "b1-1280.webp",
+     "width": 1280,
+     "height": 720,
+     "format": "webp",
+     "bytes": 54566
+    },
+    {
+     "file": "b1-1920.avif",
+     "width": 1920,
+     "height": 1080,
+     "format": "avif",
+     "bytes": 78385
+    },
+    {
+     "file": "b1-1920.webp",
+     "width": 1920,
+     "height": 1080,
+     "format": "webp",
+     "bytes": 101146
+    },
+    {
+     "file": "b1-2560.avif",
+     "width": 2560,
+     "height": 1440,
+     "format": "avif",
+     "bytes": 121958
+    },
+    {
+     "file": "b1-2560.webp",
+     "width": 2560,
+     "height": 1440,
+     "format": "webp",
+     "bytes": 155948
+    }
+   ],
+   "alt": "Low angle across the ice as a hockey player in dark gear stops hard, throwing up a spray of ice under a single light.",
+   "object_position_phone": "58% 45%",
+   "quiet_space_for_text": "Top-left: near-black arena behind the boards; the lower left is bright ice, so a headline there needs a dark gradient.",
+   "source_page": "https://www.pexels.com/photo/a-person-ice-skating-on-ice-rink-6468935/",
+   "photographer": "Tony Schnagl",
+   "licence": "Pexels License (free for commercial use, no attribution required)",
+   "date_fetched": "2026-11-15",
+   "source_size": [
+    5200,
+    3466
+   ],
+   "crop_in_source": {
+    "x": 0,
+    "y": 200,
+    "width": 5200,
+    "height": 2925
+   },
+   "notes": "Light is neutral white-grey rather than strongly blue."
+  },
+  {
+   "slot": "B-2",
+   "ratio": "4:5",
+   "files": [
+    {
+     "file": "b2-480.avif",
+     "width": 480,
+     "height": 600,
+     "format": "avif",
+     "bytes": 15907
+    },
+    {
+     "file": "b2-480.webp",
+     "width": 480,
+     "height": 600,
+     "format": "webp",
+     "bytes": 18686
+    },
+    {
+     "file": "b2-800.avif",
+     "width": 800,
+     "height": 1000,
+     "format": "avif",
+     "bytes": 33461
+    },
+    {
+     "file": "b2-800.webp",
+     "width": 800,
+     "height": 1000,
+     "format": "webp",
+     "bytes": 37138
+    },
+    {
+     "file": "b2-1200.avif",
+     "width": 1200,
+     "height": 1500,
+     "format": "avif",
+     "bytes": 63756
+    },
+    {
+     "file": "b2-1200.webp",
+     "width": 1200,
+     "height": 1500,
+     "format": "webp",
+     "bytes": 65176
+    }
+   ],
+   "alt": "An adult hockey player in a plain black practice jersey and white helmet steps onto the ice through the bench door, a second player behind him.",
+   "object_position_phone": "45% 45%",
+   "quiet_space_for_text": "Little: the boards at right are plain white.",
+   "source_page": "https://www.pexels.com/photo/hockey-players-entering-on-ice-rink-6468586/",
+   "photographer": "Tony Schnagl",
+   "licence": "Pexels License (free for commercial use, no attribution required)",
+   "date_fetched": "2026-11-15",
+   "source_size": [
+    3467,
+    5200
+   ],
+   "crop_in_source": {
+    "x": 1451,
+    "y": 2002,
+    "width": 1430,
+    "height": 1788
+   },
+   "notes": "No leg-swing photo exists on Pexels; this is an adult stepping onto the ice at practice. Crop excludes a faint decal on the glass; one unreadable dark reflection remains at top right."
+  },
+  {
+   "slot": "B-3",
+   "ratio": "4:5",
+   "files": [
+    {
+     "file": "b3-480.avif",
+     "width": 480,
+     "height": 600,
+     "format": "avif",
+     "bytes": 12302
+    },
+    {
+     "file": "b3-480.webp",
+     "width": 480,
+     "height": 600,
+     "format": "webp",
+     "bytes": 15554
+    },
+    {
+     "file": "b3-800.avif",
+     "width": 800,
+     "height": 1000,
+     "format": "avif",
+     "bytes": 23667
+    },
+    {
+     "file": "b3-800.webp",
+     "width": 800,
+     "height": 1000,
+     "format": "webp",
+     "bytes": 28526
+    },
+    {
+     "file": "b3-1200.avif",
+     "width": 1200,
+     "height": 1500,
+     "format": "avif",
+     "bytes": 40715
+    },
+    {
+     "file": "b3-1200.webp",
+     "width": 1200,
+     "height": 1500,
+     "format": "webp",
+     "bytes": 48102
+    }
+   ],
+   "alt": "A woman in a white top sits at an office desk and stretches both arms overhead with her eyes closed; a corkboard of drawings and a bicycle behind her.",
+   "object_position_phone": "30% 40%",
+   "quiet_space_for_text": "Upper right: plain pale wall.",
+   "source_page": "https://www.pexels.com/photo/woman-stretching-her-body-while-sitting-7888730/",
+   "photographer": "RDNE Stock project",
+   "licence": "Pexels License (free for commercial use, no attribution required)",
+   "date_fetched": "2026-11-15",
+   "source_size": [
+    4133,
+    6199
+   ],
+   "crop_in_source": {
+    "x": 0,
+    "y": 1673,
+    "width": 2851,
+    "height": 3564
+   },
+   "notes": "Seated overhead stretch in warm daylight, not a standing side stretch in evening light. Crop excludes a branded marker and a desk name plate."
+  },
+  {
+   "slot": "C-1",
+   "ratio": "3:2",
+   "files": [
+    {
+     "file": "c1-828.avif",
+     "width": 828,
+     "height": 552,
+     "format": "avif",
+     "bytes": 18055
+    },
+    {
+     "file": "c1-828.webp",
+     "width": 828,
+     "height": 552,
+     "format": "webp",
+     "bytes": 22422
+    },
+    {
+     "file": "c1-1280.avif",
+     "width": 1280,
+     "height": 853,
+     "format": "avif",
+     "bytes": 39235
+    },
+    {
+     "file": "c1-1280.webp",
+     "width": 1280,
+     "height": 853,
+     "format": "webp",
+     "bytes": 49916
+    },
+    {
+     "file": "c1-1920.avif",
+     "width": 1920,
+     "height": 1280,
+     "format": "avif",
+     "bytes": 80538
+    },
+    {
+     "file": "c1-1920.webp",
+     "width": 1920,
+     "height": 1280,
+     "format": "webp",
+     "bytes": 108158
+    },
+    {
+     "file": "c1-2560.avif",
+     "width": 2560,
+     "height": 1707,
+     "format": "avif",
+     "bytes": 136776
+    },
+    {
+     "file": "c1-2560.webp",
+     "width": 2560,
+     "height": 1707,
+     "format": "webp",
+     "bytes": 179702
+    }
+   ],
+   "alt": "Side view of a woman in a high crescent lunge on a pink mat, arms raised, in a bright room with pale wooden walls and floor.",
+   "object_position_phone": "64% 50%",
+   "quiet_space_for_text": "Left 45%: pale whitewashed wall, for a dark headline.",
+   "source_page": "https://www.pexels.com/photo/photo-of-person-stretching-3758030/",
+   "photographer": "Alexy Almond",
+   "licence": "Pexels License (free for commercial use, no attribution required)",
+   "date_fetched": "2026-11-15",
+   "source_size": [
+    5260,
+    3726
+   ],
+   "crop_in_source": {
+    "x": 0,
+    "y": 745,
+    "width": 4471,
+    "height": 2981
+   },
+   "notes": "High lunge, not a low lunge; the window itself is out of frame."
+  },
+  {
+   "slot": "C-2",
+   "ratio": "4:5",
+   "files": [
+    {
+     "file": "c2-480.avif",
+     "width": 480,
+     "height": 600,
+     "format": "avif",
+     "bytes": 4899
+    },
+    {
+     "file": "c2-480.webp",
+     "width": 480,
+     "height": 600,
+     "format": "webp",
+     "bytes": 5118
+    },
+    {
+     "file": "c2-800.avif",
+     "width": 800,
+     "height": 1000,
+     "format": "avif",
+     "bytes": 10276
+    },
+    {
+     "file": "c2-800.webp",
+     "width": 800,
+     "height": 1000,
+     "format": "webp",
+     "bytes": 10724
+    },
+    {
+     "file": "c2-1200.avif",
+     "width": 1200,
+     "height": 1500,
+     "format": "avif",
+     "bytes": 19563
+    },
+    {
+     "file": "c2-1200.webp",
+     "width": 1200,
+     "height": 1500,
+     "format": "webp",
+     "bytes": 19874
+    }
+   ],
+   "alt": "A taped black hockey stick blade and a puck on pale, scratched ice.",
+   "object_position_phone": "55% 50%",
+   "quiet_space_for_text": "Lower right: soft blurred wooden floor.",
+   "source_page": "https://www.pexels.com/photo/ice-skating-shoes-hanging-on-a-wooden-rack-10455856/",
+   "photographer": "Tima Miroshnichenko",
+   "licence": "Pexels License",
+   "date_fetched": "2026-11-15",
+   "source_size": [
+    6000,
+    4000
+   ],
+   "crop_in_source": {
+    "x": 1520,
+    "y": 0,
+    "width": 3200,
+    "height": 4000
+   },
+   "notes": "Figure skates, not hockey skates; hanging on a wooden rack against a warm blurred background, not a pale wall. An embossed mark on the blade is out of focus and unreadable.",
+   "page": "https://www.pexels.com/photo/close-up-shot-of-a-hockey-puck-and-hockey-stick-6847470/",
+   "note": "Replaced the figure-skates photo (Cowork, Nov 15: wrong sport for hockey officials and players)."
+  },
+  {
+   "slot": "C-3",
+   "ratio": "4:5",
+   "files": [
+    {
+     "file": "c3-480.avif",
+     "width": 480,
+     "height": 600,
+     "format": "avif",
+     "bytes": 8411
+    },
+    {
+     "file": "c3-480.webp",
+     "width": 480,
+     "height": 600,
+     "format": "webp",
+     "bytes": 13140
+    },
+    {
+     "file": "c3-800.avif",
+     "width": 800,
+     "height": 1000,
+     "format": "avif",
+     "bytes": 15352
+    },
+    {
+     "file": "c3-800.webp",
+     "width": 800,
+     "height": 1000,
+     "format": "webp",
+     "bytes": 24552
+    },
+    {
+     "file": "c3-1200.avif",
+     "width": 1200,
+     "height": 1500,
+     "format": "avif",
+     "bytes": 25881
+    },
+    {
+     "file": "c3-1200.webp",
+     "width": 1200,
+     "height": 1500,
+     "format": "webp",
+     "bytes": 41100
+    }
+   ],
+   "alt": "A laptop with a blank screen and a terracotta mug of black coffee on a white desk, beige curtain behind; nobody in shot.",
+   "object_position_phone": "60% 55%",
+   "quiet_space_for_text": "Lower left: plain white desk top.",
+   "source_page": "https://www.pexels.com/photo/a-cup-of-coffee-beside-a-laptop-8472496/",
+   "photographer": "Cup of Couple",
+   "licence": "Pexels License (free for commercial use, no attribution required)",
+   "date_fetched": "2026-11-15",
+   "source_size": [
+    5241,
+    7857
+   ],
+   "crop_in_source": {
+    "x": 0,
+    "y": 650,
+    "width": 5241,
+    "height": 6551
+   },
+   "notes": "No chair in shot; warm beige curtain rather than a cool window."
+  }
+ ]
 }

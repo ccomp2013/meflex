@@ -32,6 +32,9 @@
     var fits = window.innerHeight >= 600 && stage.scrollHeight <= stage.clientHeight + 1;
     if (!fits) { html.classList.remove('motion'); active = false; geo = null; return; }
     var s = stage.getBoundingClientRect(), p = plate.getBoundingClientRect();
+    var words0 = hero.querySelector('.opening-text').getBoundingClientRect();
+    /* on a narrow screen the words sit above the plate: they must never overlap it */
+    if (window.matchMedia('(max-width: 59.99rem)').matches && words0.bottom + 16 > p.top) { html.classList.remove('motion'); active = false; geo = null; return; }
     /* The picture starts by covering a target: the whole stage on wide screens; on phones, an edge-to-edge band
        from just under the words to the plate's foot, so the words never sit on the photograph. */
     var t = { left: s.left, right: s.right, top: s.top, bottom: s.bottom };
@@ -55,13 +58,13 @@
     var vh = window.innerHeight;
     if (geo) {
       var top = hero.getBoundingClientRect().top;
-      var e = ease(clamp(-top / (geo.span * .78), 0, 1)), k = 1 - e;
+      var e = ease(clamp(-top / (geo.span * .9), 0, 1)), k = 1 - e;
       var sx = geo.sx + (1 - geo.sx) * e, sy = geo.sy + (1 - geo.sy) * e, c = Math.max(sx, sy);
       plate.style.transform = 'translate3d(' + (geo.tx * k).toFixed(2) + 'px,' + (geo.ty * k).toFixed(2) + 'px,0) scale(' + sx.toFixed(4) + ',' + sy.toFixed(4) + ')';
       inner.style.transform = 'scale(' + (c / sx).toFixed(4) + ',' + (c / sy).toFixed(4) + ')';
       stage.style.setProperty('--e', e.toFixed(3));
       stage.style.setProperty('--b', (1 - e * e * e).toFixed(3));
-      stage.style.setProperty('--r', clamp(-top / (geo.span * .4), 0, 1).toFixed(3));
+      stage.style.setProperty('--r', clamp(-top / (geo.span * .9) * 1.6 - .5, 0, 1).toFixed(3));
     }
     depthEls.forEach(function (el) {
       var r = el.parentNode.getBoundingClientRect();
