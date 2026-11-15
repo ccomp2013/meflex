@@ -1,0 +1,206 @@
+/* MeFlex website, Phase 2, direction B: the home page. Six sections: the opening under the lights, the ice sheet
+   (the hockey story, with the blue line painting through the five Between-games stretches), the live demo at centre
+   ice, the desk story, how it works, and what is still to come (the maker's note and the App Store sign-up, both
+   placeholders). Motion lives in home.js and only runs when the visitor allows motion (html.motion); without
+   JavaScript or with reduced motion every line is drawn and every word is visible. */
+
+/* 1. Opening ------------------------------------------------------------------------------------------------ */
+.open { position: relative; isolation: isolate; overflow: hidden; }
+.b1 { margin: 0; position: relative; overflow: hidden; aspect-ratio: 5 / 4; max-height: 56svh; width: 100%; background: var(--night); }
+.b1-photo { position: absolute; inset: -6% 0 0; }
+.b1-photo picture, .b1-photo img { display: block; width: 100%; height: 100%; }
+.b1-photo img { object-fit: cover; object-position: 60% 30%; }
+/* only the bottom edge melts into the arena: the photo itself stays clear */
+.b1::after { content: ""; position: absolute; inset: auto 0 0; height: 28%; background: linear-gradient(180deg, var(--shade-0), var(--shade-full)); }
+.open-copy { position: relative; padding: .75rem var(--gutter) 3.5rem; max-width: 46rem; }
+.open h1 { font-size: var(--fs-hero); line-height: .86; letter-spacing: -.01em; max-width: 7.5em; }
+.lead { margin-top: 1.5rem; max-width: 33rem; font-size: var(--fs-lead); line-height: 1.5; color: var(--soft); }
+.actions { margin-top: 2rem; }
+.fine { margin-top: 1rem; font-size: var(--fs-small); color: var(--soft); max-width: 34rem; }
+
+@media (min-width: 960px) {
+  /* the words keep their own column of plain dark: the photo starts where the copy ends, so no text sits on it */
+  .open { --pad-l: max(var(--gutter), calc((100vw - var(--max)) / 2)); --copy: min(44vw, 38rem);
+    min-height: min(calc(100svh - 70px), 880px); display: flex; align-items: center; }
+  .b1 { position: absolute; inset: 0 0 0 calc(var(--pad-l) + var(--copy) + 1.5rem); aspect-ratio: auto; max-height: none; width: auto; z-index: -1;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 30%); mask-image: linear-gradient(90deg, transparent 0, #000 30%); }
+  .b1-photo img { object-position: 58% 40%; }
+  .b1::after { height: 22%; }
+  .open-copy { padding: 4rem 0 5rem var(--pad-l); width: var(--copy); max-width: none; box-sizing: content-box; }
+  .open h1 { font-size: clamp(4.5rem, 2rem + 5.4vw, 8rem); max-width: 100%; }
+}
+
+/* 2. The ice sheet ------------------------------------------------------------------------------------------- */
+.ice { --focus: var(--rink-blue); position: relative; color: var(--sheet-ink); background: var(--sheet); padding: 5rem var(--gutter) 5rem; }
+.ice-grid { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 3.5rem; }
+.ice h2 { font-size: var(--fs-h2); line-height: .88; max-width: 8em; }
+.ice-lead { margin-top: 1.25rem; font-size: var(--fs-lead); font-weight: 600; max-width: 34rem; }
+.routine { margin-top: 2.25rem; padding-left: 1.25rem; border-left: 3px solid var(--rink-red); max-width: 34rem; }
+.routine h3 { font-size: var(--fs-h3); }
+.routine-meta { margin: .5rem 0 .6rem; font-weight: 600; }
+.routine > p:not(.routine-meta) { color: var(--sheet-muted); }
+
+/* The memorable moment: the five stretches on a blue line that paints down as you scroll */
+.line-block { --F: min(clamp(2rem, 1.2rem + 2.4vw, 3.5rem), 10.5vw); --pad: clamp(.6rem, 1.1vw, 1rem); --spot: 2.25rem; }
+.line-wrap { position: relative; }
+.blue-line { position: absolute; left: calc(var(--spot) / 2 - 6px); width: 12px; top: calc(var(--pad) + var(--F) / 2); bottom: calc(var(--pad) + var(--F) / 2); height: auto; overflow: visible; }
+.blue-line line { fill: none; } /* viewBox is 10 units wide over 12px: a stroke of 10 fills the band */
+.bl-band { stroke: var(--rink-blue-soft); stroke-width: 10; }
+.bl-draw { stroke: var(--rink-blue); stroke-width: 10; stroke-dasharray: 100; stroke-dashoffset: 0; }
+.stations { list-style: none; margin: 0; padding: 0; position: relative; }
+.station { display: grid; grid-template-columns: var(--spot) minmax(0, 1fr); column-gap: clamp(1rem, 2.4vw, 2.25rem); align-items: start; padding-block: var(--pad); }
+.spot { width: var(--spot); height: var(--spot); margin-top: calc(var(--F) / 2 - var(--spot) / 2); border-radius: 50%; display: grid; place-items: center;
+  background: var(--rink-red); color: var(--white); font: 800 1.05rem/1 var(--display); box-shadow: 0 0 0 4px var(--sheet), 0 0 0 6px var(--rink-red);
+  transition: background-color .35s, color .35s, box-shadow .35s; }
+.st-name { font: 800 var(--F)/1 var(--display); letter-spacing: -.005em; color: var(--sheet-ink); transition: color .45s; overflow-wrap: break-word; }
+
+/* The phone frame (drawn in CSS) */
+.phone { position: relative; width: 300px; max-width: 100%; padding: 9px; border-radius: 48px;
+  background: linear-gradient(150deg, #33475A 0%, #0B141C 26%, #0B141C 74%, #2A3D50 100%);
+  box-shadow: inset 0 0 0 1.5px rgba(214,236,250,.3), inset 0 0 0 4px #05090D, 0 50px 80px -36px rgba(6,18,30,.6), 0 18px 30px -18px rgba(6,18,30,.55); }
+.phone::before { content: ""; position: absolute; z-index: 2; top: 20px; left: 37%; right: 37%; height: 19px; border-radius: 99px; background: #02060A; }
+.phone picture, .phone img { display: block; width: 100%; height: auto; border-radius: 39px; }
+.phone img { background: var(--night); }
+.phone-slot { display: grid; justify-items: center; }
+.phone-rise { width: 260px; max-width: 100%; }
+.phone-cap { margin-top: 1.25rem; text-align: center; font-size: var(--fs-small); color: var(--sheet-muted); }
+
+.also { display: grid; gap: 2rem; padding-top: 3rem; border-top: 1px solid var(--sheet-line); }
+.also-copy h3 { font-size: var(--fs-h3); margin-bottom: .75rem; }
+.b2 { margin: 0; aspect-ratio: 4 / 5; border-radius: var(--r); overflow: hidden; max-width: 26rem; box-shadow: 0 40px 70px -40px rgba(6,18,30,.55); }
+.b2 picture, .b2 img { display: block; width: 100%; height: 100%; }
+.b2 img { object-fit: cover; object-position: 45% 45%; }
+.also-intro { font-size: var(--fs-lead); max-width: 34rem; }
+.lineup { list-style: none; margin: 1.5rem 0 0; padding: 0; border-top: 2px solid var(--rink-blue); max-width: 36rem; }
+.lineup li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .1rem 1.5rem; padding: .9rem 0; border-bottom: 1px solid var(--sheet-line); }
+.lu-name { font: 800 1.45rem/1.1 var(--display); }
+.lu-time { color: var(--sheet-muted); white-space: nowrap; }
+.also-note { margin-top: 1.25rem; color: var(--sheet-muted); max-width: 34rem; }
+
+@media (min-width: 600px) {
+  .also { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); align-items: center; gap: 2rem 3rem; }
+}
+@media (min-width: 960px) {
+  .ice { padding-block: 7rem 6rem; }
+  .ice-grid { grid-template-columns: minmax(0, 1fr) 320px; column-gap: clamp(3rem, 7vw, 8rem); row-gap: 4.5rem; }
+  .ice-head { grid-column: 1; grid-row: 1; }
+  .line-block { grid-column: 1; grid-row: 2; }
+  .phone-slot { grid-column: 2; grid-row: 1 / 3; align-self: stretch; align-items: start; }
+  .phone-slot .phone-rise { width: 300px; position: sticky; top: 8vh; }
+  .also { grid-column: 1 / -1; grid-row: 3; grid-template-columns: 360px minmax(0, 1fr); gap: 1rem clamp(3rem, 7vw, 7rem); }
+}
+
+/* 3. Demo at centre ice ---------------------------------------------------------------------------------- */
+/* Below 960px the order is heading, timer, then the steps (the same in the page, so keyboard order matches);
+   wider, the heading and steps share the left column and the timer sits at centre ice on the right. */
+.demo { position: relative; overflow: clip; padding: 5rem var(--gutter) 5.5rem; background: var(--night); }
+.demo-grid { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+.demo h2 { font-size: var(--fs-h2); line-height: .9; max-width: 8em; }
+.demo-intro { margin-top: 1.25rem; font-size: var(--fs-lead); color: var(--soft); max-width: 32rem; }
+.steps { list-style: none; counter-reset: s; margin: 0; padding: 0; max-width: 32rem; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: .75rem; padding: .85rem 0; border-top: 1px solid var(--line); }
+.steps li:last-child { border-bottom: 1px solid var(--line); }
+.steps li::before { content: counter(s); font: 800 1.6rem/1 var(--display); color: var(--ice); padding-top: .05rem; }
+.tip { margin-top: 1.1rem; color: var(--soft); max-width: 32rem; }
+.feel { margin-top: 1.5rem; max-width: 32rem; padding: 1rem 1.15rem; border-radius: var(--r); background: var(--night-3); box-shadow: inset 3px 0 0 var(--rink-red); font-weight: 600; }
+
+/* The face-off circle is concentric with the timer ring: the demo panel has a fixed top padding and a 300px stage,
+   so the circle (332px across) is placed on the same centre, and the name below the ring is moved clear of it.
+   It draws from 12 o'clock, like the timer ring. */
+.demo-stage { --pt: 32px; --ring: 300px; --fo: 340px; position: relative; }
+.faceoff { display: none; position: absolute; left: 50%; margin-left: calc(var(--fo) / -2); top: calc(var(--pt) + var(--ring) / 2 - var(--fo) / 2); width: var(--fo); height: var(--fo); pointer-events: none; }
+.faceoff path { fill: none; stroke: var(--rink-red); stroke-width: 2.5; stroke-dasharray: 100; stroke-dashoffset: 0; }
+.demo .mf-demo { --mf-ink: #EEF3F6; --mf-track: #22374A; --mf-surface: var(--night-2); --mf-muted: #9DAFBC; --mf-accent: #EEF3F6; --mf-on-accent: #0A131C;
+  --mf-focus: #A9CCDF; --mf-font: var(--text); --mf-num-font: var(--display);
+  position: relative; width: min(100%, 24rem); border-radius: var(--r); box-shadow: inset 0 0 0 1px var(--line); }
+.demo .mf-time { font-weight: 700; font-size: clamp(3.5rem, 13vw, 5rem); }
+.demo .mf-name { font-family: var(--display); font-weight: 800; font-size: 1.75rem; }
+.demo .mf-btn { border-radius: var(--r); max-width: 100%; }
+.demo .mf-btn.mf-play { min-width: min(8.5rem, 100%); }
+
+@media (min-width: 600px) {
+  .faceoff { display: block; }
+  .demo .mf-demo { --mf-surface: transparent; box-shadow: none; padding: var(--pt) 24px 0; width: 24rem; }
+  .demo .mf-stage { width: var(--ring); margin-bottom: 40px; }
+  .demo-stage { padding-bottom: 1rem; }
+}
+@media (min-width: 960px) {
+  .demo { padding-block: 6rem; }
+  .demo-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: clamp(3rem, 6vw, 6rem); row-gap: 2.5rem; }
+  .demo-head { grid-column: 1; grid-row: 1; }
+  .demo-body { grid-column: 1; grid-row: 2; }
+  .demo-stage { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+}
+
+/* 4. Desk ------------------------------------------------------------------------------------------------ */
+.desk { padding: 5rem var(--gutter) 5.5rem; background: var(--night-2); border-top: 1px solid var(--line-soft); }
+.desk-grid { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 3.5rem; }
+.desk-visual { position: relative; max-width: 38rem; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .62fr); align-items: end; padding-bottom: 2rem; }
+.b3 { grid-column: 1 / 2; grid-row: 1; margin: 0; aspect-ratio: 4 / 5; border-radius: var(--r); overflow: hidden; }
+.b3 picture, .b3 img { display: block; width: 100%; height: 100%; }
+.b3 img { object-fit: cover; object-position: 30% 40%; }
+/* the phone overlaps the photo's lower right corner, fully in view */
+.phone-desk { grid-column: 1 / 3; grid-row: 1; justify-self: end; width: 48%; max-width: 250px; margin-bottom: -2rem; padding: 6px; border-radius: 34px;
+  box-shadow: inset 0 0 0 1.5px rgba(214,236,250,.3), inset 0 0 0 3px #05090D, 0 40px 60px -24px rgba(0,0,0,.85), 0 0 0 6px var(--night-2); }
+.phone-desk::before { top: 12px; height: 13px; }
+.phone-desk picture, .phone-desk img { border-radius: 28px; }
+.desk h2 { font-size: var(--fs-h2); line-height: .9; max-width: 8em; }
+.desk-lead { margin-top: 1.25rem; font-size: var(--fs-lead); color: var(--soft); max-width: 32rem; }
+.routine-dark { border-left-color: var(--ice); }
+.routine-dark > p:not(.routine-meta) { color: var(--soft); }
+.mini { list-style: none; counter-reset: m; margin: 1.1rem 0 0; padding: 0; }
+.mini li { counter-increment: m; display: flex; align-items: center; gap: .9rem; padding: .3rem 0; font: 800 1.6rem/1.05 var(--display); }
+.mini li::before { content: counter(m); flex: none; width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid; place-items: center; font-size: .95rem; box-shadow: inset 0 0 0 2px var(--muted); }
+.desk-note { margin-top: 1.75rem; color: var(--soft); max-width: 32rem; }
+@media (min-width: 960px) {
+  .desk { padding-block: 7rem; }
+  .desk-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: clamp(3rem, 7vw, 7rem); }
+}
+
+/* 5. How it works: three steps ------------------------------------------------------------------------------ */
+.how { max-width: calc(var(--max) + 2 * var(--gutter)); margin: 0 auto; padding: 5.5rem var(--gutter) 4.5rem; }
+.how h2 { font-size: var(--fs-h2); }
+.how-steps { list-style: none; counter-reset: h; margin: 2.75rem 0 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 3rem; }
+.how-steps li { counter-increment: h; position: relative; padding: 1.5rem 0 1.75rem; border-top: 1px solid var(--line); }
+.how-steps li::before { content: counter(h); display: block; font: 800 3.25rem/1 var(--display); color: var(--ice); margin-bottom: .75rem; }
+.how-steps h3 { font-size: 2rem; line-height: 1; }
+.how-steps p { margin-top: .6rem; color: var(--soft); max-width: 24rem; }
+@media (min-width: 750px) { .how-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* 6. Still to come, then the close --------------------------------------------------------------------------- */
+/* one quiet row, no boxes: the maker's note waiting for Chris's words, and the sign-up drawn as switched off */
+.later { max-width: calc(var(--max) + 2 * var(--gutter)); margin: 0 auto; padding: 1rem var(--gutter) 6rem; overflow-wrap: break-word; }
+.later-title { font-size: 1.6rem; color: var(--soft); padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.later-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem 4rem; margin-top: 1.75rem; }
+.later h3 { font-size: var(--fs-h3); display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .9rem; }
+.tag { display: inline-flex; align-items: center; min-height: 1.75rem; padding: .1rem .7rem; border-radius: 99px; font: 600 var(--fs-small)/1.2 var(--text); }
+.tag-placeholder { color: var(--night); background: var(--ice); }
+.maker-text { margin-top: 1rem; font-size: var(--fs-lead); color: var(--soft); max-width: 30rem; }
+/* the sign-up: designed as switched off, not broken. One status, said once; the field and button are drawn as
+   dashed outlines */
+.store-off { margin-top: 1rem; display: flex; align-items: flex-start; gap: .6rem; color: var(--soft); max-width: 34rem; }
+.store-off svg { flex: none; width: 1.15rem; height: 1.15rem; margin-top: .2em; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.store-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: .5rem; margin-top: 1.25rem; }
+.store-row label { color: var(--muted); font-size: var(--fs-small); }
+.store-row input, .store-row button { font: inherit; min-height: 3rem; border-radius: var(--r); border: 1.5px dashed var(--muted); background: transparent; color: var(--muted); padding: 0 1rem; min-width: 0; width: 100%; cursor: not-allowed; }
+.store-row input::placeholder { color: var(--muted); opacity: 1; }
+.store-row button { font-weight: 600; width: auto; justify-self: start; }
+.close { margin-top: 4rem; padding-top: 2.5rem; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.25rem 2rem; }
+.close-line { font: 800 var(--fs-h3)/1 var(--display); }
+@media (min-width: 600px) {
+  .store-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .store-row label { grid-column: 1 / -1; }
+}
+@media (min-width: 960px) { .later-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); } }
+
+/* Motion: only when home.js has decided motion is welcome (it adds html.motion) ------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  html.motion .station:not(.is-on) .st-name { color: var(--sheet-muted); }
+  html.motion .station:not(.is-on) .spot { background: var(--sheet); color: var(--rink-red); box-shadow: 0 0 0 4px var(--sheet), inset 0 0 0 2.5px var(--rink-red); }
+  html.motion .faceoff:not(.is-drawn) path { stroke-dashoffset: 100; }
+  html.motion .faceoff path { transition: stroke-dashoffset 1.8s var(--ease); }
+  html.motion [data-depth], html.motion [data-rise] { will-change: transform; }
+  /* the lights come up on the opening photo, once */
+  .b1-photo img { animation: lightsUp 1.6s var(--ease) both; }
+  @keyframes lightsUp { from { opacity: 0; filter: brightness(.4); } to { opacity: 1; filter: none; } }
+}
