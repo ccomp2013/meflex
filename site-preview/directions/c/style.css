@@ -1,0 +1,295 @@
+/* MeFlex, direction C: Daylight calm ("first light").
+   Grammar: one centred axis, a wide quiet measure, lots of air. Phones and photo prints stand upright on light
+   shelves, side by side, never overlapping. One light source for the whole page, a window at the upper left, so every
+   shadow falls down and to the right. The app's dark screens sit in this light world as dark objects.
+   The timer ring is the motif. */
+
+@font-face { font-family: "Instrument Serif"; src: url("../shared/fonts/instrument-serif-normal-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Instrument Serif"; src: url("../shared/fonts/instrument-serif-italic-400.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Hanken Grotesk"; src: url("../shared/fonts/hanken-grotesk-normal-400-600.woff2") format("woff2"); font-weight: 400 600; font-style: normal; font-display: swap; }
+
+:root {
+  --paper: #EDF1F2;        /* cool morning off-white */
+  --paper-lit: #F8FAFA;    /* where the light lands */
+  --paper-shade: #E2E8EA;  /* the plane in shade */
+  --ink: #142029;          /* text */
+  --ink-2: #46535D;        /* secondary text, 6.9:1 on paper */
+  --lake: #2D5B7C;         /* daylight blue, the one accent */
+  --lake-deep: #234A66;
+  --sky: #C4D6E0;          /* pale daylight blue for tracks and tints */
+  --hair: rgba(20, 32, 41, .14);
+  --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --g: 16px;
+  --max: 1200px;
+  --space: clamp(4.5rem, 9vw, 9rem);
+  color-scheme: light;
+}
+@media (min-width: 720px) { :root { --g: clamp(24px, 4vw, 56px); } }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--sans); font-size: 1.0625rem; line-height: 1.6; font-weight: 400;
+  overflow-wrap: break-word; -webkit-font-smoothing: antialiased;
+}
+main, .foot { position: relative; z-index: 1; }
+.top { position: relative; z-index: 10; }
+
+img { max-width: 100%; height: auto; }
+h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: var(--lake); text-underline-offset: .2em; text-decoration-thickness: 1px; }
+a:hover { color: var(--lake-deep); }
+:focus-visible { outline: 3px solid var(--lake); outline-offset: 3px; border-radius: 4px; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+.wrap { width: calc(100% - 2 * var(--g)); max-width: var(--max); margin-inline: auto; }
+
+.skip { position: absolute; left: var(--g); top: -100px; z-index: 50; background: var(--ink); color: #fff; padding: .75rem 1rem; border-radius: 6px; }
+.skip:focus { top: 12px; color: #fff; }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; text-align: center;
+  min-height: 52px; padding: .8rem 1.6rem; border-radius: 999px;
+  background: var(--lake); color: #fff; font-weight: 600; font-size: 1rem; line-height: 1.25; text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 1px 1px rgba(20,32,41,.18), 6px 12px 24px -12px rgba(29,62,87,.55);
+  transition: background-color .2s ease;
+}
+.btn:hover { background: var(--lake-deep); color: #fff; }
+.btn:focus-visible { outline-offset: 4px; border-radius: 999px; }
+.btn-quiet { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px rgba(20,32,41,.35); min-height: 44px; padding: .55rem 1.1rem; }
+.btn-quiet:hover { background: rgba(255,255,255,.6); color: var(--ink); }
+
+/* ---------- header: brand, then links, then Try it now, in reading order ---------- */
+.top-inner { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1rem; padding-block: .6rem; }
+.brand { font-family: var(--serif); font-size: 1.85rem; line-height: 1; color: var(--ink); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; margin-right: auto; letter-spacing: -.01em; }
+.brand:hover { color: var(--ink); }
+.nav { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; }
+.nav a:not(.btn) { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .5rem; color: var(--ink); text-decoration: none; font-size: .95rem; }
+.nav a:not(.btn):hover { text-decoration: underline; color: var(--ink); }
+.nav-cta { margin-left: .35rem; }
+.nav .btn-quiet { font-size: .95rem; }
+@media (min-width: 960px) { .top-inner { padding-block: 1.25rem; } .nav { gap: .25rem .75rem; } }
+
+/* ---------- photographs ---------- */
+.photo { position: relative; margin: 0; background: var(--paper-shade); overflow: hidden; }
+.photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- 1. opening: the words first, then the light ---------- */
+.hero-copy { text-align: center; padding-block: clamp(1.75rem, 6vw, 5.5rem) clamp(2.5rem, 6vw, 5rem); }
+.hero h1 {
+  font-size: min(max(2.5rem, 3.6vw + 1rem), 5.25rem, 12.5vw);
+  line-height: 1.02; letter-spacing: -.012em; max-width: 15em; margin-inline: auto;
+}
+.hero-sub { margin: 1.4rem auto 0; font-size: 1.125rem; color: var(--ink-2); max-width: 36rem; }
+.hero-act { margin-top: 1.75rem; }
+.hero-note { margin: .9rem auto 0; font-size: .9375rem; color: var(--ink-2); max-width: 30rem; }
+/* full bleed, the whole 3:2 frame where the screen allows; on a phone the crop centres on the lunge */
+.photo-c1 { width: 100%; height: min(75vw, 46svh); min-height: 15rem; }
+.photo-c1 picture { display: block; height: 100%; }
+/* the photo is a little taller than its frame so it can drift behind it as you scroll */
+.photo-c1 img { object-position: 64% 50%; height: calc(100% + 40px); margin-top: -20px; }
+@media (min-width: 720px) {
+  .photo-c1 { height: min(66.667vw, 100svh); min-height: 26rem; }
+  .photo-c1 img { object-position: 50% 30%; }
+}
+
+/* ---------- shelves: phones and prints standing upright on a pale ledge ---------- */
+.shelf { position: relative; display: flex; justify-content: center; align-items: flex-end; gap: clamp(1.1rem, 5vw, 4.5rem); margin: clamp(3rem, 6vw, 5rem) auto 0; max-width: 52rem; }
+.shelf::after { /* the ledge: a lit top edge, a shaded face, a soft shadow on the wall below */
+  content: ""; position: absolute; z-index: 0; left: -4%; right: -4%; top: 100%; height: 12px;
+  background: linear-gradient(180deg, #FFFFFF 0 2px, #DDE4E7 2px, #C9D3D8 100%);
+  box-shadow: 0 1px 0 rgba(20,32,41,.18), 8px 22px 26px -16px rgba(20,32,41,.45);
+}
+.shelf > * { position: relative; z-index: 1; }
+.shelf .photo-c2 img { object-position: 55% 50%; }
+.shelf .photo-c3 img { object-position: 60% 55%; }
+.shelf .photo { width: 54%; max-width: 23rem; aspect-ratio: 4 / 5; border: clamp(6px, 1.2vw, 12px) solid #FAFBFB;
+  box-shadow: 1px 2px 3px rgba(20,32,41,.18), 16px 26px 40px -14px rgba(20,32,41,.32); }
+.shelf .phone { width: 36%; max-width: 14.5rem; }
+
+/* ---------- phones: a dark object in a light room ---------- */
+.phone { position: relative; }
+.phone-body {
+  position: relative; padding: 3.2%; border-radius: 15% / 7%;
+  background: linear-gradient(140deg, #3a434b 0%, #12171b 18%, #0c0f12 70%, #1c2329 100%);
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255,255,255,.22),   /* rim catching the window light */
+    inset -1px -1px 0 rgba(0,0,0,.6),
+    0 0 0 1px rgba(20,32,41,.5),
+    2px 3px 4px rgba(20,32,41,.22),
+    6px 10px 14px -4px rgba(20,32,41,.30),
+    18px 30px 44px -10px rgba(20,32,41,.30);
+}
+.phone-body::before { content: ""; position: absolute; right: -3px; top: 22%; width: 3px; height: 9%; border-radius: 0 2px 2px 0; background: #1a2026; }
+.phone-body img { display: block; width: 100%; height: auto; border-radius: 12% / 5.6%; background: #0f1112; }
+.phone-cast { /* the long cast shadow on the wall behind */
+  position: absolute; z-index: -1; inset: 4% -20% 2% 20%; border-radius: 28%;
+  background: radial-gradient(75% 62% at 32% 40%, rgba(20,32,41,.28), rgba(20,32,41,.10) 52%, rgba(20,32,41,0) 76%);
+  filter: blur(20px);
+}
+
+/* ---------- section heads: centred, a wide quiet measure ---------- */
+.story-head { text-align: center; max-width: 42rem; margin-inline: auto; }
+.story-head h2, .soon h2 { font-size: min(max(2.4rem, 2.6vw + 1.3rem), 4.4rem, 13vw); line-height: 1.04; letter-spacing: -.01em; }
+.lead { margin: 1.25rem auto 0; font-size: 1.1875rem; line-height: 1.55; color: var(--ink-2); max-width: 36rem; }
+
+/* ---------- 2 and 4. the stories ---------- */
+.story { position: relative; padding-block: var(--space) calc(var(--space) * .9); overflow-x: clip; }
+.story > .wrap { position: relative; z-index: 1; }
+/* a broad shaft of morning light crossing the wall; it drifts a little as you scroll */
+.shaft { position: absolute; z-index: 0; top: 0; bottom: 0; left: 4%; width: 60%; pointer-events: none;
+  background: linear-gradient(108deg, rgba(255,255,255,0) 10%, rgba(255,255,255,.7) 42%, rgba(255,255,255,.2) 62%, rgba(255,255,255,0) 80%);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent); mask-image: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent); }
+.story-desk .shaft { left: 30%; }
+
+.detail { display: grid; gap: 3rem; max-width: 62rem; margin: clamp(4rem, 8vw, 6.5rem) auto 0; }
+.detail h3 { font-size: min(max(1.8rem, 1vw + 1.4rem), 2.4rem, 11vw); line-height: 1.1; }
+.routine-meta { margin-top: .35rem; font-size: .9375rem; font-weight: 600; color: var(--lake); }
+.detail p:not(.routine-meta):not(.small) { margin-top: 1rem; color: var(--ink-2); }
+.moves { margin-top: 1.5rem; counter-reset: m; }
+.moves li { counter-increment: m; display: grid; grid-template-columns: 2.25rem 1fr; align-items: baseline; padding: .7rem 0; border-bottom: 1px solid var(--hair); }
+.moves li:first-child { border-top: 1px solid var(--hair); }
+.moves li::before { content: counter(m); font-family: var(--serif); font-style: italic; font-size: 1.25rem; color: var(--ink-2); }
+.durations { margin-top: 1.25rem; }
+.durations li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .1rem 1.5rem; padding: .65rem 0; border-bottom: 1px dotted rgba(20,32,41,.28); }
+.durations li:first-child { border-top: 1px dotted rgba(20,32,41,.28); }
+.durations .dur { color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.small { font-size: .9375rem; color: var(--ink-2); }
+.more .small { margin-top: 1rem; }
+@media (min-width: 860px) {
+  .detail { grid-template-columns: 1fr 1fr; column-gap: clamp(3rem, 7vw, 6rem); }
+}
+
+/* ---------- 3. the live demo, and the ring ---------- */
+.try { position: relative; padding-block: var(--space); overflow-x: clip;
+  background: radial-gradient(55% 50% at 50% 48%, rgba(255,255,255,.8), rgba(255,255,255,0) 72%); }
+.try-stage {
+  --S: min(300px, calc(100vw - 2 * var(--g) - 64px));  /* the demo's own ring */
+  --R: calc(var(--S) / 2 + 30px);                      /* the drawn dial around it */
+  --P: 30px;                                            /* from the top of the demo to its ring */
+  --pad: max(0px, calc(var(--R) - var(--S) / 2 - var(--P)));
+  position: relative; margin-top: 3rem; padding-top: var(--pad);
+}
+.dial { position: absolute; z-index: 0; overflow: visible;
+  width: calc(2 * var(--R)); height: calc(2 * var(--R));
+  left: calc(50% - var(--R)); top: calc(var(--pad) + var(--P) + var(--S) / 2 - var(--R)); }
+.dial circle, .dial path { fill: none; }
+.dial-ticks { stroke: rgba(20,32,41,.30); stroke-width: 3; stroke-dasharray: .35 3.65; stroke-dashoffset: -1.8; }
+.dial-track { stroke: var(--hair); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.dial-arc { stroke: var(--lake); stroke-width: .9; stroke-linecap: round; stroke-dasharray: 1 1; stroke-dashoffset: 0; }
+.dial .dial-dot { fill: var(--lake); stroke: var(--paper-lit); stroke-width: .6; }
+html.motion .dial-arc { stroke-dashoffset: 1; }
+html.motion .dial-dot { opacity: 0; }
+html.motion .is-drawing .dial-dot { opacity: 1; }
+html.motion .dial-ticks { transition: stroke .9s ease; }
+html.motion .is-drawn .dial-ticks { stroke: rgba(45,91,124,.55); }
+
+.try .mf-demo {
+  --mf-ink: var(--ink); --mf-track: var(--sky); --mf-surface: transparent; --mf-muted: var(--ink-2);
+  --mf-accent: var(--lake); --mf-on-accent: #fff; --mf-focus: var(--lake);
+  --mf-font: var(--sans); --mf-num-font: var(--serif);
+  position: relative; z-index: 1; padding: var(--P) 0 0; max-width: 32rem; border-radius: 0;
+}
+.try .mf-stage { width: var(--S); margin-bottom: calc(var(--R) - var(--S) / 2 + 14px); }
+.try .mf-ring .mf-ring-fill { stroke: var(--lake); }
+.try .mf-art { box-shadow: 10px 16px 28px -14px rgba(20,32,41,.45); }
+.try .mf-name { font-family: var(--serif); font-weight: 400; font-size: 1.75rem; }
+.try .mf-time { font-weight: 400; font-size: min(max(3.6rem, 6vw), 5.25rem, 22vw); letter-spacing: 0; }
+.try .mf-btn { border-color: rgba(20,32,41,.45); font-size: .95rem; }
+.try .mf-btn.mf-play { min-width: min(8.5rem, 100%); border-color: var(--lake); }
+.try .mf-btn:hover { background: rgba(255,255,255,.7); }
+.try .mf-btn.mf-play:hover { background: var(--lake-deep); }
+.try .mf-btn:focus-visible { border-radius: 999px; }
+.try .mf-still { font-size: .9375rem; }
+
+.feel { margin: 3.5rem auto 0; text-align: center; font-family: var(--serif); font-style: italic; font-size: min(max(1.5rem, 1vw + 1.1rem), 2.1rem, 10vw); line-height: 1.25; max-width: 22em; }
+.try-steps { max-width: 64rem; margin: 3rem auto 0; }
+.steps { counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 2.25rem 1fr; align-items: baseline; padding: .85rem 0; border-bottom: 1px solid var(--hair); }
+.steps li:first-child { border-top: 1px solid var(--hair); }
+.steps li::before { content: counter(s); font-family: var(--serif); font-style: italic; font-size: 1.25rem; color: var(--lake); }
+.tip { margin-top: 1.25rem; color: var(--ink-2); font-size: .9375rem; text-align: center; }
+@media (min-width: 860px) {
+  /* the four steps read across, like the timer's own sequence */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); column-gap: 2rem; border-top: 1px solid var(--hair); }
+  .steps li, .steps li:first-child { display: block; border: 0; padding: 1.1rem 0 0; }
+  .steps li::before { display: block; font-size: 1.6rem; line-height: 1; margin-bottom: .6rem; }
+}
+@media (min-width: 960px) {
+  /* the big dial: the ring you watched draw becomes the frame of the real timer.
+     The name sits above the timer ring, the clock and the one row of buttons below it, all inside the dial. */
+  .try-stage { --S: 300px; --R: min(430px, 44vw); --P: calc(4rem + 6px); padding-bottom: max(0px, calc(var(--R) - 330px)); }
+  .try .mf-demo { padding-top: 0; }
+  .try .mf-name { grid-row: 1; height: 3rem; line-height: 3rem; margin: 0 0 1rem; }
+  .try .mf-stage { grid-row: 2; margin-bottom: .75rem; }
+  .dial-ticks { stroke-width: 2.4; }
+  .dial-arc { stroke-width: .42; }
+}
+
+/* ---------- 5. how it works: one phone on its shelf, two facts either side ---------- */
+.how { position: relative; padding-block: var(--space) calc(var(--space) * 1.1); background: var(--paper-shade); overflow-x: clip; }
+.how::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(112deg, rgba(255,255,255,0) 18%, rgba(255,255,255,.55) 38%, rgba(255,255,255,0) 60%); }
+.how > .wrap { position: relative; }
+.how-grid { display: grid; gap: 2rem; margin-top: 3.5rem; }
+.facts li { padding: 1.3rem 0 1.4rem; border-top: 1px solid rgba(20,32,41,.2); }
+.facts h3 { font-size: min(max(1.6rem, .8vw + 1.3rem), 2.1rem, 10vw); line-height: 1.15; }
+.facts p { margin-top: .5rem; color: var(--ink-2); }
+.shelf-one { margin: 1rem auto 1.5rem; }
+.shelf-one::after { left: -40%; right: -40%; }
+.shelf-one .phone { width: min(15rem, 56vw); max-width: none; }
+@media (min-width: 960px) {
+  .how-grid { grid-template-columns: 1fr 15rem 1fr; column-gap: clamp(3rem, 6vw, 6rem); align-items: center; }
+  .facts-a { text-align: right; }
+  .facts p { max-width: 22rem; }
+  .facts-a p { margin-left: auto; }
+  .shelf-one { margin: 0 0 12px; }
+}
+
+/* ---------- 6. app store, switched off ---------- */
+.soon { padding-block: var(--space); }
+.soon-inner { text-align: center; }
+.soon h2 { font-size: min(max(2rem, 1.8vw + 1.3rem), 3.4rem, 11vw); line-height: 1.08; max-width: 17em; margin-inline: auto; }
+.signup {
+  max-width: 36rem; margin: 2.25rem auto 0; padding: 1.25rem; text-align: left;
+  border: 1px dashed rgba(20,32,41,.35); border-radius: 4px;
+  background: repeating-linear-gradient(135deg, rgba(20,32,41,0) 0 9px, rgba(20,32,41,.035) 9px 10px);
+}
+.signup-status { display: flex; gap: .7rem; align-items: center; font-weight: 600; font-size: .9375rem; }
+.signup-status::before { /* a small switch, drawn in the off position */
+  content: ""; flex: none; width: 2.1rem; height: 1.2rem; border-radius: 999px; border: 1px solid rgba(20,32,41,.45);
+  background: radial-gradient(circle at .55rem 50%, rgba(20,32,41,.45) 0 .38rem, transparent .4rem); }
+.signup-row { margin-top: 1.1rem; display: grid; gap: .5rem; }
+.signup-row > * { min-width: 0; }
+.signup label { font-size: .875rem; color: var(--ink-2); }
+.signup input, .signup button { font: inherit; min-height: 48px; border-radius: 3px; max-width: 100%; }
+.signup input { width: 100%; padding: 0 .9rem; border: 1px solid rgba(20,32,41,.22); background: rgba(255,255,255,.35); color: var(--ink-2); cursor: not-allowed; }
+.signup button { padding: 0 1.25rem; border: 1px solid rgba(20,32,41,.22); background: transparent; color: rgba(20,32,41,.5); font-weight: 600; cursor: not-allowed; justify-self: start; }
+@media (min-width: 560px) {
+  .signup-row { grid-template-columns: 1fr auto; }
+  .signup label { grid-column: 1 / -1; }
+}
+.soon-now { margin-top: clamp(3.5rem, 7vw, 5.5rem); }
+.soon-now p + p { margin-top: 1.25rem; }
+.soon-line { font-family: var(--serif); font-size: min(max(1.6rem, 1vw + 1.2rem), 2.2rem, 10vw); line-height: 1.15; }
+.soon-now .small { margin-top: .9rem; }
+
+/* ---------- footer ---------- */
+.foot { border-top: 1px solid var(--hair); padding-block: 2.5rem 3rem; background: var(--paper); }
+.foot-inner { display: grid; gap: .75rem; justify-items: center; text-align: center; }
+.foot-brand { font-family: var(--serif); font-size: 1.6rem; line-height: 1; }
+.foot-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 .25rem; }
+.foot-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .6rem; color: var(--ink); }
+.foot-line { color: var(--ink-2); font-size: .9375rem; max-width: 40rem; }
+
+/* ---------- reduced motion: everything stays where the layout put it ---------- */
+@media (prefers-reduced-motion: reduce) {
+  [data-depth] { transform: none !important; }
+  .dial-arc { stroke-dashoffset: 0 !important; }
+  .dial-dot { opacity: 1 !important; }
+  .btn, .dial-ticks { transition: none !important; }
+}

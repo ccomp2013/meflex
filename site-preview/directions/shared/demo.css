@@ -1,0 +1,36 @@
+/* MeFlex website, all three directions: the live demo's structure. Each direction sets the look through these tokens:
+   --mf-ink (text and the ring), --mf-track (ring track), --mf-surface (panel), --mf-muted, --mf-accent,
+   --mf-on-accent (text on the accent button), --mf-focus, --mf-font, --mf-num-font (the big time). */
+.mf-demo { --mf-ink: #F2EEE8; --mf-track: #2A3136; --mf-surface: #12171A; --mf-muted: #A9B1B6; --mf-accent: #C9785A; --mf-on-accent: #0E1113; --mf-focus: #D8B678;
+  --mf-font: inherit; --mf-num-font: inherit;
+  color: var(--mf-ink); background: var(--mf-surface); font-family: var(--mf-font); border-radius: 28px;
+  padding: clamp(20px, 4vw, 40px); display: grid; justify-items: center; gap: 6px; text-align: center; max-width: 30rem; margin-inline: auto; }
+.mf-stage { position: relative; width: min(100%, 300px); aspect-ratio: 1; margin-bottom: 10px; }
+.mf-ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.mf-ring circle { fill: none; stroke-width: 4.5; }
+.mf-ring .mf-ring-track { stroke: var(--mf-track); }
+.mf-ring .mf-ring-fill { stroke: var(--mf-ink); stroke-linecap: round; stroke-dasharray: 1000; stroke-dashoffset: 600; }
+.mf-demo.is-live .mf-ring .mf-ring-fill { stroke-dashoffset: 1000; }
+.mf-art { position: absolute; inset: 7.5%; border-radius: 50%; overflow: hidden; }
+.mf-figure { display: block; width: 100%; height: 100%; transform-origin: 50% 80%; transition: transform .45s ease; }
+.mf-demo.is-mirrored .mf-figure { transform: scaleX(-1); }
+.mf-demo.is-moving .mf-figure { animation: mfIn 1.4s cubic-bezier(.2,.7,.2,1) both; }
+.mf-demo.is-moving.is-mirrored .mf-figure { animation-name: mfInMirror; }
+@keyframes mfIn { from { transform: translateY(-4%) rotate(-3deg); } to { transform: none; } }
+@keyframes mfInMirror { from { transform: scaleX(-1) translateY(-4%) rotate(-3deg); } to { transform: scaleX(-1); } }
+@media (prefers-reduced-motion: reduce) { .mf-figure { transition: none; } .mf-demo.is-moving .mf-figure { animation: none; } }
+.mf-name { margin: 0; font-weight: 600; font-size: 1.25rem; }
+.mf-time { margin: 0; font-family: var(--mf-num-font); font-size: clamp(3rem, 12vw, 4.5rem); line-height: 1; font-variant-numeric: tabular-nums; font-weight: 300; letter-spacing: -0.02em; }
+.mf-demo.is-paused .mf-time { opacity: .6; }
+.mf-side { margin: 0 0 8px; color: var(--mf-muted); min-height: 1.5em; }
+.mf-controls { display: flex; flex-wrap: nowrap; justify-content: center; align-items: center; gap: 12px; }
+.mf-controls[hidden], .mf-still[hidden] { display: none; }
+.mf-btn { font: inherit; font-weight: 600; min-height: 48px; min-width: 48px; padding: 0 22px; border-radius: 999px; border: 2px solid var(--mf-ink); background: transparent; color: var(--mf-ink); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; touch-action: manipulation; }
+.mf-btn.mf-play { background: var(--mf-accent); color: var(--mf-on-accent); border-color: var(--mf-accent); min-width: 8.5rem; justify-content: center; }
+.mf-btn.mf-icon { padding: 0; width: 48px; justify-content: center; border-width: 1.5px; }
+.mf-btn.mf-icon svg { width: 22px; height: 22px; }
+.mf-btn:focus-visible { outline: 3px solid var(--mf-focus); outline-offset: 3px; }
+.mf-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mf-sound[aria-pressed="false"] .mf-wave, .mf-sound[aria-pressed="true"] .mf-mute { display: none; }
+.mf-still { margin: 6px 0 0; color: var(--mf-muted); font-size: .95rem; max-width: 26rem; }
+.mf-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
