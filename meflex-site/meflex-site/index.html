@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="fd21ebdf451d">
+<meta name="meflex-version" content="890f8223deff">
 <meta name="meflex-voice" content="voice/">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -1518,7 +1518,7 @@ Object.entries(KID_STEPS).forEach(([id, steps]) => { const st = STRETCHES.find(s
 const SUPPORTED = ['groinhold', 'ankledf', 'postwall', 'chairfig4', 'chairham', 'seatedtwist', 'necktilt', 'levator', 'chintuck', 'neckturn', 'calf', 'doorway', 'crossbody', 'chestclasp', 'bandchest'];
 STRETCHES.forEach(s => { s.supported = SUPPORTED.includes(s.id); });
 const BY_ID = Object.fromEntries(STRETCHES.map(s => [s.id, s]));
-const PICS = {"lunge":{"v":"25293428","loop":null}};
+const PICS = {"groinhold":{"v":"d1287163","loop":null},"highknees":{"v":"a209c5df","loop":null},"hiplunge":{"v":"2f89a04e","loop":null},"kneeschest":{"v":"b5d6dc38","loop":null},"lunge":{"v":"25293428","loop":null},"quad":{"v":"6250f0f8","loop":null}};
 const PIC_W = [192, 640, 960];
 let PIC_BASE = 'figures/';
 
@@ -1917,7 +1917,7 @@ function artDrawn(st, circle, mirror, move) {
 }
 
 const picFor = (id) => !!PICS[id] && profile.guide === 'man';
-const PIC_SECOND_SIDE = new Set(['lunge']);
+const PIC_SECOND_SIDE = new Set(['lunge', 'hiplunge', 'quad', 'groinhold']);
 const picSrc = (id, w) => `${PIC_BASE}${id}-${w}.webp?v=${PICS[id].v}`;
 const picSet = (id) => PIC_W.map(w => `${picSrc(id, w)} ${w}w`).join(', ');
 const PLAYER_SIZES = 'min(82vw, 360px)';
