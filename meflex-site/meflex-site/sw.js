@@ -5,7 +5,7 @@
 // those go to the network exactly as without it. It sends nothing of its own except fetching FILES from the site.
 // It never stores personal data: history, routines, settings and answers live in the page's own storage, not here.
 // A new version waits until the person taps Reload ("A new version is ready"); it never takes over by itself.
-const VERSION = '988277a8e2c8';
+const VERSION = 'fd21ebdf451d';
 const FILES = ["index.html", "manifest.webmanifest", "apple-touch-icon.png", "icon-192.png", "icon-512.png"];
 // Nov 15 (recorded voice on the website): every recording the page may ask for (voice/manifest.json and voice/<key>.m4a).
 // None is fetched at install (4.2 MB). Each is kept the first time the page fetches it: the list when the Voice or coach
@@ -15,7 +15,7 @@ const VOICE = ["voice/manifest.json", "voice/001278fc.m4a", "voice/0012bbdf.m4a"
 // fetched at install (that could be many megabytes). Each one is kept the first time the page shows it, and the page
 // asks for a routine's player pictures when that routine is opened, so a routine started with a signal still has them
 // with none. They live in their own cache, which survives app updates; only pictures no longer listed are removed.
-const PICS = ["figures/lunge-192.webp?v=d2c2ab13", "figures/lunge-640.webp?v=d2c2ab13", "figures/lunge-960.webp?v=d2c2ab13"];
+const PICS = ["figures/lunge-192.webp?v=25293428", "figures/lunge-640.webp?v=25293428", "figures/lunge-960.webp?v=25293428"];
 const BASE = self.registration.scope; // the folder sw.js lives in, e.g. https://example.github.io/meflex/meflex-site/meflex-site/
 // Hardening: cache names carry a tag of this folder, so another copy of MeFlex on the same address keeps its own offline
 // files. Caches from before this change (meflex-offline-<12 hex>) are cleared once.
