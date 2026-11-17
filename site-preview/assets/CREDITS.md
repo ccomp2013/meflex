@@ -22,7 +22,7 @@ How they were checked:
 
 ## App pictures
 The phone-frame screens (img/app-*.webp, img/app-*.avif) are MeFlex's own,
-made by meflex/tools/site_assets.js from the built app on Nov 15, 2026.
+made by meflex/tools/site_assets.js from the built app on Nov 15, 2026. app-between-games-* was retaken from the live app (version cda5ddc6b18a, man guide) on Nov 17, 2026, so it shows the real stretch pictures.
 
 ## Fonts
 Self-hosted from Google Fonts (fonts.gstatic.com), Latin subset, fetched Nov 15, 2026 (list in fonts/fonts.json).
