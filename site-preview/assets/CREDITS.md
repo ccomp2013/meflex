@@ -21,7 +21,7 @@ How they were checked:
 | C-3 | photos/c3-*.avif, .webp | https://www.pexels.com/photo/a-cup-of-coffee-beside-a-laptop-8472496/ | Cup of Couple | Pexels License | 2026-11-15 |
 
 ## App pictures
-The phone-frame screens (img/app-*.webp, img/app-*.avif) and lunge.svg (the traced Low Lunge figure) are MeFlex's own,
+The phone-frame screens (img/app-*.webp, img/app-*.avif) are MeFlex's own,
 made by meflex/tools/site_assets.js from the built app on Nov 15, 2026.
 
 ## Fonts
@@ -33,3 +33,8 @@ All under the SIL Open Font License 1.1:
 - Barlow (Jeremy Tribby) — direction B text
 - Instrument Serif (Instrument) — direction C display
 - Hanken Grotesk (Hanken Design Co.) — direction C text
+
+## Stretch pictures (Z1, Nov 17)
+`img/low-lunge-*-400.webp` and `img/lib/*-400.webp` are MeFlex's own AI-generated stretch pictures, approved by Chris and
+shipped in the app (`meflex-source` `app/figures/`), resized to 400 px. The page labels them "Pictures made with AI.".
+The traced `lunge.svg` is no longer used on this page and was removed (the three directions keep their own copy in `directions/shared/`).
