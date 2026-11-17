@@ -37,3 +37,10 @@
 /* Phase 2 site (review, Nov 15): before the hold starts the ring is empty, so the fill's round line cap is hidden
    (it otherwise shows as a stray dot at 12 o'clock); it appears as soon as the hold is running, paused or done. */
 .mf-demo.is-live:not(.is-running):not(.is-paused):not(.is-done) .mf-ring-fill { stroke-opacity: 0; }
+
+/* Nov 17: the Low Lunge picture (man guide) shows the right leg forward, so it is mirrored for "Left leg forward" and shown
+   as made for "Right leg forward", as in the app. Pictures don't do the ease-in movement (as in the app). */
+.mf-figure.mf-photo { border-radius: 50%; object-fit: cover; transform: scaleX(-1); }
+.mf-demo.is-mirrored .mf-figure.mf-photo { transform: none; }
+.mf-demo.is-moving .mf-figure.mf-photo { animation: none; }
+.mf-credit { margin: 6px 0 0; text-align: center; font-size: 12px; color: var(--muted, #8E979C); }
