@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="ea75e2884296">
+<meta name="meflex-version" content="cda5ddc6b18a">
 <meta name="meflex-voice" content="voice/">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -1518,7 +1518,7 @@ Object.entries(KID_STEPS).forEach(([id, steps]) => { const st = STRETCHES.find(s
 const SUPPORTED = ['groinhold', 'ankledf', 'postwall', 'chairfig4', 'chairham', 'seatedtwist', 'necktilt', 'levator', 'chintuck', 'neckturn', 'calf', 'doorway', 'crossbody', 'chestclasp', 'bandchest'];
 STRETCHES.forEach(s => { s.supported = SUPPORTED.includes(s.id); });
 const BY_ID = Object.fromEntries(STRETCHES.map(s => [s.id, s]));
-const PICS = {"ankledf":{"v":"2fbe904b","loop":null},"anklerock":{"v":"cd11ad1b","loop":null},"armcircles":{"v":"4655a5b3","loop":null},"bandadd":{"v":"7cb4ad47","loop":null},"bandcalf":{"v":"a96d5053","loop":null},"bandchest":{"v":"093ec867","loop":null},"bandcross":{"v":"690bf78d","loop":null},"bandham":{"v":"cc7fd8df","loop":null},"bandlat":{"v":"4703eeea","loop":null},"bandquad":{"v":"407bae69","loop":null},"butterfly":{"v":"ed941436","loop":null},"buttkicks":{"v":"08e6effa","loop":null},"calf":{"v":"0a14d5c0","loop":null},"calfdrop":{"v":"97c87646","loop":null},"catcow":{"v":"0cbc84a2","loop":null},"chairfig4":{"v":"3156b617","loop":null},"chairham":{"v":"79f2fa67","loop":null},"chestclasp":{"v":"1909fb8b","loop":null},"child":{"v":"e30eb409","loop":null},"chintuck":{"v":"a55b103f","loop":null},"cobra":{"v":"3b105fed","loop":null},"cossack":{"v":"711ddeef","loop":null},"couch":{"v":"45f44fa8","loop":null},"crossbody":{"v":"5f496ae8","loop":null},"dbfly":{"v":"10563170","loop":null},"doorway":{"v":"d289783c","loop":null},"downdog":{"v":"3109fa5a","loop":null},"figure4":{"v":"75c67c42","loop":null},"fold":{"v":"9a4d92d0","loop":null},"frog":{"v":"bf22872d","loop":null},"gate":{"v":"dd91927a","loop":null},"goblet":{"v":"47dedac9","loop":null},"groinhold":{"v":"d1287163","loop":null},"halfsplit":{"v":"f27b0572","loop":null},"happybaby":{"v":"d1ab1006","loop":null},"highknees":{"v":"a209c5df","loop":null},"hiplunge":{"v":"2f89a04e","loop":null},"inchworm":{"v":"344036cf","loop":null},"kneeschest":{"v":"b5d6dc38","loop":null},"lateral":{"v":"25f04159","loop":null},"legswing":{"v":"24d09d3d","loop":null},"levator":{"v":"8760091f","loop":null},"lizard":{"v":"8d0d0fd1","loop":null},"lunge":{"v":"25293428","loop":null},"lyingham":{"v":"1cb729bc","loop":null},"necktilt":{"v":"6dc8f687","loop":null},"neckturn":{"v":"50a8b26d","loop":null},"passthrough":{"v":"ed8b9ed1","loop":null},"pigeon":{"v":"b20192ee","loop":null},"postwall":{"v":"ad875854","loop":null},"pullover":{"v":"e8820e95","loop":null},"puppy":{"v":"8e5dd34e","loop":null},"quad":{"v":"6250f0f8","loop":null},"rdlhold":{"v":"147b3bbf","loop":null},"seatedtwist":{"v":"c94f4c98","loop":null},"sidebend":{"v":"610313c9","loop":null},"sidequad":{"v":"c3d587b5","loop":null},"sideswing":{"v":"9d98492e","loop":null},"skatestance":{"v":"6f9565a9","loop":null},"sphinx":{"v":"8349a4d2","loop":null},"standfold":{"v":"d3455a11","loop":null},"suitcase":{"v":"faeb34cb","loop":null},"thread":{"v":"04dc8a99","loop":null},"torsotwist":{"v":"815f4fc0","loop":null},"twist":{"v":"183f0d8f","loop":null},"walklunge":{"v":"cb874fd0","loop":null}};
+const PICS = {"ankledf":{"v":"2fbe904b","loop":null},"anklerock":{"v":"cd11ad1b","loop":null},"armcircles":{"v":"4655a5b3","loop":null},"bandadd":{"v":"7cb4ad47","loop":null},"bandcalf":{"v":"a96d5053","loop":null},"bandchest":{"v":"093ec867","loop":null},"bandcross":{"v":"690bf78d","loop":null},"bandham":{"v":"cc7fd8df","loop":null},"bandlat":{"v":"af0c8982","loop":null},"bandquad":{"v":"407bae69","loop":null},"butterfly":{"v":"ed941436","loop":null},"buttkicks":{"v":"08e6effa","loop":null},"calf":{"v":"0a14d5c0","loop":null},"calfdrop":{"v":"97c87646","loop":null},"catcow":{"v":"0cbc84a2","loop":null},"chairfig4":{"v":"3156b617","loop":null},"chairham":{"v":"79f2fa67","loop":null},"chestclasp":{"v":"1909fb8b","loop":null},"child":{"v":"e30eb409","loop":null},"chintuck":{"v":"a55b103f","loop":null},"cobra":{"v":"3b105fed","loop":null},"cossack":{"v":"711ddeef","loop":null},"couch":{"v":"45f44fa8","loop":null},"crossbody":{"v":"5f496ae8","loop":null},"dbfly":{"v":"10563170","loop":null},"doorway":{"v":"d289783c","loop":null},"downdog":{"v":"3109fa5a","loop":null},"figure4":{"v":"75c67c42","loop":null},"fold":{"v":"9a4d92d0","loop":null},"frog":{"v":"bf22872d","loop":null},"gate":{"v":"dd91927a","loop":null},"goblet":{"v":"47dedac9","loop":null},"groinhold":{"v":"d1287163","loop":null},"halfsplit":{"v":"f27b0572","loop":null},"happybaby":{"v":"d1ab1006","loop":null},"highknees":{"v":"a209c5df","loop":null},"hiplunge":{"v":"2f89a04e","loop":null},"inchworm":{"v":"344036cf","loop":null},"kneeschest":{"v":"b5d6dc38","loop":null},"lateral":{"v":"25f04159","loop":null},"legswing":{"v":"9b343d2d","loop":null},"levator":{"v":"8760091f","loop":null},"lizard":{"v":"8d0d0fd1","loop":null},"lunge":{"v":"25293428","loop":null},"lyingham":{"v":"1cb729bc","loop":null},"necktilt":{"v":"6dc8f687","loop":null},"neckturn":{"v":"50a8b26d","loop":null},"passthrough":{"v":"ed8b9ed1","loop":null},"pigeon":{"v":"b20192ee","loop":null},"postwall":{"v":"ad875854","loop":null},"pullover":{"v":"e8820e95","loop":null},"puppy":{"v":"8e5dd34e","loop":null},"quad":{"v":"6250f0f8","loop":null},"rdlhold":{"v":"147b3bbf","loop":null},"seatedtwist":{"v":"c94f4c98","loop":null},"sidebend":{"v":"610313c9","loop":null},"sidequad":{"v":"c3d587b5","loop":null},"sideswing":{"v":"9d98492e","loop":null},"skatestance":{"v":"6f9565a9","loop":null},"sphinx":{"v":"8349a4d2","loop":null},"standfold":{"v":"d3455a11","loop":null},"suitcase":{"v":"faeb34cb","loop":null},"thread":{"v":"04dc8a99","loop":null},"torsotwist":{"v":"815f4fc0","loop":null},"twist":{"v":"183f0d8f","loop":null},"w-ankledf":{"v":"f0af4e86","loop":null},"w-anklerock":{"v":"bec78cbe","loop":null},"w-armcircles":{"v":"20e1b17d","loop":null},"w-bandadd":{"v":"37af3562","loop":null},"w-bandcalf":{"v":"a7ca095b","loop":null},"w-bandchest":{"v":"b4c47cae","loop":null},"w-bandcross":{"v":"0378abb0","loop":null},"w-bandham":{"v":"69ea0463","loop":null},"w-bandlat":{"v":"32398a04","loop":null},"w-bandquad":{"v":"55222718","loop":null},"w-butterfly":{"v":"3771c93c","loop":null},"w-buttkicks":{"v":"002ca8e3","loop":null},"w-calf":{"v":"bf30e4cb","loop":null},"w-calfdrop":{"v":"f9c8a021","loop":null},"w-catcow":{"v":"0d9bf87a","loop":null},"w-chairfig4":{"v":"e9703627","loop":null},"w-chairham":{"v":"600c5e2c","loop":null},"w-chestclasp":{"v":"4af09d9a","loop":null},"w-child":{"v":"855e0673","loop":null},"w-chintuck":{"v":"8f234c93","loop":null},"w-cobra":{"v":"7be58832","loop":null},"w-cossack":{"v":"beada11e","loop":null},"w-couch":{"v":"6c2f0b9c","loop":null},"w-crossbody":{"v":"d6de1afc","loop":null},"w-dbfly":{"v":"ac888e12","loop":null},"w-doorway":{"v":"99234351","loop":null},"w-downdog":{"v":"1d1f8be1","loop":null},"w-figure4":{"v":"afebc674","loop":null},"w-fold":{"v":"656f481f","loop":null},"w-frog":{"v":"f451a50e","loop":null},"w-gate":{"v":"549ddd89","loop":null},"w-goblet":{"v":"537b4583","loop":null},"w-groinhold":{"v":"9df46b9d","loop":null},"w-halfsplit":{"v":"20662c61","loop":null},"w-happybaby":{"v":"0658ab32","loop":null},"w-highknees":{"v":"bdc00bbb","loop":null},"w-hiplunge":{"v":"c917d115","loop":null},"w-inchworm":{"v":"577c28df","loop":null},"w-kneeschest":{"v":"743a6dfa","loop":null},"w-lateral":{"v":"3cb2a7d3","loop":null},"w-legswing":{"v":"fcf623c6","loop":null},"w-levator":{"v":"d166c57a","loop":null},"w-lizard":{"v":"7cc08ab2","loop":null},"w-lunge":{"v":"63866dc2","loop":null},"w-lyingham":{"v":"fe759cfe","loop":null},"w-necktilt":{"v":"22924b2f","loop":null},"w-neckturn":{"v":"5af43185","loop":null},"w-passthrough":{"v":"10bfce31","loop":null},"w-pigeon":{"v":"a89b8f65","loop":null},"w-postwall":{"v":"b8e7a79c","loop":null},"w-pullover":{"v":"15239280","loop":null},"w-puppy":{"v":"058ca523","loop":null},"w-quad":{"v":"1b58687d","loop":null},"w-rdlhold":{"v":"06b1b1c0","loop":null},"w-seatedtwist":{"v":"09e1504d","loop":null},"w-sidebend":{"v":"6f735ad6","loop":null},"w-sidequad":{"v":"5a2dfb1a","loop":null},"w-sideswing":{"v":"484561d0","loop":null},"w-skatestance":{"v":"82716257","loop":null},"w-sphinx":{"v":"4fdcb7fe","loop":null},"w-standfold":{"v":"b34553d0","loop":null},"w-suitcase":{"v":"45e68e4c","loop":null},"w-thread":{"v":"d2486033","loop":null},"w-torsotwist":{"v":"890d2d43","loop":null},"w-twist":{"v":"f2c23353","loop":null},"w-walklunge":{"v":"7d9e101b","loop":null},"walklunge":{"v":"cb874fd0","loop":null}};
 const PIC_W = [192, 640, 960];
 let PIC_BASE = 'figures/';
 
@@ -1905,7 +1905,8 @@ const CHEV = '<svg aria-hidden="true" class="chev" viewBox="0 0 24 24"><path d="
 
 function art(st, mirror, move = false, px = 64) {
   const circle = look.circle === 'mixed' ? st.circle : look.circle;
-  if (picFor(st.id)) return picPlate(st, circle, mirror, move, px);
+  const key = picFor(st.id);
+  if (key) return picPlate(st, circle, mirror, move, px, key);
   return artDrawn(st, circle, mirror, move);
 }
 function artDrawn(st, circle, mirror, move) {
@@ -1916,16 +1917,20 @@ function artDrawn(st, circle, mirror, move) {
   return `<svg viewBox="0 0 200 200" class="plate" role="img" aria-label="${esc(st.name)}"><circle cx="100" cy="100" r="96" fill="${circle}"/></svg>`;
 }
 
-const picFor = (id) => !!PICS[id] && profile.guide === 'man';
-const PIC_SECOND_SIDE = new Set(['lunge', 'hiplunge', 'quad', 'groinhold', 'anklerock', 'legswing', 'gate', 'ankledf',
-  'bandcalf', 'bandham', 'bandlat', 'bandquad', 'bandcross', 'chairfig4', 'chairham', 'couch', 'figure4', 'halfsplit', 'lizard',
+const picFor = (id) => { const k = (profile.guide === 'man' ? '' : 'w-') + id; return PICS[k] ? k : null; };
+const PIC_SECOND_SIDE = new Set(['lunge', 'hiplunge', 'quad', 'groinhold', 'anklerock', 'gate', 'ankledf',
+  'bandcalf', 'bandham', 'bandquad', 'bandcross', 'chairfig4', 'chairham', 'couch', 'figure4', 'halfsplit', 'lizard',
   'calfdrop', 'lyingham', 'pigeon', 'sidequad', 'suitcase', 'twist', 'thread', 'calf', 'cossack']);
+const W_PIC_SECOND_SIDE = new Set(['lunge', 'pigeon', 'figure4', 'quad', 'calf', 'necktilt', 'crossbody', 'twist', 'thread',
+  'halfsplit', 'lizard', 'lyingham', 'sidequad', 'couch', 'seatedtwist', 'chairham', 'bandham', 'bandadd', 'bandcross',
+  'bandquad', 'bandcalf', 'bandlat', 'calfdrop', 'suitcase', 'legswing', 'sideswing', 'anklerock', 'ankledf', 'hiplunge']);
+const picSecondSide = (key) => key.startsWith('w-') ? W_PIC_SECOND_SIDE.has(key.slice(2)) : PIC_SECOND_SIDE.has(key);
 const picSrc = (id, w) => `${PIC_BASE}${id}-${w}.webp?v=${PICS[id].v}`;
 const picSet = (id) => PIC_W.map(w => `${picSrc(id, w)} ${w}w`).join(', ');
 const PLAYER_SIZES = 'min(82vw, 360px)';
-function picPlate(st, circle, mirror, big, px) {
+function picPlate(st, circle, mirror, big, px, key = st.id) {
   return `<span class="plate picplate" style="background:${circle}" data-circle="${circle}" data-name="${esc(st.name)}" data-id="${st.id}"${mirror ? ' data-mirror="1"' : ''}${big ? ' data-move="1"' : ''}>`
-    + `<img class="pic${(PIC_SECOND_SIDE.has(st.id) ? !mirror : mirror) ? ' mirror' : ''}" src="${picSrc(st.id, 640)}" srcset="${picSet(st.id)}" sizes="${big ? PLAYER_SIZES : px + 'px'}" `
+    + `<img class="pic${(picSecondSide(key) ? !mirror : mirror) ? ' mirror' : ''}" src="${picSrc(key, 640)}" srcset="${picSet(key)}" sizes="${big ? PLAYER_SIZES : px + 'px'}" `
     + `width="${PIC_W[1]}" height="${PIC_W[1]}" alt="${esc(st.name)}" decoding="async" ${big ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'}></span>`;
 }
 function picFallback(img) {
@@ -1933,11 +1938,11 @@ function picFallback(img) {
   plate.outerHTML = st ? artDrawn(st, plate.dataset.circle, plate.dataset.mirror === '1', plate.dataset.move === '1')
     : `<svg viewBox="0 0 200 200" class="plate" role="img" aria-label="${esc(plate.dataset.name)}"><circle cx="100" cy="100" r="96" fill="${esc(plate.dataset.circle)}"/></svg>`;
 }
-const picLine = () => { $('safetyPictures').hidden = !Object.keys(PICS).some(picFor); };
+const picLine = () => { $('safetyPictures').hidden = !STRETCHES.some(st => picFor(st.id)); };
 picLine(); $('safetyBtn').addEventListener('click', picLine);
 document.addEventListener('error', (e) => { if (e.target instanceof HTMLImageElement && e.target.classList.contains('pic')) picFallback(e.target); }, true);
 function picWarm(items) {
-  for (const id of new Set(items.map(it => it.st.id))) if (picFor(id)) { const im = new Image(); im.decoding = 'async'; im.sizes = PLAYER_SIZES; im.srcset = picSet(id); im.src = picSrc(id, 640); }
+  for (const id of new Set(items.map(it => it.st.id))) { const k = picFor(id); if (k) { const im = new Image(); im.decoding = 'async'; im.sizes = PLAYER_SIZES; im.srcset = picSet(k); im.src = picSrc(k, 640); } }
 }
 const picMotion = (id) => !!(PICS[id] && PICS[id].loop) && !reduceMotion();
 
@@ -2108,11 +2113,11 @@ function renderHomeProgress() {
     el.innerHTML = `<span class="pgtext"><b>Your week starts with your first routine</b><small>Weekly goal: ${goal} day${goal === 1 ? '' : 's'}</small></span>${CHEV}`;
     el.setAttribute('aria-label', 'No sessions yet. Open History'); return;
   }
-  const s = progressStats(h, goal), w = s.week, pct = Math.round(s.meter.score * 100);
-  el.innerHTML = `<span class="pgtext"><b>${w.doneDays} of ${goal} day${goal === 1 ? '' : 's'}<small>this week</small></b>
+  const s = progressStats(h, goal), w = s.week, pct = Math.round(s.meter.score * 100), over = w.doneDays > goal;
+  el.innerHTML = `<span class="pgtext"><b>${over ? `${w.doneDays} days` : `${w.doneDays} of ${goal} day${goal === 1 ? '' : 's'}`}<small>this week${over ? ` (goal ${goal})` : ''}</small></b>
       </span>
     <span class="pgpct"><b>${pct}%</b><small>consistency</small></span>${CHEV}`;
-  el.setAttribute('aria-label', `${w.doneDays} of ${goal} days this week, ${pct}% consistency. Open History`);
+  el.setAttribute('aria-label', `${over ? `${w.doneDays} days this week (goal ${goal})` : `${w.doneDays} of ${goal} days this week`}, ${pct}% consistency. Open History`);
 }
 $('homeProgress').onclick = () => { renderHistory(); show('history'); };
 $('browseAll').onclick = () => { renderExplore(); show('explore'); };
@@ -2964,7 +2969,8 @@ $('closeBtn').onclick = closePlayer;
 function renderDone(saved, done, total) {
   const h = histGet(), goal = look.goal, w = progressStats(h, goal).week, s = weeklyStreak(h, goal);
   $('doneCount').textContent = `${done} of ${total}`;
-  $('doneWeek').textContent = `${w.doneDays} of ${goal}`;
+  $('doneWeek').textContent = w.doneDays > goal ? String(w.doneDays) : `${w.doneDays} of ${goal}`;
+  $('doneWeek').nextElementSibling.textContent = w.doneDays > goal ? `days this week (goal ${goal})` : 'days this week';
   $('doneDots').innerHTML = weekDotsHTML(w.days); $('doneDots').setAttribute('aria-label', weekDotsLabel(w.days));
   $('doneStreak').innerHTML = streakTitle(s); $('doneStreakSub').textContent = streakMessage(s, goal);
   $('doneFlame').classList.toggle('lit', s.current > 0);
@@ -3301,7 +3307,7 @@ function renderHistory() {
   $('histEmptyGoal').textContent = `Your weekly goal is ${goal} day${goal === 1 ? '' : 's'}. You can change it in Settings.`;
   if (!h.length) return;
   const w = P_.week;
-  $('wkCount').innerHTML = `<b>${w.doneDays}</b> of ${goal} day${goal === 1 ? '' : 's'}`;
+  $('wkCount').innerHTML = w.doneDays > goal ? `<b>${w.doneDays}</b> days (goal ${goal})` : `<b>${w.doneDays}</b> of ${goal} day${goal === 1 ? '' : 's'}`;
   $('wkNote').textContent = w.doneDays >= goal ? 'Weekly goal reached' : 'this week';
   $('wkDots').innerHTML = w.days.map((d, i) => `<span class="wd${d.done ? ' done' : ''}${d.today ? ' today' : ''}${d.future ? ' future' : ''}" title="${d.date.toLocaleDateString(undefined, { weekday: 'long' })}${d.done ? ', stretched' : ''}"><i></i><small>${'MTWTFSS'[i]}</small></span>`).join('');
   $('wkDots').setAttribute('aria-label', weekDotsLabel(w.days));
@@ -3432,14 +3438,14 @@ function whyLine(t, p) {
   if (p.target) parts.push(`about ${Math.max(1, Math.round(t.total / 60))} min`);
   if (t.notes.avoided.size) parts.push('no ' + [...t.notes.avoided].map(a => ({ kneeling: 'kneeling', floor: 'floor work', overhead: 'overhead', balance: 'balancing' }[a])).join(' or '));
   if (t.notes.supported) parts.push('chair & wall options');
-  if (p.hold) parts.push(`${p.hold} s holds`);
+  if (p.hold && !R(t.id).dynamic) parts.push(`${p.hold} s holds`);
   return parts.slice(0, 4).join(', ');
 }
 
 let REC_MEMO = { key: null, list: null };
 function recommendations(n = 3) {
   const raw = Platform.storage.get(HIST_KEY);
-  const key = JSON.stringify([profile, look.hold, raw, hasRoutineAnswers() ? 0 : new Date().getHours()]);
+  const key = JSON.stringify([profile, look.hold, raw, hasRoutineAnswers() ? 0 : new Date().getHours(), new Date().toDateString()]);
   if (REC_MEMO.key !== key) REC_MEMO = { key, list: recommendationsAll() };
   return REC_MEMO.list.slice(0, n);
 }
@@ -3448,8 +3454,11 @@ const hockeyRoles = () => (profile.hockey || []).filter(x => x !== 'none');
 const roleHockeyIds = () => [...new Set(hockeyRoles().flatMap(x => HOCKEY_ROLE_ROUTINES[x] || []))];
 const HOCKEY_WHY = { 'hockey-pre': 'For players, before the game', 'hockey-post': 'For players, after the game', 'ref-pre': 'For officials, before the game',
   'ref-between': 'For officials, between games', 'ref-post': 'For officials, after the game', 'ref-recovery': 'For officials, at the end of the night' };
+function roleIdsToday() { const ids = roleHockeyIds(), today = new Date().toDateString(), h = histGet();
+  const done = new Set(h.filter(x => new Date(x.at).toDateString() === today).map(x => x.id));
+  return ids.filter(id => !done.has(id)).concat(ids.filter(id => done.has(id))); }
 function recommendationsAll(n = 99) {
-  const roleIds = roleHockeyIds();
+  const roleIds = roleIdsToday();
   if (!hasRoutineAnswers()) {
     const h = new Date().getHours();
     const [pick, why] = h < 11 ? ['first-light', 'Good for mornings'] : h < 17 ? ['desk-reset', 'A midday reset'] : ['lights-out', 'Winds you down for bed'];
@@ -3977,10 +3986,14 @@ $('remOff').onclick = () => remPhoneOff();
 remPhoneSync();
 
 const PLAN_KEY = 'meflex.plan', PLAN_DAYS = 7;
-const planAnswersKey = () => JSON.stringify(['age', 'level', 'focus', 'equipment', 'minutes', 'avoid'].map(k => Array.isArray(profile[k]) ? profile[k].slice().sort() : profile[k] ?? null));
+const planAnswersKey = () => JSON.stringify(['age', 'level', 'focus', 'equipment', 'minutes', 'avoid'].map(k => Array.isArray(profile[k]) ? profile[k].slice().sort() : profile[k] ?? null)
+  .concat(hockeyRoles().length ? [hockeyRoles().slice().sort()] : []));
+const planHockey = (role) => role === 'ref' ? ['ref-pre', 'ref-post'] : (HOCKEY_ROLE_ROUTINES[role] || []).slice(0, 2);
+const PLAN_DESK = new Set(['desk', 'office']);
 const planMissing = () => ['level', 'minutes', 'focus'].filter(k => k === 'focus' ? !(profile.focus || []).length : !profile[k]);
 function planPick() {
-  const recs = recommendations(ROUTINES.length).filter(x => x.r.cat !== 'hockey'), out = [], cats = new Set();
+  const roles = hockeyRoles(), hk = [...new Set(roles.flatMap(planHockey))].filter(id => R(id)).slice(0, 2);
+  const recs = recommendations(ROUTINES.length).filter(x => x.r.cat !== 'hockey' && !(hk.length && PLAN_DESK.has(x.r.cat))), out = hk.map(planRec), cats = new Set(out.map(() => 'hockey'));
   const ids = (x) => new Set((x.plan ? x.plan.items.map(([id]) => id) : x.r.items.map(([id]) => id)));
   const same = (a, b) => { const A = ids(a), B = ids(b); let n = 0; A.forEach(i => { if (B.has(i)) n++; }); return n / Math.max(1, Math.min(A.size, B.size)) > 0.6; };
   const fresh = (x) => !out.some(y => same(x, y));
