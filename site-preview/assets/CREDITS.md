@@ -38,3 +38,5 @@ All under the SIL Open Font License 1.1:
 `img/low-lunge-*-400.webp` and `img/lib/*-400.webp` are MeFlex's own AI-generated stretch pictures, approved by Chris and
 shipped in the app (`meflex-source` `app/figures/`), resized to 400 px. The page labels them "Pictures made with AI.".
 The traced `lunge.svg` is no longer used on this page and was removed (the three directions keep their own copy in `directions/shared/`).
+
+`img/share-1200x630.jpg` (YY1, Nov 18) is the share picture for links (Open Graph and Twitter cards): the approved man Low Lunge picture (`img/low-lunge-960.webp`, AI-generated) on the site's dark background, with the name set in the site's own fonts (Big Shoulders Display and Barlow, as listed above). Made with a local browser screenshot; nothing downloaded.
