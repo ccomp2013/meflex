@@ -38,3 +38,8 @@ All under the SIL Open Font License 1.1:
 `img/low-lunge-*-400.webp` and `img/lib/*-400.webp` are MeFlex's own AI-generated stretch pictures, approved by Chris and
 shipped in the app (`meflex-source` `app/figures/`), resized to 400 px. The page labels them "Pictures made with AI.".
 The traced `lunge.svg` is no longer used on this page and was removed (the three directions keep their own copy in `directions/shared/`).
+
+FF4 (Nov 18): 34 more `img/lib/*-400.webp` for the three hockey drafts (referee, goalie and adult-league pages), made the same way
+from the live app's 640 px pictures (version cda5ddc6b18a), WebP quality 80. Where a woman picture differs from the written steps
+(Front Leg Swings, Standing Groin Stretch, Lying Hamstring, Standing Forward Fold; `docs/reports/steps-vs-pictures.md` in meflex-source),
+the page uses the man's.
