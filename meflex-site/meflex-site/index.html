@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="c5acec1616b5">
+<meta name="meflex-version" content="0219f420a8d6">
 <meta name="meflex-voice" content="voice/">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -52,11 +52,28 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .picplate { position: relative; }
 .loopvid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; background: inherit; }
 .loopvid.mirror { transform: scaleX(-1); }
-.stage .showme { position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%); z-index: 3; display: inline-flex; align-items: center; gap: 6px;
-  min-height: var(--tap); padding: 0 16px; border-radius: 22px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); font-size: calc(15px * var(--ts, 1)); font-weight: 600; }
-.showme svg, .showme2 svg { width: 16px; height: 16px; fill: currentColor; }
-.showme2 { display: inline-flex; align-items: center; gap: 6px; margin: var(--sp3) 0 0; }
-.infoloop { position: relative; width: min(72vw, 280px); aspect-ratio: 1; margin: var(--sp3) auto 0; border-radius: 50%; overflow: hidden; }
+.loopvid { opacity: 0; transition: opacity .25s ease; }
+.loopvid.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .loopvid { transition: none; } }
+.showbadge { position: absolute; right: 7%; bottom: 7%; z-index: 3; width: 44px; height: 44px; padding: 0; border: 0; background: none; display: grid; place-items: center; border-radius: 50%; cursor: pointer; }
+.showbadge[hidden] { display: none; }
+.showbadge .sb { width: 32px; height: 32px; border-radius: 50%; background: rgba(14, 17, 19, .78); color: #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .35); display: grid; place-items: center; }
+.showbadge svg { width: 14px; height: 14px; fill: currentColor; display: none; }
+.showbadge .i-play { display: block; }
+.showbadge.on .i-play, .showbadge.replay .i-play { display: none; }
+.showbadge.on .i-stop { display: block; }
+.showbadge.replay:not(.on) .i-replay { display: block; }
+.showbadge:focus-visible { outline: none; }
+.showbadge:focus-visible .sb { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stage.hasdemo .art, .infohero .heroart { cursor: pointer; }
+.showhint { position: absolute; left: 50%; bottom: -6px; transform: translateX(-50%); z-index: 4; white-space: nowrap; pointer-events: none; background: var(--raised); color: var(--ink);
+  font-size: calc(13px * min(var(--ts, 1), 1.3)); font-weight: 600; padding: 7px 12px; border-radius: 16px; box-shadow: 0 2px 10px rgba(0, 0, 0, .35); }
+.showhint[hidden] { display: none; }
+.infohero { position: relative; width: min(72vw, 280px); aspect-ratio: 1; margin: 4px auto 18px; }
+.infohero[hidden] { display: none; }
+.infohero .heroart { width: 100%; height: 100%; }
+.infohero .showbadge { right: 3%; bottom: 3%; }
+#info.has-hero .head .mini { display: none; }
 #routine .scroll { flex: 1; overflow-y: auto; min-height: 0; padding-block: 28px calc(120px + var(--sab)); scroll-padding-bottom: calc(120px + var(--sab)); -webkit-overflow-scrolling: touch; }
 #routine .meta { color: var(--accent); font-weight: 600; font-size: calc(15px * var(--ts, 1)); font-variant-numeric: tabular-nums; }
 #routine h1 { font-size: calc(34px * var(--ts, 1)); line-height: 1.1; letter-spacing: -0.6px; margin: 6px 0 0; text-wrap: balance; }
@@ -269,13 +286,6 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus { outl
 .fchip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .count { color: var(--muted); font-size: calc(13px * var(--ts, 1)); margin: 14px 0 0; font-variant-numeric: tabular-nums; }
 .needs { margin-top: 30px; border-top: 1px solid var(--line); padding-top: 14px; }
-.needs summary { min-height: 44px; cursor: pointer; font-size: calc(13px * var(--ts, 1)); color: var(--muted); font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-.needs summary::-webkit-details-marker { display: none; }
-.needs summary::after { content: "Show"; text-transform: none; letter-spacing: 0; color: var(--accent); font-weight: 600; }
-.needs[open] summary::after { content: "Hide"; }
-.needs ul { margin: 10px 0 0; padding: 0; list-style: none; columns: 2; column-gap: 16px; font-size: calc(14px * var(--ts, 1)); }
-.needs li { padding: 3px 0; break-inside: avoid; }
-.needs li span { color: var(--muted); font-size: calc(12px * var(--ts, 1)); }
 #info .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: -8px 0 6px; }
 #info .tags span { font-size: calc(12px * var(--ts, 1)); font-weight: 600; color: var(--muted); border: 1px solid var(--line); border-radius: 12px; padding: 3px 9px; }
 #setup { padding-block: var(--sat) 0; position: relative; }
@@ -641,8 +651,6 @@ body.hasupd .tabbed .scroll { padding-bottom: calc(172px + env(safe-area-inset-b
 .ts-big #rList .stepper { margin-left: auto; }
 </style>
 <style>
-/* Apple-readiness item 6: the to-do list of stretches still needing a reference photo is never shown to people (website and iPhone app); it stays in the preview and test pages */
-#libNeeds { display: none !important; }
 /* The page fills the whole screen, under the status bar and home indicator; content keeps clear of them. */
 :root { --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px); }
 html { height: 100%; background: #0E1113; }
@@ -786,7 +794,6 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     </div>
     <p class="count" id="libCount" aria-live="polite"></p>
     <div id="libBody"></div>
-    <details class="needs" id="libNeeds"><summary id="libNeedsSum"></summary><p class="note">These show as plain colored circles until a side-on reference photo is traced.</p><ul id="libNeedsList"></ul></details>
   </div>
 </section>
 
@@ -969,7 +976,8 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
         <circle id="ringFill" cx="50" cy="50" r="47" stroke="var(--ink)" stroke-linecap="round" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="1000"/>
       </svg>
       <div class="art" id="art"></div>
-      <button class="showme" id="showMe" aria-pressed="false" hidden><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.5l11 6.5-11 6.5z"/></svg><span>Show me</span></button>
+      <button class="showbadge" id="showMe" hidden><span class="sb"><svg class="i-play" aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.5l11 6.5-11 6.5z"/></svg><svg class="i-stop" aria-hidden="true" viewBox="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="1.5"/></svg></span></button>
+      <div class="showhint" id="showHint" aria-hidden="true" hidden>Tap the picture to watch it move</div>
       <div class="cdnum" id="cdNum" aria-live="polite" hidden></div>
       <div class="bubble" id="graceBubble" aria-live="off" hidden></div>
       <div class="sides2" id="twoSides" role="img" aria-label="Two sides" hidden><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/></svg></div>
@@ -989,9 +997,8 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 
 <section class="screen" id="info" hidden>
   <div class="bar"><button class="icon" id="infoBack" aria-label="Back"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="mid">How to</div><span></span></div>
+  <div class="infohero" id="infoHero" hidden><div class="heroart" id="infoHeroArt"></div><button class="showbadge" id="infoShowMe" hidden><span class="sb"><svg class="i-play" aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.5l11 6.5-11 6.5z"/></svg><svg class="i-stop" aria-hidden="true" viewBox="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="1.5"/></svg><svg class="i-replay" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5a7 7 0 1 1-6.6 4.7l1.9.6A5 5 0 1 0 12 7v3L7.5 6 12 2z"/></svg></span></button></div>
   <div class="head"><div class="mini" id="infoArt"></div><div><h1 id="infoName"></h1><div class="focus" id="infoFocus"></div></div></div>
-  <button class="ghost showme2" id="infoShowMe" aria-pressed="false" hidden><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.5l11 6.5-11 6.5z"/></svg><span>Show me</span></button>
-  <div class="plate infoloop" id="infoLoop" hidden></div>
   <div class="tags" id="infoTags"></div>
   <p class="youthnote" id="infoYouth" hidden>It should feel a little tight, never painful. Stop if anything hurts. Ask a coach or doctor.</p>
   <p class="pnote" id="infoPersonal" data-private hidden></p>
@@ -1081,7 +1088,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <h2 id="safetyTitle" tabindex="-1">Privacy and safety</h2>
     <p class="resettext" id="safetyHealth"><b>Health notice.</b> MeFlex is general stretching guidance, not medical advice. A stretch should feel like mild discomfort, never pain; ease off if it hurts. If you’re pregnant, injured, have a health condition or are unsure, check with a doctor first.</p>
     <p class="resettext" id="safetyPrivacy"></p>
-    <p class="resettext" id="safetyPictures" hidden>Stretch pictures are AI-generated.</p>
+    <p class="resettext" id="safetyPictures" hidden>Stretch pictures and demo clips are AI-generated.</p>
     <button class="cta" id="safetyDone">Done</button>
   </div>
 </div>
@@ -1551,7 +1558,7 @@ Object.entries(KID_STEPS).forEach(([id, steps]) => { const st = STRETCHES.find(s
 const SUPPORTED = ['groinhold', 'ankledf', 'postwall', 'chairfig4', 'chairham', 'seatedtwist', 'necktilt', 'levator', 'chintuck', 'neckturn', 'calf', 'doorway', 'crossbody', 'chestclasp', 'bandchest'];
 STRETCHES.forEach(s => { s.supported = SUPPORTED.includes(s.id); });
 const BY_ID = Object.fromEntries(STRETCHES.map(s => [s.id, s]));
-const PICS = {"ankledf":{"v":"a8f33b0e","loop":null},"anklerock":{"v":"911c5049","loop":null},"armcircles":{"v":"41b57d91","loop":null},"bandadd":{"v":"7cb4ad47","loop":null},"bandcalf":{"v":"a96d5053","loop":null},"bandchest":{"v":"093ec867","loop":null},"bandcross":{"v":"690bf78d","loop":null},"bandham":{"v":"cc7fd8df","loop":null},"bandlat":{"v":"af0c8982","loop":null},"bandquad":{"v":"407bae69","loop":null},"butterfly":{"v":"62cdc0e5","loop":null},"buttkicks":{"v":"a66d1809","loop":null},"calf":{"v":"0a14d5c0","loop":null},"calfdrop":{"v":"97c87646","loop":null},"catcow":{"v":"0cbc84a2","loop":null},"chairfig4":{"v":"3156b617","loop":null},"chairham":{"v":"79f2fa67","loop":null},"chestclasp":{"v":"1909fb8b","loop":null},"child":{"v":"e30eb409","loop":null},"chintuck":{"v":"a55b103f","loop":null},"cobra":{"v":"3b105fed","loop":null},"cossack":{"v":"6175a924","loop":null},"couch":{"v":"a2b1502e","loop":null},"crossbody":{"v":"5f496ae8","loop":null},"dbfly":{"v":"10563170","loop":null},"doorway":{"v":"d289783c","loop":null},"downdog":{"v":"3109fa5a","loop":null},"figure4":{"v":"75c67c42","loop":null},"fold":{"v":"9a4d92d0","loop":null},"frog":{"v":"d23de5f0","loop":null},"gate":{"v":"face0345","loop":null},"goblet":{"v":"47dedac9","loop":null},"groinhold":{"v":"619f54f8","loop":null},"halfsplit":{"v":"f27b0572","loop":null},"happybaby":{"v":"d1ab1006","loop":null},"highknees":{"v":"dab2adce","loop":null},"hiplunge":{"v":"2f89a04e","loop":"3236b681"},"inchworm":{"v":"74f7527c","loop":null},"kneeschest":{"v":"b5d6dc38","loop":null},"lateral":{"v":"25f04159","loop":"4dd7ccbd"},"legswing":{"v":"d141c625","loop":null},"levator":{"v":"8760091f","loop":null},"lizard":{"v":"0a4f97bd","loop":null},"lunge":{"v":"25293428","loop":"5fb29044"},"lyingham":{"v":"1cb729bc","loop":null},"necktilt":{"v":"6dc8f687","loop":null},"neckturn":{"v":"50a8b26d","loop":null},"passthrough":{"v":"ed8b9ed1","loop":null},"pigeon":{"v":"5b82af3b","loop":null},"postwall":{"v":"fb964c95","loop":null},"pullover":{"v":"e8820e95","loop":null},"puppy":{"v":"8e5dd34e","loop":null},"quad":{"v":"6250f0f8","loop":"55eefc3f"},"rdlhold":{"v":"147b3bbf","loop":null},"seatedtwist":{"v":"c94f4c98","loop":null},"sidebend":{"v":"610313c9","loop":null},"sidequad":{"v":"c3d587b5","loop":null},"sideswing":{"v":"1ba9e48b","loop":null},"skatestance":{"v":"3e680fa9","loop":null},"sphinx":{"v":"8349a4d2","loop":null},"standfold":{"v":"d3455a11","loop":null},"suitcase":{"v":"faeb34cb","loop":null},"thread":{"v":"04dc8a99","loop":null},"torsotwist":{"v":"81bb2d2f","loop":null},"twist":{"v":"183f0d8f","loop":null},"w-ankledf":{"v":"f0af4e86","loop":null},"w-anklerock":{"v":"bec78cbe","loop":null},"w-armcircles":{"v":"20e1b17d","loop":null},"w-bandadd":{"v":"37af3562","loop":null},"w-bandcalf":{"v":"a7ca095b","loop":null},"w-bandchest":{"v":"b4c47cae","loop":null},"w-bandcross":{"v":"0378abb0","loop":null},"w-bandham":{"v":"69ea0463","loop":null},"w-bandlat":{"v":"32398a04","loop":null},"w-bandquad":{"v":"55222718","loop":null},"w-butterfly":{"v":"3771c93c","loop":null},"w-buttkicks":{"v":"002ca8e3","loop":null},"w-calf":{"v":"bf30e4cb","loop":null},"w-calfdrop":{"v":"f9c8a021","loop":null},"w-catcow":{"v":"0d9bf87a","loop":null},"w-chairfig4":{"v":"e9703627","loop":null},"w-chairham":{"v":"600c5e2c","loop":null},"w-chestclasp":{"v":"4af09d9a","loop":null},"w-child":{"v":"855e0673","loop":null},"w-chintuck":{"v":"8f234c93","loop":null},"w-cobra":{"v":"7be58832","loop":null},"w-cossack":{"v":"beada11e","loop":null},"w-couch":{"v":"6c2f0b9c","loop":null},"w-crossbody":{"v":"d6de1afc","loop":null},"w-dbfly":{"v":"ac888e12","loop":null},"w-doorway":{"v":"99234351","loop":null},"w-downdog":{"v":"1d1f8be1","loop":null},"w-figure4":{"v":"afebc674","loop":null},"w-fold":{"v":"656f481f","loop":null},"w-frog":{"v":"f451a50e","loop":null},"w-gate":{"v":"549ddd89","loop":null},"w-goblet":{"v":"537b4583","loop":null},"w-groinhold":{"v":"cb01b3b1","loop":null},"w-halfsplit":{"v":"20662c61","loop":null},"w-happybaby":{"v":"0658ab32","loop":null},"w-highknees":{"v":"bdc00bbb","loop":null},"w-hiplunge":{"v":"c917d115","loop":null},"w-inchworm":{"v":"577c28df","loop":null},"w-kneeschest":{"v":"743a6dfa","loop":null},"w-lateral":{"v":"3cb2a7d3","loop":null},"w-legswing":{"v":"2467a979","loop":null},"w-levator":{"v":"d166c57a","loop":null},"w-lizard":{"v":"7cc08ab2","loop":null},"w-lunge":{"v":"63866dc2","loop":"39ee6efd"},"w-lyingham":{"v":"fe759cfe","loop":null},"w-necktilt":{"v":"22924b2f","loop":null},"w-neckturn":{"v":"5af43185","loop":null},"w-passthrough":{"v":"10bfce31","loop":null},"w-pigeon":{"v":"a89b8f65","loop":null},"w-postwall":{"v":"b8e7a79c","loop":null},"w-pullover":{"v":"15239280","loop":null},"w-puppy":{"v":"058ca523","loop":null},"w-quad":{"v":"1b58687d","loop":"70738fff"},"w-rdlhold":{"v":"06b1b1c0","loop":null},"w-seatedtwist":{"v":"09e1504d","loop":null},"w-sidebend":{"v":"6f735ad6","loop":null},"w-sidequad":{"v":"5a2dfb1a","loop":null},"w-sideswing":{"v":"484561d0","loop":null},"w-skatestance":{"v":"82716257","loop":null},"w-sphinx":{"v":"4fdcb7fe","loop":null},"w-standfold":{"v":"b34553d0","loop":null},"w-suitcase":{"v":"45e68e4c","loop":null},"w-thread":{"v":"d2486033","loop":null},"w-torsotwist":{"v":"71170482","loop":null},"w-twist":{"v":"f2c23353","loop":null},"w-walklunge":{"v":"7d9e101b","loop":null},"walklunge":{"v":"58b611e7","loop":null}};
+const PICS = {"ankledf":{"v":"a8f33b0e","loop":"707d28f1"},"anklerock":{"v":"911c5049","loop":"8804cf1b"},"armcircles":{"v":"41b57d91","loop":null},"bandadd":{"v":"7cb4ad47","loop":null},"bandcalf":{"v":"a96d5053","loop":null},"bandchest":{"v":"093ec867","loop":null},"bandcross":{"v":"690bf78d","loop":null},"bandham":{"v":"cc7fd8df","loop":null},"bandlat":{"v":"af0c8982","loop":null},"bandquad":{"v":"407bae69","loop":null},"butterfly":{"v":"62cdc0e5","loop":null},"buttkicks":{"v":"a66d1809","loop":"165dfc48"},"calf":{"v":"0a14d5c0","loop":null},"calfdrop":{"v":"97c87646","loop":null},"catcow":{"v":"0cbc84a2","loop":null},"chairfig4":{"v":"3156b617","loop":null},"chairham":{"v":"79f2fa67","loop":null},"chestclasp":{"v":"1909fb8b","loop":null},"child":{"v":"e30eb409","loop":null},"chintuck":{"v":"a55b103f","loop":null},"cobra":{"v":"3b105fed","loop":null},"cossack":{"v":"6175a924","loop":null},"couch":{"v":"a2b1502e","loop":null},"crossbody":{"v":"5f496ae8","loop":null},"dbfly":{"v":"10563170","loop":null},"doorway":{"v":"d289783c","loop":null},"downdog":{"v":"3109fa5a","loop":null},"figure4":{"v":"75c67c42","loop":null},"fold":{"v":"9a4d92d0","loop":null},"frog":{"v":"d23de5f0","loop":null},"gate":{"v":"face0345","loop":null},"goblet":{"v":"47dedac9","loop":null},"groinhold":{"v":"619f54f8","loop":"7c9904ea"},"halfsplit":{"v":"f27b0572","loop":null},"happybaby":{"v":"d1ab1006","loop":null},"highknees":{"v":"dab2adce","loop":"8e58819a"},"hiplunge":{"v":"2f89a04e","loop":"3236b681"},"inchworm":{"v":"74f7527c","loop":null},"kneeschest":{"v":"b5d6dc38","loop":null},"lateral":{"v":"25f04159","loop":"4dd7ccbd"},"legswing":{"v":"d141c625","loop":null},"levator":{"v":"8760091f","loop":null},"lizard":{"v":"0a4f97bd","loop":null},"lunge":{"v":"25293428","loop":"5fb29044"},"lyingham":{"v":"1cb729bc","loop":null},"necktilt":{"v":"6dc8f687","loop":null},"neckturn":{"v":"50a8b26d","loop":null},"passthrough":{"v":"ed8b9ed1","loop":null},"pigeon":{"v":"5b82af3b","loop":null},"postwall":{"v":"fb964c95","loop":null},"pullover":{"v":"e8820e95","loop":null},"puppy":{"v":"8e5dd34e","loop":null},"quad":{"v":"6250f0f8","loop":"55eefc3f"},"rdlhold":{"v":"147b3bbf","loop":null},"seatedtwist":{"v":"c94f4c98","loop":null},"sidebend":{"v":"610313c9","loop":null},"sidequad":{"v":"c3d587b5","loop":null},"sideswing":{"v":"1ba9e48b","loop":"539e2238"},"skatestance":{"v":"3e680fa9","loop":"0d598b18"},"sphinx":{"v":"8349a4d2","loop":null},"standfold":{"v":"d3455a11","loop":null},"suitcase":{"v":"faeb34cb","loop":null},"thread":{"v":"04dc8a99","loop":null},"torsotwist":{"v":"81bb2d2f","loop":null},"twist":{"v":"183f0d8f","loop":null},"w-ankledf":{"v":"f0af4e86","loop":"964d3d50"},"w-anklerock":{"v":"bec78cbe","loop":"f6f48938"},"w-armcircles":{"v":"20e1b17d","loop":null},"w-bandadd":{"v":"37af3562","loop":null},"w-bandcalf":{"v":"a7ca095b","loop":null},"w-bandchest":{"v":"b4c47cae","loop":null},"w-bandcross":{"v":"0378abb0","loop":null},"w-bandham":{"v":"69ea0463","loop":null},"w-bandlat":{"v":"32398a04","loop":null},"w-bandquad":{"v":"55222718","loop":null},"w-butterfly":{"v":"3771c93c","loop":null},"w-buttkicks":{"v":"002ca8e3","loop":"8114c715"},"w-calf":{"v":"bf30e4cb","loop":null},"w-calfdrop":{"v":"f9c8a021","loop":null},"w-catcow":{"v":"0d9bf87a","loop":null},"w-chairfig4":{"v":"e9703627","loop":null},"w-chairham":{"v":"600c5e2c","loop":null},"w-chestclasp":{"v":"4af09d9a","loop":null},"w-child":{"v":"855e0673","loop":null},"w-chintuck":{"v":"8f234c93","loop":null},"w-cobra":{"v":"7be58832","loop":null},"w-cossack":{"v":"beada11e","loop":null},"w-couch":{"v":"6c2f0b9c","loop":null},"w-crossbody":{"v":"d6de1afc","loop":null},"w-dbfly":{"v":"ac888e12","loop":null},"w-doorway":{"v":"99234351","loop":null},"w-downdog":{"v":"1d1f8be1","loop":null},"w-figure4":{"v":"afebc674","loop":null},"w-fold":{"v":"656f481f","loop":null},"w-frog":{"v":"f451a50e","loop":null},"w-gate":{"v":"549ddd89","loop":null},"w-goblet":{"v":"537b4583","loop":null},"w-groinhold":{"v":"cb01b3b1","loop":null},"w-halfsplit":{"v":"20662c61","loop":null},"w-happybaby":{"v":"0658ab32","loop":null},"w-highknees":{"v":"bdc00bbb","loop":"5914af7b"},"w-hiplunge":{"v":"c917d115","loop":null},"w-inchworm":{"v":"577c28df","loop":null},"w-kneeschest":{"v":"743a6dfa","loop":null},"w-lateral":{"v":"3cb2a7d3","loop":null},"w-legswing":{"v":"2467a979","loop":null},"w-levator":{"v":"d166c57a","loop":null},"w-lizard":{"v":"7cc08ab2","loop":null},"w-lunge":{"v":"63866dc2","loop":"39ee6efd"},"w-lyingham":{"v":"fe759cfe","loop":null},"w-necktilt":{"v":"22924b2f","loop":null},"w-neckturn":{"v":"5af43185","loop":null},"w-passthrough":{"v":"10bfce31","loop":null},"w-pigeon":{"v":"a89b8f65","loop":null},"w-postwall":{"v":"b8e7a79c","loop":null},"w-pullover":{"v":"15239280","loop":null},"w-puppy":{"v":"058ca523","loop":null},"w-quad":{"v":"1b58687d","loop":"70738fff"},"w-rdlhold":{"v":"06b1b1c0","loop":null},"w-seatedtwist":{"v":"09e1504d","loop":null},"w-sidebend":{"v":"6f735ad6","loop":null},"w-sidequad":{"v":"5a2dfb1a","loop":null},"w-sideswing":{"v":"484561d0","loop":"0b144005"},"w-skatestance":{"v":"82716257","loop":"353efbf1"},"w-sphinx":{"v":"4fdcb7fe","loop":null},"w-standfold":{"v":"b34553d0","loop":null},"w-suitcase":{"v":"45e68e4c","loop":null},"w-thread":{"v":"d2486033","loop":null},"w-torsotwist":{"v":"71170482","loop":null},"w-twist":{"v":"f2c23353","loop":null},"w-walklunge":{"v":"7d9e101b","loop":null},"walklunge":{"v":"58b611e7","loop":null}};
 const PIC_W = [192, 640, 960];
 let PIC_BASE = 'figures/';
 
@@ -1990,22 +1997,37 @@ function showMeOffline(btn, id, still) {
   Platform.cached(loopSrc(k)).then(ok => { if (!ok && still()) btn.hidden = true; });
 }
 window.addEventListener('online', () => { if (!$('player').hidden && STEPS[P.i]) $('showMe').hidden = !loopFor(STEPS[P.i].s.id); });
-function showMeLabel(btn, on) { btn.querySelector('span').textContent = on ? 'Show picture' : 'Show me'; btn.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+function showMeLabel(btn, on) {
+  const n = btn.dataset.sname || ''; btn.classList.toggle('on', on); btn.removeAttribute('aria-pressed');
+  btn.setAttribute('aria-label', (on ? 'Stop demo' : btn.classList.contains('replay') ? 'Replay demo' : 'Play demo') + (n ? ', ' + n : ''));
+}
+const SHOWME_HINT_KEY = 'meflex.showmeHint';
+let showHintTimer = 0;
+function showMeHint(offer) {
+  const h = $('showHint');
+  if (!offer) { clearTimeout(showHintTimer); h.hidden = true; return; }
+  if (store.get(SHOWME_HINT_KEY, false)) return;
+  store.set(SHOWME_HINT_KEY, true); h.hidden = false; showHintTimer = setTimeout(() => { h.hidden = true; }, 4000);
+}
 function showMeStop() {
   const { video, url, btn, holder } = SHOWME; SHOWME.video = SHOWME.url = SHOWME.btn = SHOWME.holder = null;
-  if (video) { try { video.pause(); } catch (e) {} video.remove(); }
+  if (video) { try { video.pause(); } catch (e) {}
+    if (!reduceMotion() && video.classList.contains('on')) { video.classList.add('leaving'); video.classList.remove('on'); setTimeout(() => video.remove(), 260); }
+    else video.remove();
+  }
   if (url) Platform.loopFree(url);
+  if (btn === $('infoShowMe')) btn.classList.add('replay');
   if (btn) showMeLabel(btn, false);
-  if (holder && holder.id === 'infoLoop') holder.hidden = true;
 }
-async function showMeStart(btn, holder, key, mirror) {
-  showMeStop(); SHOWME.btn = btn; SHOWME.holder = holder; showMeLabel(btn, true);
+async function showMeStart(btn, holder, key, mirror, once = false) {
+  showMeStop(); SHOWME.btn = btn; SHOWME.holder = holder; showMeLabel(btn, true); $('showHint').hidden = true;
   const v = document.createElement('video'); v.className = 'loopvid' + (mirror ? ' mirror' : ''); v.muted = true; v.defaultMuted = true; v.playsInline = true;
-  v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true'); v.loop = !reduceMotion();
+  v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true'); v.loop = !once && !reduceMotion();
   v.onended = () => { if (SHOWME.video === v) showMeStop(); }; v.onerror = () => { if (SHOWME.video === v) showMeStop(); };
-  SHOWME.video = v; if (holder.id === 'infoLoop') holder.hidden = false; holder.appendChild(v);
+  SHOWME.video = v; holder.appendChild(v);
   try { const u = await Platform.loop(loopSrc(key)); if (SHOWME.video !== v) { Platform.loopFree(u); return; }
-    SHOWME.url = u; v.src = u; const p = v.play(); if (p && p.catch) p.catch(() => { if (SHOWME.video === v) showMeStop(); });
+    SHOWME.url = u; v.src = u; const p = v.play(), show = () => { if (SHOWME.video === v) v.classList.add('on'); };
+    if (p && p.then) p.then(show, () => { if (SHOWME.video === v) showMeStop(); }); else show();
   } catch (e) { if (SHOWME.video === v) showMeStop(); }
 }
 
@@ -2353,9 +2375,6 @@ function renderLibrary() {
     const sts = hit.filter(s => s.kind === k);
     return sts.length ? `<h2 class="sec">${name} <span>(${sts.length})</span></h2><ul class="rows">${sts.map(stretchRow).join('')}</ul>` : '';
   }).join('') : '<p class="empty">No exercises match both filters.</p>';
-  const needs = STRETCHES.filter(s => !s.figure);
-  $('libNeedsSum').textContent = `Need a reference photo (${needs.length})`;
-  $('libNeedsList').innerHTML = needs.map(s => `<li>${esc(s.name)} <span>${POSITIONS[s.pos]}</span></li>`).join('');
 }
 document.querySelector('#library .filters').addEventListener('click', (e) => {
   const b = e.target.closest('.fchip'); if (!b) return;
@@ -2796,6 +2815,7 @@ function load(i, { animate = true, remaining, quiet = false } = {}) {
   P.lastSec = Math.ceil(P.remaining / 1000);
   if (isSecondSide(i)) sideFlip(art(st.s, st.mirror, true, 360), animate); else crossfade(art(st.s, st.mirror, true, 360), animate);
   const hasLoop = !!loopFor(st.s.id); if ($('showMe').hidden === hasLoop) $('showMe').hidden = !hasLoop; showMeOffline($('showMe'), st.s.id, () => STEPS[P.i] === st);
+  $('showMe').dataset.sname = st.s.name; showMeLabel($('showMe'), false); document.querySelector('#player .stage').classList.toggle('hasdemo', hasLoop); showMeHint(hasLoop);
   $('count').textContent = `${st.si + 1} of ${cur.items.length}`;
   $('prevBtn').disabled = i === 0;
   render();
@@ -3077,7 +3097,10 @@ function openInfo(st, mirror, from, fromPlayer) {
   infoFrom = from; resumeAfterInfo = fromPlayer && P.running;
   if (fromPlayer) setRunning(false);
   $('infoArt').innerHTML = art(st, mirror, false, 96);
-  { const lk = loopFor(st.id); $('infoShowMe').hidden = !lk; showMeOffline($('infoShowMe'), st.id, () => INFO_LOOP && INFO_LOOP.key === lk); INFO_LOOP = lk ? { key: lk, mirror: picSecondSide(lk) ? !mirror : mirror, circle: (st.circle || '') } : null; }
+  { const lk = loopFor(st.id), b = $('infoShowMe');
+    INFO_LOOP = lk ? { key: lk } : null; $('infoHero').hidden = !lk; $('info').classList.toggle('has-hero', !!lk);
+    $('infoHeroArt').innerHTML = lk ? art(st, mirror, false, 280) : ''; b.hidden = !lk; b.classList.remove('replay', 'on');
+    if (lk) { b.dataset.sname = st.name; showMeLabel(b, false); showMeOffline(b, st.id, () => INFO_LOOP && INFO_LOOP.key === lk); infoAutoplay(lk); } }
   $('infoName').textContent = st.name;
   $('infoFocus').textContent = st.focus;
   const kid = cur && cur.r.youth && ['routine', 'player'].includes(from) && st.kidSteps;
@@ -3092,7 +3115,13 @@ function openInfo(st, mirror, from, fromPlayer) {
 }
 $('infoBtn').onclick = () => { const s = STEPS[P.i]; openInfo(s.s, s.mirror, 'player', true); };
 let INFO_LOOP = null;
-$('infoShowMe').onclick = () => { if (SHOWME.btn === $('infoShowMe')) return showMeStop(); if (!INFO_LOOP) return; $('infoLoop').style.background = INFO_LOOP.circle; showMeStart($('infoShowMe'), $('infoLoop'), INFO_LOOP.key, INFO_LOOP.mirror); };
+function infoDemo() { const im = $('infoHeroArt').querySelector('img.pic'); if (!INFO_LOOP || !im || $('infoShowMe').hidden) return;
+  showMeStart($('infoShowMe'), im.parentNode, INFO_LOOP.key, im.classList.contains('mirror'), true); }
+function infoAutoplay(key) { if (reduceMotion()) return;
+  setTimeout(() => { if (current === 'info' && INFO_LOOP && INFO_LOOP.key === key && !SHOWME.video) infoDemo(); }, 450); }
+$('infoShowMe').onclick = () => { if (SHOWME.btn === $('infoShowMe')) return showMeStop(); infoDemo(); };
+$('infoHero').addEventListener('click', (e) => { if (!e.target.closest('#infoShowMe') && e.target.closest('.heroart')) $('infoShowMe').click(); });
+document.querySelector('#player .stage').addEventListener('click', (e) => { if (!e.target.closest('#showMe') && e.target.closest('.art') && !$('showMe').hidden) $('showMe').click(); });
 $('showMe').onclick = () => { if (SHOWME.btn === $('showMe')) return showMeStop(); const st = STEPS[P.i], k = st && loopFor(st.s.id), im = $('art').querySelector('img.pic'); if (!k || !im) return; showMeStart($('showMe'), im.parentNode, k, im.classList.contains('mirror')); };
 $('infoBack').onclick = () => { show(infoFrom); if (infoFrom === 'player' && resumeAfterInfo) setRunning(true); };
 
