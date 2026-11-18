@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="0219f420a8d6">
+<meta name="meflex-version" content="3eb056d1ebda">
 <meta name="meflex-voice" content="voice/">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -55,24 +55,26 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .loopvid { opacity: 0; transition: opacity .25s ease; }
 .loopvid.on { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .loopvid { transition: none; } }
-.showbadge { position: absolute; right: 7%; bottom: 7%; z-index: 3; width: 44px; height: 44px; padding: 0; border: 0; background: none; display: grid; place-items: center; border-radius: 50%; cursor: pointer; }
+.showbadge { position: absolute; z-index: 3; width: 56px; height: 56px; padding: 0; border: 0; background: none; display: grid; place-items: center; border-radius: 50%; cursor: pointer; }
+.infohero .showbadge { left: 100.74%; top: 68.47%; transform: translate(-50%, -50%); }
+.stage .showbadge { inset: 5.5%; width: auto; height: auto; }
+.stage .showbadge .sb { display: none; }
+.stage .showbadge:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 .showbadge[hidden] { display: none; }
-.showbadge .sb { width: 32px; height: 32px; border-radius: 50%; background: rgba(14, 17, 19, .78); color: #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .35); display: grid; place-items: center; }
-.showbadge svg { width: 14px; height: 14px; fill: currentColor; display: none; }
-.showbadge .i-play { display: block; }
+.showbadge .sb { width: 54px; height: 54px; border-radius: 50%; background: var(--ink); color: var(--bg); box-shadow: 0 2px 10px rgba(0, 0, 0, .35), 0 0 0 1px rgba(0, 0, 0, .06); display: grid; place-items: center; }
+.showbadge svg { width: 22px; height: 22px; fill: currentColor; display: none; }
+.showbadge .i-play { display: block; margin-left: 3px; }
 .showbadge.on .i-play, .showbadge.replay .i-play { display: none; }
 .showbadge.on .i-stop { display: block; }
 .showbadge.replay:not(.on) .i-replay { display: block; }
 .showbadge:focus-visible { outline: none; }
-.showbadge:focus-visible .sb { outline: 2px solid var(--accent); outline-offset: 2px; }
+.showbadge:focus-visible .sb { outline: 3px solid var(--accent); outline-offset: 3px; }
 .stage.hasdemo .art, .infohero .heroart { cursor: pointer; }
-.showhint { position: absolute; left: 50%; bottom: -6px; transform: translateX(-50%); z-index: 4; white-space: nowrap; pointer-events: none; background: var(--raised); color: var(--ink);
-  font-size: calc(13px * min(var(--ts, 1), 1.3)); font-weight: 600; padding: 7px 12px; border-radius: 16px; box-shadow: 0 2px 10px rgba(0, 0, 0, .35); }
-.showhint[hidden] { display: none; }
+.infotip { margin: 12px 0 0; color: var(--muted); font-size: calc(15px * min(var(--ts, 1), 1.3)); text-align: center; text-wrap: balance; }
+.showcap[hidden] { display: none; }
 .infohero { position: relative; width: min(72vw, 280px); aspect-ratio: 1; margin: 4px auto 18px; }
 .infohero[hidden] { display: none; }
 .infohero .heroart { width: 100%; height: 100%; }
-.infohero .showbadge { right: 3%; bottom: 3%; }
 #info.has-hero .head .mini { display: none; }
 #routine .scroll { flex: 1; overflow-y: auto; min-height: 0; padding-block: 28px calc(120px + var(--sab)); scroll-padding-bottom: calc(120px + var(--sab)); -webkit-overflow-scrolling: touch; }
 #routine .meta { color: var(--accent); font-weight: 600; font-size: calc(15px * var(--ts, 1)); font-variant-numeric: tabular-nums; }
@@ -977,7 +979,6 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
       </svg>
       <div class="art" id="art"></div>
       <button class="showbadge" id="showMe" hidden><span class="sb"><svg class="i-play" aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.5l11 6.5-11 6.5z"/></svg><svg class="i-stop" aria-hidden="true" viewBox="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="1.5"/></svg></span></button>
-      <div class="showhint" id="showHint" aria-hidden="true" hidden>Tap the picture to watch it move</div>
       <div class="cdnum" id="cdNum" aria-live="polite" hidden></div>
       <div class="bubble" id="graceBubble" aria-live="off" hidden></div>
       <div class="sides2" id="twoSides" role="img" aria-label="Two sides" hidden><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/></svg></div>
@@ -998,6 +999,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 <section class="screen" id="info" hidden>
   <div class="bar"><button class="icon" id="infoBack" aria-label="Back"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="mid">How to</div><span></span></div>
   <div class="infohero" id="infoHero" hidden><div class="heroart" id="infoHeroArt"></div><button class="showbadge" id="infoShowMe" hidden><span class="sb"><svg class="i-play" aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.5l11 6.5-11 6.5z"/></svg><svg class="i-stop" aria-hidden="true" viewBox="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="1.5"/></svg><svg class="i-replay" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5a7 7 0 1 1-6.6 4.7l1.9.6A5 5 0 1 0 12 7v3L7.5 6 12 2z"/></svg></span></button></div>
+  <p class="infotip" id="infoTip" hidden>Tip: during a workout, tap the picture to watch the move.</p>
   <div class="head"><div class="mini" id="infoArt"></div><div><h1 id="infoName"></h1><div class="focus" id="infoFocus"></div></div></div>
   <div class="tags" id="infoTags"></div>
   <p class="youthnote" id="infoYouth" hidden>It should feel a little tight, never painful. Stop if anything hurts. Ask a coach or doctor.</p>
@@ -2001,14 +2003,6 @@ function showMeLabel(btn, on) {
   const n = btn.dataset.sname || ''; btn.classList.toggle('on', on); btn.removeAttribute('aria-pressed');
   btn.setAttribute('aria-label', (on ? 'Stop demo' : btn.classList.contains('replay') ? 'Replay demo' : 'Play demo') + (n ? ', ' + n : ''));
 }
-const SHOWME_HINT_KEY = 'meflex.showmeHint';
-let showHintTimer = 0;
-function showMeHint(offer) {
-  const h = $('showHint');
-  if (!offer) { clearTimeout(showHintTimer); h.hidden = true; return; }
-  if (store.get(SHOWME_HINT_KEY, false)) return;
-  store.set(SHOWME_HINT_KEY, true); h.hidden = false; showHintTimer = setTimeout(() => { h.hidden = true; }, 4000);
-}
 function showMeStop() {
   const { video, url, btn, holder } = SHOWME; SHOWME.video = SHOWME.url = SHOWME.btn = SHOWME.holder = null;
   if (video) { try { video.pause(); } catch (e) {}
@@ -2020,7 +2014,7 @@ function showMeStop() {
   if (btn) showMeLabel(btn, false);
 }
 async function showMeStart(btn, holder, key, mirror, once = false) {
-  showMeStop(); SHOWME.btn = btn; SHOWME.holder = holder; showMeLabel(btn, true); $('showHint').hidden = true;
+  showMeStop(); SHOWME.btn = btn; SHOWME.holder = holder; showMeLabel(btn, true);
   const v = document.createElement('video'); v.className = 'loopvid' + (mirror ? ' mirror' : ''); v.muted = true; v.defaultMuted = true; v.playsInline = true;
   v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true'); v.loop = !once && !reduceMotion();
   v.onended = () => { if (SHOWME.video === v) showMeStop(); }; v.onerror = () => { if (SHOWME.video === v) showMeStop(); };
@@ -2815,7 +2809,7 @@ function load(i, { animate = true, remaining, quiet = false } = {}) {
   P.lastSec = Math.ceil(P.remaining / 1000);
   if (isSecondSide(i)) sideFlip(art(st.s, st.mirror, true, 360), animate); else crossfade(art(st.s, st.mirror, true, 360), animate);
   const hasLoop = !!loopFor(st.s.id); if ($('showMe').hidden === hasLoop) $('showMe').hidden = !hasLoop; showMeOffline($('showMe'), st.s.id, () => STEPS[P.i] === st);
-  $('showMe').dataset.sname = st.s.name; showMeLabel($('showMe'), false); document.querySelector('#player .stage').classList.toggle('hasdemo', hasLoop); showMeHint(hasLoop);
+  $('showMe').dataset.sname = st.s.name; showMeLabel($('showMe'), false); document.querySelector('#player .stage').classList.toggle('hasdemo', hasLoop);
   $('count').textContent = `${st.si + 1} of ${cur.items.length}`;
   $('prevBtn').disabled = i === 0;
   render();
@@ -3098,7 +3092,7 @@ function openInfo(st, mirror, from, fromPlayer) {
   if (fromPlayer) setRunning(false);
   $('infoArt').innerHTML = art(st, mirror, false, 96);
   { const lk = loopFor(st.id), b = $('infoShowMe');
-    INFO_LOOP = lk ? { key: lk } : null; $('infoHero').hidden = !lk; $('info').classList.toggle('has-hero', !!lk);
+    INFO_LOOP = lk ? { key: lk } : null; $('infoHero').hidden = !lk; $('infoTip').hidden = !lk; $('info').classList.toggle('has-hero', !!lk);
     $('infoHeroArt').innerHTML = lk ? art(st, mirror, false, 280) : ''; b.hidden = !lk; b.classList.remove('replay', 'on');
     if (lk) { b.dataset.sname = st.name; showMeLabel(b, false); showMeOffline(b, st.id, () => INFO_LOOP && INFO_LOOP.key === lk); infoAutoplay(lk); } }
   $('infoName').textContent = st.name;
