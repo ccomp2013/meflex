@@ -76,6 +76,11 @@
 .lu-name { font: 800 1.45rem/1.1 var(--display); }
 .lu-time { color: var(--sheet-muted); white-space: nowrap; }
 .also-note { margin-top: 1.25rem; color: var(--sheet-muted); max-width: 34rem; }
+.hockey-links { margin-top: 1.75rem; max-width: 36rem; }
+.hockey-links h4 { font: 800 1.25rem/1.1 var(--display); margin: 0 0 .25rem; }
+.hockey-links ul { list-style: none; margin: 0; padding: 0; }
+.hockey-links a { display: inline-flex; align-items: center; min-height: var(--tap); color: var(--rink-blue); font-weight: 600; text-decoration: underline; text-decoration-color: var(--rink-blue-soft); }
+.hockey-links a:hover { text-decoration-color: var(--rink-blue); }
 
 @media (min-width: 600px) {
   .also { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); align-items: center; gap: 2rem 3rem; }
