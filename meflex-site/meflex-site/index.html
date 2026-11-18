@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="917b5faadca3">
+<meta name="meflex-version" content="769d496e07dc">
 <meta name="meflex-voice" content="voice/">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -49,6 +49,14 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .picplate { box-sizing: border-box; width: 96%; height: 96%; margin: 2%; border-radius: 50%; overflow: hidden; }
 .picplate .pic { display: block; width: 100%; height: 100%; object-fit: cover; }
 .picplate .pic.mirror { transform: scaleX(-1); }
+.picplate { position: relative; }
+.loopvid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; background: inherit; }
+.loopvid.mirror { transform: scaleX(-1); }
+.stage .showme { position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%); z-index: 3; display: inline-flex; align-items: center; gap: 6px;
+  min-height: var(--tap); padding: 0 16px; border-radius: 22px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); font-size: 15px; font-weight: 600; }
+.showme svg, .showme2 svg { width: 16px; height: 16px; fill: currentColor; }
+.showme2 { display: inline-flex; align-items: center; gap: 6px; margin: var(--sp3) 0 0; }
+.infoloop { position: relative; width: min(72vw, 280px); aspect-ratio: 1; margin: var(--sp3) auto 0; border-radius: 50%; overflow: hidden; }
 #routine .scroll { flex: 1; overflow-y: auto; min-height: 0; padding-block: 28px calc(120px + var(--sab)); scroll-padding-bottom: calc(120px + var(--sab)); -webkit-overflow-scrolling: touch; }
 #routine .meta { color: var(--accent); font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; }
 #routine h1 { font-size: 34px; line-height: 1.1; letter-spacing: -0.6px; margin: 6px 0 0; text-wrap: balance; }
@@ -946,6 +954,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
         <circle id="ringFill" cx="50" cy="50" r="47" stroke="var(--ink)" stroke-linecap="round" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="1000"/>
       </svg>
       <div class="art" id="art"></div>
+      <button class="showme" id="showMe" aria-pressed="false" hidden><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.5l11 6.5-11 6.5z"/></svg><span>Show me</span></button>
       <div class="cdnum" id="cdNum" aria-live="polite" hidden></div>
       <div class="bubble" id="graceBubble" aria-live="off" hidden></div>
       <div class="sides2" id="twoSides" role="img" aria-label="Two sides" hidden><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/></svg></div>
@@ -966,6 +975,8 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
 <section class="screen" id="info" hidden>
   <div class="bar"><button class="icon" id="infoBack" aria-label="Back"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="mid">How to</div><span></span></div>
   <div class="head"><div class="mini" id="infoArt"></div><div><h1 id="infoName"></h1><div class="focus" id="infoFocus"></div></div></div>
+  <button class="ghost showme2" id="infoShowMe" aria-pressed="false" hidden><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.5l11 6.5-11 6.5z"/></svg><span>Show me</span></button>
+  <div class="plate infoloop" id="infoLoop" hidden></div>
   <div class="tags" id="infoTags"></div>
   <p class="youthnote" id="infoYouth" hidden>It should feel a little tight, never painful. Stop if anything hurts. Ask a coach or doctor.</p>
   <p class="pnote" id="infoPersonal" data-private hidden></p>
@@ -1182,6 +1193,8 @@ const Platform = (() => {
     async clearFiles() { const F = plug('Filesystem'); if (!F) return true;
       try { const { files } = await F.readdir({ path: '', directory: 'CACHE' }); await Promise.all((files || []).map(f => typeof f === 'string' ? f : f.name).filter(n => /^meflex-(backup-[\w-]+\.json|reminder\.ics)$/.test(n)).map(n => F.deleteFile({ path: n, directory: 'CACHE' }).catch(() => {}))); return true; } catch (e) { return false; } },
     reviewPrompt: () => false,
+    async loop(url) { const r = await fetch(url); if (!r.ok) throw new Error('loop ' + r.status); return URL.createObjectURL(await r.blob()); },
+    loopFree(u) { try { if (u) URL.revokeObjectURL(u); } catch (e) {} },
     saveFile(name, text, type, done) {
       const tell = (ok, how) => { try { if (done) done(ok, how); } catch (e) {} };
       const F = plug('Filesystem'), S = plug('Share');
@@ -1518,7 +1531,7 @@ Object.entries(KID_STEPS).forEach(([id, steps]) => { const st = STRETCHES.find(s
 const SUPPORTED = ['groinhold', 'ankledf', 'postwall', 'chairfig4', 'chairham', 'seatedtwist', 'necktilt', 'levator', 'chintuck', 'neckturn', 'calf', 'doorway', 'crossbody', 'chestclasp', 'bandchest'];
 STRETCHES.forEach(s => { s.supported = SUPPORTED.includes(s.id); });
 const BY_ID = Object.fromEntries(STRETCHES.map(s => [s.id, s]));
-const PICS = {"ankledf":{"v":"2fbe904b","loop":null},"anklerock":{"v":"cd11ad1b","loop":null},"armcircles":{"v":"4655a5b3","loop":null},"bandadd":{"v":"7cb4ad47","loop":null},"bandcalf":{"v":"a96d5053","loop":null},"bandchest":{"v":"093ec867","loop":null},"bandcross":{"v":"690bf78d","loop":null},"bandham":{"v":"cc7fd8df","loop":null},"bandlat":{"v":"af0c8982","loop":null},"bandquad":{"v":"407bae69","loop":null},"butterfly":{"v":"ed941436","loop":null},"buttkicks":{"v":"08e6effa","loop":null},"calf":{"v":"0a14d5c0","loop":null},"calfdrop":{"v":"97c87646","loop":null},"catcow":{"v":"0cbc84a2","loop":null},"chairfig4":{"v":"3156b617","loop":null},"chairham":{"v":"79f2fa67","loop":null},"chestclasp":{"v":"1909fb8b","loop":null},"child":{"v":"e30eb409","loop":null},"chintuck":{"v":"a55b103f","loop":null},"cobra":{"v":"3b105fed","loop":null},"cossack":{"v":"711ddeef","loop":null},"couch":{"v":"45f44fa8","loop":null},"crossbody":{"v":"5f496ae8","loop":null},"dbfly":{"v":"10563170","loop":null},"doorway":{"v":"d289783c","loop":null},"downdog":{"v":"3109fa5a","loop":null},"figure4":{"v":"75c67c42","loop":null},"fold":{"v":"9a4d92d0","loop":null},"frog":{"v":"bf22872d","loop":null},"gate":{"v":"dd91927a","loop":null},"goblet":{"v":"47dedac9","loop":null},"groinhold":{"v":"d1287163","loop":null},"halfsplit":{"v":"f27b0572","loop":null},"happybaby":{"v":"d1ab1006","loop":null},"highknees":{"v":"a209c5df","loop":null},"hiplunge":{"v":"2f89a04e","loop":null},"inchworm":{"v":"344036cf","loop":null},"kneeschest":{"v":"b5d6dc38","loop":null},"lateral":{"v":"25f04159","loop":null},"legswing":{"v":"65e67a84","loop":null},"levator":{"v":"8760091f","loop":null},"lizard":{"v":"8d0d0fd1","loop":null},"lunge":{"v":"25293428","loop":null},"lyingham":{"v":"1cb729bc","loop":null},"necktilt":{"v":"6dc8f687","loop":null},"neckturn":{"v":"50a8b26d","loop":null},"passthrough":{"v":"ed8b9ed1","loop":null},"pigeon":{"v":"b20192ee","loop":null},"postwall":{"v":"ad875854","loop":null},"pullover":{"v":"e8820e95","loop":null},"puppy":{"v":"8e5dd34e","loop":null},"quad":{"v":"6250f0f8","loop":null},"rdlhold":{"v":"147b3bbf","loop":null},"seatedtwist":{"v":"c94f4c98","loop":null},"sidebend":{"v":"610313c9","loop":null},"sidequad":{"v":"c3d587b5","loop":null},"sideswing":{"v":"9d98492e","loop":null},"skatestance":{"v":"6f9565a9","loop":null},"sphinx":{"v":"8349a4d2","loop":null},"standfold":{"v":"d3455a11","loop":null},"suitcase":{"v":"faeb34cb","loop":null},"thread":{"v":"04dc8a99","loop":null},"torsotwist":{"v":"815f4fc0","loop":null},"twist":{"v":"183f0d8f","loop":null},"w-ankledf":{"v":"f0af4e86","loop":null},"w-anklerock":{"v":"bec78cbe","loop":null},"w-armcircles":{"v":"20e1b17d","loop":null},"w-bandadd":{"v":"37af3562","loop":null},"w-bandcalf":{"v":"a7ca095b","loop":null},"w-bandchest":{"v":"b4c47cae","loop":null},"w-bandcross":{"v":"0378abb0","loop":null},"w-bandham":{"v":"69ea0463","loop":null},"w-bandlat":{"v":"32398a04","loop":null},"w-bandquad":{"v":"55222718","loop":null},"w-butterfly":{"v":"3771c93c","loop":null},"w-buttkicks":{"v":"002ca8e3","loop":null},"w-calf":{"v":"bf30e4cb","loop":null},"w-calfdrop":{"v":"f9c8a021","loop":null},"w-catcow":{"v":"0d9bf87a","loop":null},"w-chairfig4":{"v":"e9703627","loop":null},"w-chairham":{"v":"600c5e2c","loop":null},"w-chestclasp":{"v":"4af09d9a","loop":null},"w-child":{"v":"855e0673","loop":null},"w-chintuck":{"v":"8f234c93","loop":null},"w-cobra":{"v":"7be58832","loop":null},"w-cossack":{"v":"beada11e","loop":null},"w-couch":{"v":"6c2f0b9c","loop":null},"w-crossbody":{"v":"d6de1afc","loop":null},"w-dbfly":{"v":"ac888e12","loop":null},"w-doorway":{"v":"99234351","loop":null},"w-downdog":{"v":"1d1f8be1","loop":null},"w-figure4":{"v":"afebc674","loop":null},"w-fold":{"v":"656f481f","loop":null},"w-frog":{"v":"f451a50e","loop":null},"w-gate":{"v":"549ddd89","loop":null},"w-goblet":{"v":"537b4583","loop":null},"w-groinhold":{"v":"9df46b9d","loop":null},"w-halfsplit":{"v":"20662c61","loop":null},"w-happybaby":{"v":"0658ab32","loop":null},"w-highknees":{"v":"bdc00bbb","loop":null},"w-hiplunge":{"v":"c917d115","loop":null},"w-inchworm":{"v":"577c28df","loop":null},"w-kneeschest":{"v":"743a6dfa","loop":null},"w-lateral":{"v":"3cb2a7d3","loop":null},"w-legswing":{"v":"fcf623c6","loop":null},"w-levator":{"v":"d166c57a","loop":null},"w-lizard":{"v":"7cc08ab2","loop":null},"w-lunge":{"v":"63866dc2","loop":null},"w-lyingham":{"v":"fe759cfe","loop":null},"w-necktilt":{"v":"22924b2f","loop":null},"w-neckturn":{"v":"5af43185","loop":null},"w-passthrough":{"v":"10bfce31","loop":null},"w-pigeon":{"v":"a89b8f65","loop":null},"w-postwall":{"v":"b8e7a79c","loop":null},"w-pullover":{"v":"15239280","loop":null},"w-puppy":{"v":"058ca523","loop":null},"w-quad":{"v":"1b58687d","loop":null},"w-rdlhold":{"v":"06b1b1c0","loop":null},"w-seatedtwist":{"v":"09e1504d","loop":null},"w-sidebend":{"v":"6f735ad6","loop":null},"w-sidequad":{"v":"5a2dfb1a","loop":null},"w-sideswing":{"v":"484561d0","loop":null},"w-skatestance":{"v":"82716257","loop":null},"w-sphinx":{"v":"4fdcb7fe","loop":null},"w-standfold":{"v":"b34553d0","loop":null},"w-suitcase":{"v":"45e68e4c","loop":null},"w-thread":{"v":"d2486033","loop":null},"w-torsotwist":{"v":"890d2d43","loop":null},"w-twist":{"v":"f2c23353","loop":null},"w-walklunge":{"v":"7d9e101b","loop":null},"walklunge":{"v":"cb874fd0","loop":null}};
+const PICS = {"ankledf":{"v":"2fbe904b","loop":null},"anklerock":{"v":"cd11ad1b","loop":null},"armcircles":{"v":"4655a5b3","loop":null},"bandadd":{"v":"7cb4ad47","loop":null},"bandcalf":{"v":"a96d5053","loop":null},"bandchest":{"v":"093ec867","loop":null},"bandcross":{"v":"690bf78d","loop":null},"bandham":{"v":"cc7fd8df","loop":null},"bandlat":{"v":"af0c8982","loop":null},"bandquad":{"v":"407bae69","loop":null},"butterfly":{"v":"ed941436","loop":null},"buttkicks":{"v":"08e6effa","loop":null},"calf":{"v":"0a14d5c0","loop":null},"calfdrop":{"v":"97c87646","loop":null},"catcow":{"v":"0cbc84a2","loop":null},"chairfig4":{"v":"3156b617","loop":null},"chairham":{"v":"79f2fa67","loop":null},"chestclasp":{"v":"1909fb8b","loop":null},"child":{"v":"e30eb409","loop":null},"chintuck":{"v":"a55b103f","loop":null},"cobra":{"v":"3b105fed","loop":null},"cossack":{"v":"711ddeef","loop":null},"couch":{"v":"45f44fa8","loop":null},"crossbody":{"v":"5f496ae8","loop":null},"dbfly":{"v":"10563170","loop":null},"doorway":{"v":"d289783c","loop":null},"downdog":{"v":"3109fa5a","loop":null},"figure4":{"v":"75c67c42","loop":null},"fold":{"v":"9a4d92d0","loop":null},"frog":{"v":"bf22872d","loop":null},"gate":{"v":"dd91927a","loop":null},"goblet":{"v":"47dedac9","loop":null},"groinhold":{"v":"d1287163","loop":null},"halfsplit":{"v":"f27b0572","loop":null},"happybaby":{"v":"d1ab1006","loop":null},"highknees":{"v":"a209c5df","loop":null},"hiplunge":{"v":"2f89a04e","loop":"3236b681"},"inchworm":{"v":"344036cf","loop":null},"kneeschest":{"v":"b5d6dc38","loop":null},"lateral":{"v":"25f04159","loop":"4dd7ccbd"},"legswing":{"v":"65e67a84","loop":null},"levator":{"v":"8760091f","loop":null},"lizard":{"v":"8d0d0fd1","loop":null},"lunge":{"v":"25293428","loop":"5fb29044"},"lyingham":{"v":"1cb729bc","loop":null},"necktilt":{"v":"6dc8f687","loop":null},"neckturn":{"v":"50a8b26d","loop":null},"passthrough":{"v":"ed8b9ed1","loop":null},"pigeon":{"v":"b20192ee","loop":null},"postwall":{"v":"ad875854","loop":null},"pullover":{"v":"e8820e95","loop":null},"puppy":{"v":"8e5dd34e","loop":null},"quad":{"v":"6250f0f8","loop":"55eefc3f"},"rdlhold":{"v":"147b3bbf","loop":null},"seatedtwist":{"v":"c94f4c98","loop":null},"sidebend":{"v":"610313c9","loop":null},"sidequad":{"v":"c3d587b5","loop":null},"sideswing":{"v":"9d98492e","loop":null},"skatestance":{"v":"6f9565a9","loop":null},"sphinx":{"v":"8349a4d2","loop":null},"standfold":{"v":"d3455a11","loop":null},"suitcase":{"v":"faeb34cb","loop":null},"thread":{"v":"04dc8a99","loop":null},"torsotwist":{"v":"815f4fc0","loop":null},"twist":{"v":"183f0d8f","loop":null},"w-ankledf":{"v":"f0af4e86","loop":null},"w-anklerock":{"v":"bec78cbe","loop":null},"w-armcircles":{"v":"20e1b17d","loop":null},"w-bandadd":{"v":"37af3562","loop":null},"w-bandcalf":{"v":"a7ca095b","loop":null},"w-bandchest":{"v":"b4c47cae","loop":null},"w-bandcross":{"v":"0378abb0","loop":null},"w-bandham":{"v":"69ea0463","loop":null},"w-bandlat":{"v":"32398a04","loop":null},"w-bandquad":{"v":"55222718","loop":null},"w-butterfly":{"v":"3771c93c","loop":null},"w-buttkicks":{"v":"002ca8e3","loop":null},"w-calf":{"v":"bf30e4cb","loop":null},"w-calfdrop":{"v":"f9c8a021","loop":null},"w-catcow":{"v":"0d9bf87a","loop":null},"w-chairfig4":{"v":"e9703627","loop":null},"w-chairham":{"v":"600c5e2c","loop":null},"w-chestclasp":{"v":"4af09d9a","loop":null},"w-child":{"v":"855e0673","loop":null},"w-chintuck":{"v":"8f234c93","loop":null},"w-cobra":{"v":"7be58832","loop":null},"w-cossack":{"v":"beada11e","loop":null},"w-couch":{"v":"6c2f0b9c","loop":null},"w-crossbody":{"v":"d6de1afc","loop":null},"w-dbfly":{"v":"ac888e12","loop":null},"w-doorway":{"v":"99234351","loop":null},"w-downdog":{"v":"1d1f8be1","loop":null},"w-figure4":{"v":"afebc674","loop":null},"w-fold":{"v":"656f481f","loop":null},"w-frog":{"v":"f451a50e","loop":null},"w-gate":{"v":"549ddd89","loop":null},"w-goblet":{"v":"537b4583","loop":null},"w-groinhold":{"v":"9df46b9d","loop":null},"w-halfsplit":{"v":"20662c61","loop":null},"w-happybaby":{"v":"0658ab32","loop":null},"w-highknees":{"v":"bdc00bbb","loop":null},"w-hiplunge":{"v":"c917d115","loop":null},"w-inchworm":{"v":"577c28df","loop":null},"w-kneeschest":{"v":"743a6dfa","loop":null},"w-lateral":{"v":"3cb2a7d3","loop":null},"w-legswing":{"v":"fcf623c6","loop":null},"w-levator":{"v":"d166c57a","loop":null},"w-lizard":{"v":"7cc08ab2","loop":null},"w-lunge":{"v":"63866dc2","loop":"39ee6efd"},"w-lyingham":{"v":"fe759cfe","loop":null},"w-necktilt":{"v":"22924b2f","loop":null},"w-neckturn":{"v":"5af43185","loop":null},"w-passthrough":{"v":"10bfce31","loop":null},"w-pigeon":{"v":"a89b8f65","loop":null},"w-postwall":{"v":"b8e7a79c","loop":null},"w-pullover":{"v":"15239280","loop":null},"w-puppy":{"v":"058ca523","loop":null},"w-quad":{"v":"1b58687d","loop":"70738fff"},"w-rdlhold":{"v":"06b1b1c0","loop":null},"w-seatedtwist":{"v":"09e1504d","loop":null},"w-sidebend":{"v":"6f735ad6","loop":null},"w-sidequad":{"v":"5a2dfb1a","loop":null},"w-sideswing":{"v":"484561d0","loop":null},"w-skatestance":{"v":"82716257","loop":null},"w-sphinx":{"v":"4fdcb7fe","loop":null},"w-standfold":{"v":"b34553d0","loop":null},"w-suitcase":{"v":"45e68e4c","loop":null},"w-thread":{"v":"d2486033","loop":null},"w-torsotwist":{"v":"890d2d43","loop":null},"w-twist":{"v":"f2c23353","loop":null},"w-walklunge":{"v":"7d9e101b","loop":null},"walklunge":{"v":"cb874fd0","loop":null}};
 const PIC_W = [192, 640, 960];
 let PIC_BASE = 'figures/';
 
@@ -1942,9 +1955,30 @@ const picLine = () => { $('safetyPictures').hidden = !STRETCHES.some(st => picFo
 picLine(); $('safetyBtn').addEventListener('click', picLine);
 document.addEventListener('error', (e) => { if (e.target instanceof HTMLImageElement && e.target.classList.contains('pic')) picFallback(e.target); }, true);
 function picWarm(items) {
-  for (const id of new Set(items.map(it => it.st.id))) { const k = picFor(id); if (k) { const im = new Image(); im.decoding = 'async'; im.sizes = PLAYER_SIZES; im.srcset = picSet(k); im.src = picSrc(k, 640); } }
+  for (const id of new Set(items.map(it => it.st.id))) { const lk = loopFor(id); if (lk) fetch(loopSrc(lk)).catch(() => {}); const k = picFor(id); if (k) { const im = new Image(); im.decoding = 'async'; im.sizes = PLAYER_SIZES; im.srcset = picSet(k); im.src = picSrc(k, 640); } }
 }
+const loopFor = (id) => { const k = picFor(id); return k && PICS[k].loop ? k : null; };
 const picMotion = (id) => !!(PICS[id] && PICS[id].loop) && !reduceMotion();
+const loopSrc = (k) => `${PIC_BASE}${k}-loop.mp4?v=${PICS[k].loop}`;
+const SHOWME = { video: null, url: null, btn: null, holder: null };
+function showMeLabel(btn, on) { btn.querySelector('span').textContent = on ? 'Show picture' : 'Show me'; btn.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+function showMeStop() {
+  const { video, url, btn, holder } = SHOWME; SHOWME.video = SHOWME.url = SHOWME.btn = SHOWME.holder = null;
+  if (video) { try { video.pause(); } catch (e) {} video.remove(); }
+  if (url) Platform.loopFree(url);
+  if (btn) showMeLabel(btn, false);
+  if (holder && holder.id === 'infoLoop') holder.hidden = true;
+}
+async function showMeStart(btn, holder, key, mirror) {
+  showMeStop(); SHOWME.btn = btn; SHOWME.holder = holder; showMeLabel(btn, true);
+  const v = document.createElement('video'); v.className = 'loopvid' + (mirror ? ' mirror' : ''); v.muted = true; v.defaultMuted = true; v.playsInline = true;
+  v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true'); v.loop = !reduceMotion();
+  v.onended = () => { if (SHOWME.video === v) showMeStop(); }; v.onerror = () => { if (SHOWME.video === v) showMeStop(); };
+  SHOWME.video = v; if (holder.id === 'infoLoop') holder.hidden = false; holder.appendChild(v);
+  try { const u = await Platform.loop(loopSrc(key)); if (SHOWME.video !== v) { Platform.loopFree(u); return; }
+    SHOWME.url = u; v.src = u; const p = v.play(); if (p && p.catch) p.catch(() => { if (SHOWME.video === v) showMeStop(); });
+  } catch (e) { if (SHOWME.video === v) showMeStop(); }
+}
 
 const STEP_S = 5, MIN_S = 10, MAX_S = 180;
 const R = (id) => ROUTINES.find(r => r.id === id) || myRoutine(id);
@@ -1978,6 +2012,7 @@ const tabOf = (id) => id === 'settings' ? TABBED[settingsFrom] || 'home' : TABBE
 const TABBED = { home: 'home', explore: 'explore', list: 'explore', hockey: 'explore', ladder: 'explore', series: 'explore', library: 'library', history: 'history', saved: 'saved' };
 let current = 'home';
 function show(id) {
+  if (id !== current) showMeStop();
   SCREENS.forEach(s => { $(s).hidden = s !== id; });
   current = id;
   $('tabbar').hidden = !tabOf(id);
@@ -2725,11 +2760,13 @@ async function keepAwake(on) {
 }
 
 function load(i, { animate = true, remaining, quiet = false } = {}) {
+  showMeStop();
   P.i = i; P.phase = 'hold'; const st = STEPS[i]; $('sideNote').textContent = ''; coachStop();
   P.remaining = remaining ?? holdMs(i);
   P.endAt = Date.now() + P.remaining;
   P.lastSec = Math.ceil(P.remaining / 1000);
   if (isSecondSide(i)) sideFlip(art(st.s, st.mirror, true, 360), animate); else crossfade(art(st.s, st.mirror, true, 360), animate);
+  const hasLoop = !!loopFor(st.s.id); if ($('showMe').hidden === hasLoop) $('showMe').hidden = !hasLoop;
   $('count').textContent = `${st.si + 1} of ${cur.items.length}`;
   $('prevBtn').disabled = i === 0;
   render();
@@ -3011,6 +3048,7 @@ function openInfo(st, mirror, from, fromPlayer) {
   infoFrom = from; resumeAfterInfo = fromPlayer && P.running;
   if (fromPlayer) setRunning(false);
   $('infoArt').innerHTML = art(st, mirror, false, 96);
+  { const lk = loopFor(st.id); $('infoShowMe').hidden = !lk; INFO_LOOP = lk ? { key: lk, mirror: picSecondSide(lk) ? !mirror : mirror, circle: (st.circle || '') } : null; }
   $('infoName').textContent = st.name;
   $('infoFocus').textContent = st.focus;
   const kid = cur && cur.r.youth && ['routine', 'player'].includes(from) && st.kidSteps;
@@ -3024,6 +3062,9 @@ function openInfo(st, mirror, from, fromPlayer) {
   show('info'); $('info').scrollTop = 0;
 }
 $('infoBtn').onclick = () => { const s = STEPS[P.i]; openInfo(s.s, s.mirror, 'player', true); };
+let INFO_LOOP = null;
+$('infoShowMe').onclick = () => { if (SHOWME.btn === $('infoShowMe')) return showMeStop(); if (!INFO_LOOP) return; $('infoLoop').style.background = INFO_LOOP.circle; showMeStart($('infoShowMe'), $('infoLoop'), INFO_LOOP.key, INFO_LOOP.mirror); };
+$('showMe').onclick = () => { if (SHOWME.btn === $('showMe')) return showMeStop(); const st = STEPS[P.i], k = st && loopFor(st.s.id), im = $('art').querySelector('img.pic'); if (!k || !im) return; showMeStart($('showMe'), im.parentNode, k, im.classList.contains('mirror')); };
 $('infoBack').onclick = () => { show(infoFrom); if (infoFrom === 'player' && resumeAfterInfo) setRunning(true); };
 
 const sheet = $('soundSheet');
