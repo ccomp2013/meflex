@@ -5,7 +5,7 @@
 // those go to the network exactly as without it. It sends nothing of its own except fetching FILES from the site.
 // It never stores personal data: history, routines, settings and answers live in the page's own storage, not here.
 // A new version waits until the person taps Reload ("A new version is ready"); it never takes over by itself.
-const VERSION = '199e5de97538';
+const VERSION = '05b7bbfc65d3';
 const FILES = ["index.html", "manifest.webmanifest", "apple-touch-icon.png", "icon-192.png", "icon-512.png"];
 // Nov 15 (recorded voice on the website): every recording the page may ask for (voice/manifest.json and voice/<key>.m4a).
 // None is fetched at install (4.2 MB). Each is kept the first time the page fetches it: the list when the Voice or coach
