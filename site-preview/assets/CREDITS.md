@@ -43,3 +43,5 @@ FF4 (Nov 18): 34 more `img/lib/*-400.webp` for the three hockey drafts (referee,
 from the live app's 640 px pictures (version cda5ddc6b18a), WebP quality 80. Where a woman picture differs from the written steps
 (Front Leg Swings, Standing Groin Stretch, Lying Hamstring, Standing Forward Fold; `docs/reports/steps-vs-pictures.md` in meflex-source),
 the page uses the man's.
+
+**Nov 18 (four audiences):** `img/lib/` is regenerated from the live app pictures (0219f420a8d6: the man's new shorts, the woman's redraws), and holds 8 more for the Everyday movers page. All are MeFlex's own AI-generated stretch pictures.
