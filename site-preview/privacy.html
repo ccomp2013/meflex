@@ -107,7 +107,7 @@
         <h3>Anonymous usage statistics (optional)</h3>
         <p><strong>Today this is switched off:</strong> no analytics key has been added to the app, so the PostHog library is not downloaded and nothing is sent. This section applies only once a key is added.</p>
         <p><strong>Once a key is added, it is on by default.</strong> Usage statistics, with masked session replay, start without you doing anything. You can switch them off at any time in Settings → Privacy, “Share anonymous usage data”.</p>
-        <p>When it is on, MeFlex first downloads the PostHog library from jsDelivr (cdn.jsdelivr.net), a third-party service that delivers code files. Like any web host, jsDelivr receives your IP address and basic browser details with that request. The iPhone app downloads the library the same way.</p>
+        <p>When it is on, MeFlex first downloads the PostHog library from jsDelivr (cdn.jsdelivr.net), a third-party service that delivers code files. Like any web host, jsDelivr receives your IP address and basic browser details with that request. The iPhone app does not download it: the iPhone app can only run code that is built into it, so analytics stays off there. If that ever changes, this section will say so first.</p>
         <p>MeFlex then sends anonymous usage data to PostHog, an analytics service hosted in [Placeholder: the United States or the European Union]. What is sent is four kinds of event:</p>
         <ol>
           <li>the app was opened;</li>
