@@ -1,0 +1,7 @@
+# DRAFT for launch (YY1, Nov 18). Search engines only read robots.txt at the site root, so this copy in
+# site-preview/ has no effect: the preview pages stay out of search through their own noindex tag.
+# TODO at launch: replace https://meflex.example with the real address and move this file to the site root.
+User-agent: *
+Allow: /
+
+Sitemap: https://meflex.example/sitemap.xml
