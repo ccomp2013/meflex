@@ -47,3 +47,5 @@ the page uses the man's.
 **Nov 18 (four audiences):** `img/lib/` is regenerated from the live app pictures (0219f420a8d6: the man's new shorts, the woman's redraws), and holds 8 more for the Everyone page. All are MeFlex's own AI-generated stretch pictures.
 
 **Nov 18, about 9:30 PM:** the 26 man pictures (`*-man-400.webp`) are made again from the live app's pictures (5d3319960b0b), so the ten from the man's longer-shorts batch 3 match the app. Each is the live 960 px picture scaled to 400 px; the woman's are unchanged.
+
+`img/share-1200x630.jpg` (YY1, Nov 18) is the share picture for links (Open Graph and Twitter cards): the approved man Low Lunge picture (`img/low-lunge-960.webp`, AI-generated) on the site's dark background, with the name set in the site's own fonts (Big Shoulders Display and Barlow, as listed above). Made with a local browser screenshot; nothing downloaded.

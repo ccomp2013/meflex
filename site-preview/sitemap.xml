@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DRAFT for launch (YY1, Nov 18). Kept in site-preview/ until the real web address is chosen; it does nothing here.
+     TODO: replace https://meflex.example with the real address, move this file to the site root, and list only pages that are live and indexable. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://meflex.example/</loc></url>
+  <url><loc>https://meflex.example/support.html</loc></url>
+  <url><loc>https://meflex.example/privacy.html</loc></url>
+  <url><loc>https://meflex.example/terms.html</loc></url>
+</urlset>
