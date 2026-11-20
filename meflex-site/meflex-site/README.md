@@ -1,21 +1,27 @@
 # MeFlex site
 
-Upload everything in this folder to a GitHub repository and turn on GitHub Pages.
+This folder is the MeFlex web app that GitHub Pages serves at `https://ccomp2013.github.io/meflex/meflex-site/meflex-site/`.
 
-1. On github.com, create a new repository (for example `meflex`).
-2. Choose **Add file → Upload files**, drag in all the files from this folder, and commit.
-3. Open **Settings → Pages**. Under **Build and deployment**, set **Source** to *Deploy from a branch*, then pick branch **main** and folder **/ (root)**. Save.
-4. After a minute or two the address appears at the top of that page, for example `https://YOUR-USERNAME.github.io/meflex/`.
+## How it's updated
+- **Built from source:** every file here comes from the private source repository (`meflex/app/build.py`). Nothing is edited here by hand.
+- **Published by pull request:** each update is one pull request with only the changed files (pictures and clips in `figures/`, `index.html` and `sw.js`).
+  - **Check:** Cowork runs the publish check and merges.
+  - **Approval:** Chris approves anything going live.
+- **Two files always together:** `index.html` and `sw.js`. The offline worker's version must match the page.
 
-## Add it to your iPhone home screen
+## What's here
+- `index.html`: the whole app.
+- `sw.js`: the offline worker. It keeps the app's own files at install. Each picture, clip and recording is kept the first time it's used.
+- `figures/`: each stretch's picture for both coaches (192, 640 and 960 px), plus the Show me clips (`*-loop.mp4`).
+- `voice/`: the recorded coach voice.
+- The icons and `manifest.webmanifest`, for the Home Screen.
+
+## Add it to your iPhone Home Screen
 1. Open the address in **Safari**.
 2. Tap **Share**, then **Add to Home Screen**.
 3. Tap **Add**.
 
-MeFlex then opens full-screen with its own icon.
-
 ## Notes
-- **Analytics stays off** until a PostHog key is added. The key lives in the project's `app/analytics.config.js`; this folder keeps the placeholder.
-- **The site is public:** a GitHub Pages address can be opened by anyone who has the link.
-- **Works offline:** after MeFlex has opened once with a signal, it opens without one (the `sw.js` file keeps a copy of the app's own files). When updating the site, always upload `index.html` and `sw.js` together.
+- **Analytics stays off** until a key is added in the source. With no key, Settings says MeFlex collects nothing.
+- **The site is public:** anyone with the link can open it.
 - **Your data stays on the phone:** routine times, history, settings and setup answers are stored only in that phone's browser.
