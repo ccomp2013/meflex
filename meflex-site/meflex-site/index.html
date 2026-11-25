@@ -14,7 +14,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="6542babc5aa8">
+<meta name="meflex-version" content="71cc70f75c82">
 <meta name="meflex-voice" content="voice/">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -309,6 +309,8 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus { outl
 .optbtn.coach { flex-direction: column; justify-content: center; gap: 10px; padding: 18px 10px 16px; text-align: center; position: relative; }
 .optbtn.coach .face { width: 104px; height: 104px; border-radius: 50%; background-color: var(--line); background-size: 564.7%; background-repeat: no-repeat; flex: none; }
 .optbtn.coach i { position: absolute; top: 10px; right: 10px; }
+#setupHockeyGo { width: 100%; margin-top: 18px; }
+#setupHockeyNote { margin-top: 4px; text-align: center; }
 .qnote { color: var(--accent); font-size: calc(14px * var(--ts, 1)); margin: 14px 0 0; min-height: 20px; }
 .disclaimer { margin: 28px 0 0; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); color: var(--ink); font-size: calc(15px * var(--ts, 1)); }
 .profile { margin: 0; }
@@ -4248,7 +4250,7 @@ function renderSetup() {
     <div class="opts${q.key === 'guide' ? ' coaches' : ''}" role="${q.type === 'one' ? 'radiogroup' : 'group'}" aria-labelledby="setupQ">${q.options.map(([val, name, help], k) =>
       `<button class="optbtn${q.key === 'guide' ? ' coach' : ''}" role="${q.type === 'one' ? 'radio' : 'checkbox'}" aria-checked="${on(val)}" data-k="${k}">
         ${q.key === 'guide' ? coachFace(val) : ''}<span><b>${name}</b>${help ? `<small>${help}</small>` : ''}</span><i aria-hidden="true"></i></button>`).join('')}</div>
-    <p class="qnote" id="setupNote" aria-live="polite">${q.note ? q.note(v) : ''}</p>${q.key === 'guide' ? SETUP_GOAL() : ''}`;
+    <p class="qnote" id="setupNote" aria-live="polite">${q.note ? q.note(v) : ''}</p>${q.key === 'guide' ? SETUP_GOAL() : ''}${hockeyShortcut(q, v)}`;
   if (q.key === 'guide') $(`sgoal-${OPTIONS.goal.findIndex(([g]) => g === look.goal)}`).checked = true;
   $('setupNext').textContent = answered(q, v) ? 'Next' : (q.key === 'avoid' ? 'Nothing to avoid' : 'Skip this question');
 }
@@ -4264,7 +4266,20 @@ $('setupBody').addEventListener('click', (e) => {
   }
   renderSetup();
   const again = $('setupBody').querySelector(`.optbtn[data-k="${b.dataset.k}"]`); if (again) again.focus({ preventScroll: true });
+  revealHockeyGo();
 });
+function hockeyShortcut(q, v) {
+  if (q.key !== 'hockey' || SETUP.from !== 'first' || !v.some(x => x !== 'none')) return '';
+  return `<button class="ghost" id="setupHockeyGo">Start with my hockey routines</button>
+    <p class="qsub" id="setupHockeyNote">You can answer the other questions later in Settings.</p>`;
+}
+$('setupBody').addEventListener('click', (e) => { if (e.target.closest('#setupHockeyGo')) leaveSetup(true); });
+function revealHockeyGo() {
+  const note = $('setupHockeyNote'); if (!note) return;
+  const sc = $('setupBody').closest('.scroll'), bar = document.querySelector('#setup .startbar').getBoundingClientRect().top;
+  const over = note.getBoundingClientRect().bottom - (bar - 12);
+  if (over > 0) sc.scrollTop += over;
+}
 function leaveSetup(finished) {
   const skipped = finished ? false : (SETUP.from === 'first' ? true : profile.skipped);
   Object.assign(profile, SETUP.draft, { done: true, skipped });
