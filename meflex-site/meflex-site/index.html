@@ -14,7 +14,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="7f03e956655c">
+<meta name="meflex-version" content="6542babc5aa8">
 <meta name="meflex-voice" content="voice/">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -305,6 +305,10 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus { outl
 .optbtn[role="checkbox"] i { border-radius: 7px; }
 .optbtn[aria-checked="true"] { border-color: var(--accent); }
 .optbtn[aria-checked="true"] i { border-color: var(--accent); background: var(--accent); box-shadow: inset 0 0 0 4px var(--raised); }
+.opts.coaches { grid-template-columns: 1fr 1fr; gap: 12px; }
+.optbtn.coach { flex-direction: column; justify-content: center; gap: 10px; padding: 18px 10px 16px; text-align: center; position: relative; }
+.optbtn.coach .face { width: 104px; height: 104px; border-radius: 50%; background-color: var(--line); background-size: 564.7%; background-repeat: no-repeat; flex: none; }
+.optbtn.coach i { position: absolute; top: 10px; right: 10px; }
 .qnote { color: var(--accent); font-size: calc(14px * var(--ts, 1)); margin: 14px 0 0; min-height: 20px; }
 .disclaimer { margin: 28px 0 0; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); color: var(--ink); font-size: calc(15px * var(--ts, 1)); }
 .profile { margin: 0; }
@@ -686,7 +690,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <section class="hometip" id="homeTip" aria-labelledby="homeTipHead" hidden>
       <div class="hometiprow"><h2 id="homeTipHead">Keep MeFlex on your Home Screen</h2><button class="icon" id="homeTipClose" aria-label="Dismiss this tip"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
       <ol class="tipsteps"><li>Tap Share, the square with an arrow, in Safari.</li><li>Tap Add to Home Screen.</li><li>Tap Add.</li></ol>
-      <p class="note">It then opens full screen, like an app, and works offline.</p>
+      <p class="note">Then it opens like an app and works offline.</p>
     </section>
     <h2 class="sec">More for you</h2>
     <span class="sr" id="recMoreLabel">Recommended routines, swipe sideways</span><div class="morelist carousel" id="recMore" role="region" aria-labelledby="recMoreLabel"></div>
@@ -876,9 +880,11 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <div class="segs" id="setText" role="radiogroup" aria-labelledby="textLabel"></div>
     <p class="note">Makes the words larger everywhere in MeFlex. Kept only on this device.</p>
     </section>
+    <section id="colorsSec">
     <h2 class="sec">Colors</h2>
-    <div class="preview" id="setPreview" role="img" aria-label="Preview of the chosen colours"></div>
+    <div class="preview" id="setPreview" role="img" aria-label="Preview of the chosen colors"></div>
     <div id="setLook"></div>
+    </section>
     <h2 class="sec">Weekly goal</h2>
     <div class="segs" id="setGoal" role="radiogroup" aria-label="Weekly goal, days a week"></div>
     <p class="note">Days a week you aim to stretch. History compares each week, and your 4-week consistency, with this goal.</p>
@@ -910,7 +916,7 @@ body { position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100dvh;
     <button class="ghost" id="safetyBtn" aria-haspopup="dialog">Privacy and safety</button>
     <button class="ghost" id="restoreBtn">Restore defaults</button>
     <p class="restoremsg" id="restoreMsg" aria-live="polite"></p>
-    <p class="note" style="text-align:center;margin-inline:auto">Restores sound, colors, timing, default hold and weekly goal. Your routine times and history stay.</p>
+    <p class="note" style="text-align:center;margin-inline:auto">Restores sound, <span id="restoreColors">colors, </span>timing, default hold and weekly goal. Your routine times and history stay.</p>
     <section id="offlineSec" aria-labelledby="offlineHead" data-web-only hidden>
       <h2 class="sec" id="offlineHead">Offline</h2>
       <div class="group offlinebox"><p id="offlineState" aria-live="polite"></p><p id="offlineNow" hidden>You’re offline right now. Everything still works.</p></div>
@@ -2191,7 +2197,7 @@ $('setBack').onclick = () => { const to = SCREENS.includes(settingsFrom) ? setti
 function renderHomeProgress() {
   const h = histGet(), goal = look.goal, el = $('homeProgress');
   if (!h.length) {
-    el.innerHTML = `<span class="pgtext"><b>Your week starts with your first routine</b><small>Weekly goal: ${goal} day${goal === 1 ? '' : 's'}</small></span>${CHEV}`;
+    el.innerHTML = `<span class="pgtext"><b>Your week starts here</b><small>Weekly goal: ${goal} day${goal === 1 ? '' : 's'}</small></span>${CHEV}`;
     el.setAttribute('aria-label', 'No sessions yet. Open History'); return;
   }
   const s = progressStats(h, goal), w = s.week, pct = Math.round(s.meter.score * 100), over = w.doneDays > goal;
@@ -2685,7 +2691,7 @@ $('bList').addEventListener('keydown', (e) => {
   }
   if (e.key === 'Escape') {
     e.preventDefault(); e.stopPropagation(); const back = GRAB.orig.indexOf(B.ids[i]); B.ids = GRAB.orig; GRAB.i = -1; GRAB.orig = null;
-    renderBuilder(); focusHandle(back); bMsg(`Reorder cancelled. ${st.name} is back at position ${back + 1} of ${n}.`);
+    renderBuilder(); focusHandle(back); bMsg(`Reorder canceled. ${st.name} is back at position ${back + 1} of ${n}.`);
   }
 });
 $('bSave').onclick = () => {
@@ -3207,6 +3213,9 @@ function renderPreview() {
   const sample = ['lunge', 'butterfly', 'pigeon', 'necktilt'].map(id => BY_ID[id]);
   $('setPreview').innerHTML = `<div class="big">${art(sample[0])}</div><div class="small">${sample.slice(1).map(s => `<div>${art(s)}</div>`).join('')}</div>`;
 }
+const colorsShown = () => Object.keys(PICS).length === 0;
+$('colorsSec').hidden = !colorsShown();
+$('restoreColors').hidden = !colorsShown();
 function renderSettings() {
   try { renderOfflineNote(); } catch (e) {}
   try { renderYourData(); } catch (e) {}
@@ -3350,7 +3359,7 @@ function streakMessage(s, goal) {
 function weekDotsHTML(days) { return days.map((d, i) => `<span class="wdot${d.done ? ' done' : ''}${d.today ? ' today' : ''}${d.future ? ' future' : ''}"><i></i><small>${'MTWTFSS'[i]}</small></span>`).join(''); }
 function weekDotsLabel(days) {
   const done = days.filter(d => d.done).map(d => d.date.toLocaleDateString('en-US', { weekday: 'long' }));
-  return done.length ? `This week: practised ${joinAnd(done)}` : 'This week: no practice yet';
+  return done.length ? `This week: practiced ${joinAnd(done)}` : 'This week: no practice yet';
 }
 
 function relDay(at, now = new Date()) {
@@ -4120,7 +4129,7 @@ function renderPlan() {
   const p = planGet(); if (!planActive(p)) { box.hidden = true; return; }
   const done = planDone(p), all = done.every(Boolean);
   PLAN_RECS = p.ids.map(planRec);
-  $('planSub').textContent = all ? 'All three done. Nice going. Keep on with any routine, or dismiss this plan.' : 'Three routines for this week, chosen from your setup answers. Do them on any three days.';
+  $('planSub').textContent = all ? 'All three done. Nice going.' : 'Three for this week, from your answers.';
   $('planList').innerHTML = PLAN_RECS.map((x, i) => { const mins = fmtMin(secsOf(itemsOf(x.r, x.plan ? x.plan.items : undefined)));
     return `<li><button class="planrow${done[i] ? ' done' : ''}" data-plan="${i}" aria-label="Day ${i + 1}: ${esc(x.r.title)}${/\bmin\b/.test(x.why) ? '' : ', ' + mins}. ${esc(x.why)}${done[i] ? '. Done' : ''}"><span class="pday" aria-hidden="true">Day ${i + 1}</span><span class="pt" aria-hidden="true"><b>${esc(x.r.title)}</b><small>${esc(x.why)}</small></span><span class="pdone" aria-hidden="true">${done[i] ? 'Done' : mins}</span></button></li>`; }).join('');
   const miss = planMissing(); $('planAnswers').hidden = !miss.length;
@@ -4177,13 +4186,13 @@ $('plusTrial').onclick = () => { funnel('trialTaps'); $('plusMsg').textContent =
 $('plusRestore').onclick = () => { funnel('restoreTaps'); $('plusMsg').textContent = 'Restoring purchases will work in the App Store app.'; };
 function reviewHook() { try { if (histGet().length === 4) Platform.reviewPrompt(); } catch (e) {} }
 
+const COACH_WORD = 'coach';
 const SETUP_QS = [
-  { key: 'guide', type: 'one', title: 'Who should guide you?', sub: 'This only changes which figure shows the stretches.',
-    options: [['woman', 'Woman'], ['man', 'Man']],
-    note: (v) => v === 'man' ? 'A man figure isn’t drawn yet, so stretches show as plain circles for now.' : '' },
-  { key: 'hockey', type: 'many', title: 'Do you play, officiate or tend goal?', sub: 'Choose any. Hockey routines come first on Home.', exclusive: 'none',
+  { key: 'guide', type: 'one', title: `Choose your ${COACH_WORD}`, sub: 'They show you each stretch.',
+    options: [['woman', 'Woman'], ['man', 'Man']] },
+  { key: 'hockey', type: 'many', title: 'Do you play, officiate or tend goal?', sub: 'Choose any. Hockey routines come first.', exclusive: 'none',
     options: [['player', 'I play'], ['ref', 'I referee or officiate'], ['goalie', 'I tend goal'], ['none', 'None of these']],
-    note: (v) => v.includes('goalie') ? 'Goalie routines are coming. Until then, Home shows the players’ warm-up and cool-down.' : '' },
+    note: (v) => v.includes('goalie') ? 'Goalies get the players’ routines for now.' : '' },
   { key: 'age', type: 'one', title: 'What’s your age range?', sub: 'Used to suggest suitable holds.',
     options: [['under30', 'Under 30'], ['30-44', '30–44'], ['45-64', '45–64'], ['65+', '65+']],
     note: (v) => v === '60+' ? 'Your earlier answer was 60+. Choose the range that fits now, or leave it as it is.' : '' },
@@ -4195,7 +4204,7 @@ const SETUP_QS = [
     options: [['none', 'None'], ['band', 'Resistance band'], ['dumbbells', 'Dumbbells']] },
   { key: 'minutes', type: 'one', title: 'How long per session?',
     options: [[5, '5 minutes'], [10, '10 minutes'], [15, '15 minutes']] },
-  { key: 'avoid', type: 'many', title: 'Any positions to avoid?', sub: 'Optional. Leave blank if none.',
+  { key: 'avoid', type: 'many', title: 'Any positions to avoid?', sub: 'Optional.',
     options: [['kneeling', 'Kneeling'], ['floor', 'Lying on the floor'], ['overhead', 'Arms overhead'], ['balance', 'One-leg balance']] },
 ];
 const SETUP_LABELS = Object.fromEntries(SETUP_QS.map(q => [q.key, Object.fromEntries(q.options.map(([v, n]) => [v, n]))]));
@@ -4206,7 +4215,13 @@ SETUP_LABELS.age['60+'] = '60+';
 const SETUP = { i: 0, from: 'first', draft: null };
 const SETUP_GOAL = () => `<h2 class="sec" id="setupGoalHead">Weekly goal</h2>
     <div class="segs" id="setupGoal" role="radiogroup" aria-label="Weekly goal, days a week">${goalSegs('sgoal')}</div>
-    <p class="qsub">Days a week you aim to stretch. You can change it anytime in Settings.</p>`;
+    <p class="qsub">Days a week. Change it anytime.</p>`;
+const COACH_FACES = { woman: ['w-torsotwist', 53.2, 8.2], man: ['postwall', 50, 13.3] };
+const coachFace = (val) => {
+  const f = COACH_FACES[val];
+  if (!f || typeof PICS === 'undefined' || !PICS[f[0]]) return '';
+  return `<span class="face" aria-hidden="true" style="background-image:url('${picSrc(f[0], 960)}');background-position:${f[1]}% ${f[2]}%"></span>`;
+};
 $('setupBody').addEventListener('change', (e) => { if (e.target.name === 'sgoal') { look.goal = OPTIONS.goal[+e.target.value][0]; saveLook(); } });
 
 function openSetup(from) {
@@ -4222,7 +4237,7 @@ function renderSetup() {
   $('setupSkip').hidden = end;
   if (end) {
     $('setupBody').innerHTML = `<h1 class="q" id="setupQ" tabindex="-1">You’re all set</h1>
-      <p class="qsub">You can change these answers anytime in Settings.</p>
+      <p class="qsub">Change these anytime in Settings.</p>
       <p class="disclaimer">MeFlex is general stretching guidance, not medical advice.</p>`;
     $('setupNext').textContent = SETUP.from === 'first' ? 'Start stretching' : 'Save';
     return;
@@ -4230,9 +4245,9 @@ function renderSetup() {
   const v = SETUP.draft[q.key];
   const on = (val) => q.type === 'many' ? v.includes(val) : v === val;
   $('setupBody').innerHTML = `<h1 class="q" id="setupQ" tabindex="-1">${q.title}</h1>${q.sub ? `<p class="qsub">${q.sub}</p>` : ''}
-    <div class="opts" role="${q.type === 'one' ? 'radiogroup' : 'group'}" aria-labelledby="setupQ">${q.options.map(([val, name, help], k) =>
-      `<button class="optbtn" role="${q.type === 'one' ? 'radio' : 'checkbox'}" aria-checked="${on(val)}" data-k="${k}">
-        <span><b>${name}</b>${help ? `<small>${help}</small>` : ''}</span><i aria-hidden="true"></i></button>`).join('')}</div>
+    <div class="opts${q.key === 'guide' ? ' coaches' : ''}" role="${q.type === 'one' ? 'radiogroup' : 'group'}" aria-labelledby="setupQ">${q.options.map(([val, name, help], k) =>
+      `<button class="optbtn${q.key === 'guide' ? ' coach' : ''}" role="${q.type === 'one' ? 'radio' : 'checkbox'}" aria-checked="${on(val)}" data-k="${k}">
+        ${q.key === 'guide' ? coachFace(val) : ''}<span><b>${name}</b>${help ? `<small>${help}</small>` : ''}</span><i aria-hidden="true"></i></button>`).join('')}</div>
     <p class="qnote" id="setupNote" aria-live="polite">${q.note ? q.note(v) : ''}</p>${q.key === 'guide' ? SETUP_GOAL() : ''}`;
   if (q.key === 'guide') $(`sgoal-${OPTIONS.goal.findIndex(([g]) => g === look.goal)}`).checked = true;
   $('setupNext').textContent = answered(q, v) ? 'Next' : (q.key === 'avoid' ? 'Nothing to avoid' : 'Skip this question');
@@ -4263,7 +4278,7 @@ $('setupSkip').onclick = () => leaveSetup(false);
 function renderProfileSummary() {
   const show1 = (k) => profile[k] === null || profile[k] === undefined ? 'Not set' : SETUP_LABELS[k][profile[k]];
   const showMany = (k, empty) => profile[k].length ? profile[k].map(v => SETUP_LABELS[k][v]).join(', ') : empty;
-  const rows = [['Guide', show1('guide')], ['Hockey', showMany('hockey', 'Not set')], ['Age', show1('age')], ['Flexibility', show1('level')], ['Focus', showMany('focus', 'Not set')],
+  const rows = [[COACH_WORD[0].toUpperCase() + COACH_WORD.slice(1), show1('guide')], ['Hockey', showMany('hockey', 'Not set')], ['Age', show1('age')], ['Flexibility', show1('level')], ['Focus', showMany('focus', 'Not set')],
     ['Equipment', showMany('equipment', 'Not set')], ['Session', show1('minutes')], ['Avoid', showMany('avoid', 'Nothing')]];
   $('profileRows').innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('');
 }
