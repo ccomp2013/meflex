@@ -14,7 +14,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="32a9bd17eafb">
+<meta name="meflex-version" content="d9070b8f8bd1">
 <meta name="meflex-voice" content="voice/">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -307,7 +307,7 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus { outl
 .optbtn[aria-checked="true"] i { border-color: var(--accent); background: var(--accent); box-shadow: inset 0 0 0 4px var(--raised); }
 .opts.coaches { grid-template-columns: 1fr 1fr; gap: 12px; }
 .optbtn.coach { flex-direction: column; justify-content: center; gap: 10px; padding: 18px 10px 16px; text-align: center; position: relative; }
-.optbtn.coach .face { width: 104px; height: 104px; border-radius: 50%; background-color: var(--line); background-size: 564.7%; background-repeat: no-repeat; flex: none; }
+.optbtn.coach .face { width: 104px; height: 104px; border-radius: 50%; background-color: var(--line); background-size: cover; background-position: center; background-repeat: no-repeat; flex: none; }
 .optbtn.coach i { position: absolute; top: 10px; right: 10px; }
 #setupHockeyGo { width: 100%; margin-top: 18px; }
 #setupHockeyNote { margin-top: 4px; text-align: center; }
@@ -4218,12 +4218,8 @@ const SETUP = { i: 0, from: 'first', draft: null };
 const SETUP_GOAL = () => `<h2 class="sec" id="setupGoalHead">Weekly goal</h2>
     <div class="segs" id="setupGoal" role="radiogroup" aria-label="Weekly goal, days a week">${goalSegs('sgoal')}</div>
     <p class="qsub">Days a week. Change it anytime.</p>`;
-const COACH_FACES = { woman: ['w-torsotwist', 53.2, 8.2], man: ['postwall', 50, 13.3] };
-const coachFace = (val) => {
-const f = COACH_FACES[val];
-if (!f || typeof PICS === 'undefined' || !PICS[f[0]]) return '';
-return `<span class="face" aria-hidden="true" style="background-image:url('${picSrc(f[0], 960)}');background-position:${f[1]}% ${f[2]}%"></span>`;
-};
+const coachFace = (val) => (val === 'woman' || val === 'man')
+? `<span class="face" aria-hidden="true" style="background-image:url('coach/coach-${val}.webp')"></span>` : '';
 $('setupBody').addEventListener('change', (e) => { if (e.target.name === 'sgoal') { look.goal = OPTIONS.goal[+e.target.value][0]; saveLook(); } });
 
 function openSetup(from) {
