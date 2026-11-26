@@ -178,8 +178,8 @@ function meFresh(){return st.me&&Date.now()-st.me.t<15*60e3}
 function hereNode(){if(st.cur)return S[st.cur].node;if(meFresh())return nearestNode(M.nodes,[st.me.x,st.me.y],M.adj);
  const d=st.order.filter(k=>st.s[k]==='done');return d.length?S[d[d.length-1]].node:startNode}
 function remaining(){return st.order.filter(k=>st.s[k]!=='done'&&k!==st.cur)}
-function schedule(from,t,keys){let n=from,out=[],br=false;const bi=Math.floor(STORES.length/2);
- keys.forEach((k,i)=>{const r=dist(n,S[k].nodes);const w=r?r.dist:0;t+=w/SPD()*1000;out.push({k,walk:w,arr:t,path:r?r.path:[]});t+=dwell(k)*60e3;n=r?r.end:S[k].node});return {out,end:t}}
+function schedule(from,t,keys){let n=from,out=[];const doneN=st.order.filter(x=>st.s[x]==='done').length+(st.cur?1:0),full=keys.length===STORES.length;
+ keys.forEach((k,i)=>{if((full?i:doneN+i)===12)t+=(+st.cfg.brk||0)*60e3;const r=dist(n,S[k].nodes);const w=r?r.dist:0;t+=w/SPD()*1000;out.push({k,walk:w,arr:t,path:r?r.path:[]});t+=dwell(k)*60e3;n=r?r.end:S[k].node});return {out,end:t}}
 function plan(){return schedule(startNode,startDate(),STORES.map(s=>s[0]))}
 function optimize(){const from=hereNode(),keys=remaining();if(keys.length<3)return;
  const later=keys.filter(k=>st.s[k]==='later'),pts=[from,...keys.map(k=>S[k].node)];
@@ -205,7 +205,7 @@ function applyView(){W.setAttribute('transform',`translate(${V.tx},${V.ty}) scal
 function fit(b){const r=svg.getBoundingClientRect(),[x0,y0,x1,y1]=b,s=Math.min(r.width/(x1-x0),r.height/(y1-y0))*0.92;V.s=s;V.tx=r.width/2-s*(x0+x1)/2;V.ty=r.height/2+s*(y0+y1)/2;applyView()}
 function zoomAt(f,cx,cy){const ns=Math.max(0.3,Math.min(30,V.s*f));f=ns/V.s;V.tx=cx-(cx-V.tx)*f;V.ty=cy-(cy-V.ty)*f;V.s=ns;applyView()}
 function centerOn([x,y],s){const r=svg.getBoundingClientRect();if(s)V.s=s;V.tx=r.width/2-V.s*x;V.ty=r.height/2+V.s*y;applyView()}
-let mallB;
+let mallB,routeB;
 function drawStatic(){const tgt=new Set(STORES.map(s=>s[1]));let h='';
  const pth=pts=>'M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L')+'Z';
  for(const sp of M.spaces){if(sp.loc)continue;h+=`<path d="${pth(sp.pts)}" fill="var(--hall)" stroke="#c9d3cf" stroke-width=".4"/>`}
@@ -255,7 +255,7 @@ function tap(sx,sy){const w=wld(sx,sy);
 function focusStore(k){const s=S[k];searchTarget=null;centerOn(s.c,Math.max(V.s,2.4));const r=dist(hereNode(),s.nodes);toast(s.label+(r?' · '+meters(r.dist)+' away':''))}
 $('zin').onclick=()=>{const r=svg.getBoundingClientRect();zoomAt(1.5,r.width/2,r.height/2)};
 $('zout').onclick=()=>{const r=svg.getBoundingClientRect();zoomAt(1/1.5,r.width/2,r.height/2)};
-$('fitb').onclick=()=>{follow=false;$('follow').classList.remove('on');fit(mallB)};
+$('fitb').onclick=()=>{follow=false;$('follow').classList.remove('on');fit(routeB||mallB)};
 $('follow').onclick=()=>{follow=!follow;$('follow').classList.toggle('on',follow);if(follow){if(st.me)centerOn([st.me.x,st.me.y],Math.max(V.s,2.6));else{toast('Turn on 📍 or tap your spot first');startGPS()}}};
 $('setBtn').onclick=()=>{tapMode=!tapMode;$('setBtn').classList.toggle('on',tapMode);toast(tapMode?'Tap the map where you are standing':'Cancelled')};
 // GPS
@@ -318,7 +318,7 @@ window.addEventListener('resize',()=>drawOverlay());
  M=await buildModel(buf);
  for(const [k,nm,label,dw,h] of STORES){const l=M.locs.find(x=>x.name===nm);S[k]={k,label,dw,h,nodes:l?l.nodes:[],node:l?l.nodes[0]:0,c:l&&l.spaces[0]?l.spaces[0].c:(l?M.nodes[l.nodes[0]]:null),phone:l?l.phone:''}}
  startNode=(M.locs.find(l=>l.name===START_LOC)||{nodes:[0]}).nodes[0];
- $('load').remove();drawStatic();fit(mallB);render();
+ $('load').remove();drawStatic();routeB=(()=>{const xs=[],ys=[];Object.values(S).forEach(s=>{if(s.c){xs.push(s.c[0]);ys.push(s.c[1])}});const sn=M.nodes[startNode];xs.push(sn[0]);ys.push(sn[1]);return [Math.min(...xs)-25,Math.min(...ys)-25,Math.max(...xs)+25,Math.max(...ys)+25]})();fit(routeB);render();
  setInterval(()=>{if(st.cur)renderNow()},1000);setInterval(render,30000);
  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 }catch(e){$('load').textContent='Could not load the mall map ('+e.message+'). Check your connection and reload.'}})();
