@@ -14,7 +14,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="meflex-sw" content="sw.js">
-<meta name="meflex-version" content="024f90f35353">
+<meta name="meflex-version" content="6f43e6127120">
 <meta name="meflex-voice" content="voice/">
 <title>MeFlex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -399,6 +399,7 @@ padding: 6px max(16px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area
 .primary { display: grid; gap: var(--sp3); }
 .primary .card { width: 100%; display: grid; justify-items: center; gap: var(--sp2); padding: var(--sp4); background: var(--raised); border-radius: var(--r-card); text-align: center; }
 .primary .card .cover { width: clamp(100px, calc(33vh - 108px), 200px); height: clamp(100px, calc(33vh - 108px), 200px); margin: 0; }
+@media (max-height: 700px) { .primary .card { padding: var(--sp3); gap: var(--sp1); } .primary .card .cover { width: clamp(96px, calc(33vh - 120px), 200px); height: clamp(96px, calc(33vh - 120px), 200px); } }
 .primary .cardtext { display: grid; gap: 2px; justify-items: center; }
 .primary .card .n { font-size: var(--fs-h2); }
 .primary .card .why { max-width: 34ch; }
