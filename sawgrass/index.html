@@ -1,325 +1,444 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f4c4a"><meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.json">
-<title>Sawgrass Live Map</title>
+<meta name="theme-color" content="#0f4c4a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon.svg">
+<title>Mall Run · Sawgrass</title>
 <style>
-:root{--bg:#f3f6f5;--card:#fff;--ink:#0c2423;--mute:#557170;--line:#d6e2df;--teal:#0f4c4a;--acc:#ff6b2c;--ok:#1f8a4c;--warn:#b45309;--hall:#eef1ec;--store:#cfd8d5;--tgt:#ffd9c7;--you:#1a73e8}
+:root{--bg:#f3f6f5;--card:#fff;--ink:#0c2423;--mute:#557170;--line:#d6e2df;--teal:#0f4c4a;--acc:#ff6b2c;--ok:#1f8a4c;--warn:#b45309;--hall:#eef1ec;--store:#cfd8d5;--tgt:#ffd9c7;--you:#1a73e8;--pur:#7c3aed}
 *{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,system-ui,Segoe UI,Roboto,sans-serif;overflow-x:clip}
-header{background:var(--teal);color:#fff;padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;display:flex;align-items:center;gap:10px}
-header h1{font-size:18px;margin:0;flex:1;font-weight:800}
-.hb{background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:10px;min-height:40px;padding:0 12px;font:600 14px inherit;font-family:inherit}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,system-ui,Segoe UI,Roboto,sans-serif;overflow-x:clip}
+body{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;background:var(--teal);color:#fff;padding:calc(env(safe-area-inset-top) + 8px) 12px 8px;display:flex;align-items:center;gap:8px}
+header h1{font-size:17px;margin:0;flex:1;font-weight:800;line-height:1.1}
+header h1 small{display:block;font-weight:500;font-size:12px;opacity:.8}
+.hb{background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:10px;min-height:40px;padding:0 10px;font:600 14px inherit;font-family:inherit}
 .hb.on{background:#fff;color:var(--teal)}
-#mapwrap{position:relative;height:52vh;min-height:300px;background:#e4ebe7;touch-action:none;overflow:hidden;border-bottom:1px solid var(--line)}
-#map{width:100%;height:100%;display:block;user-select:none}
-.ctl{position:absolute;right:10px;display:grid;gap:8px;top:10px}
-.ctl button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);font:700 20px inherit;font-family:inherit;color:var(--ink);box-shadow:0 2px 8px rgb(0 0 0/.12)}
+#mapwrap{position:relative;height:46vh;min-height:280px;background:#e4ebe7;touch-action:none;overflow:hidden;border-bottom:1px solid var(--line)}
+#map{width:100%;height:100%;display:block;user-select:none;-webkit-user-select:none}
+.ctl{position:absolute;right:8px;top:8px;display:grid;gap:6px}
+.ctl button{width:42px;height:42px;min-height:0;border-radius:12px;border:1px solid var(--line);background:var(--card);font:700 18px inherit;font-family:inherit;color:var(--ink);box-shadow:0 2px 8px rgb(0 0 0/.12);padding:0}
 .ctl button.on{background:var(--you);color:#fff;border-color:var(--you)}
-#gpsinfo{position:absolute;left:10px;bottom:10px;background:rgb(255 255 255/.92);border-radius:10px;padding:5px 9px;font-size:13px;max-width:70%}
-#banner{position:absolute;left:10px;right:64px;top:10px;background:var(--ink);color:#fff;border-radius:12px;padding:10px 12px;font-size:14px;display:none}
-#banner button{margin-top:6px;min-height:40px}
-.sheet{padding:12px 14px calc(env(safe-area-inset-bottom) + 24px);max-width:760px;margin:0 auto}
-.now{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 6px 20px rgb(0 0 0/.06)}
+#gpsinfo{position:absolute;left:8px;bottom:8px;background:rgb(255 255 255/.94);border-radius:10px;padding:4px 9px;font-size:13px;max-width:68%}
+#place{position:absolute;left:8px;right:58px;bottom:8px;background:var(--card);border-radius:14px;padding:10px 12px;box-shadow:0 6px 20px rgb(0 0 0/.18);display:none;z-index:2}
+#place .row{margin-top:6px}
+#banner{position:absolute;left:8px;right:58px;top:8px;background:var(--ink);color:#fff;border-radius:12px;padding:10px 12px;font-size:14px;display:none;z-index:3}
+#load{position:absolute;inset:0;display:grid;place-items:center;font-size:15px;color:var(--mute);background:#e4ebe7;text-align:center;padding:20px}
+main{max-width:760px;margin:0 auto;padding:12px 12px 20px}
+.panel{display:none}.panel.on{display:block}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:env(safe-area-inset-bottom)}
+nav button{border:0;border-radius:0;background:none;min-height:60px;font:600 12px inherit;font-family:inherit;color:var(--mute);display:grid;place-items:center;gap:0;padding:6px 2px}
+nav button b{font-size:20px;line-height:1}
+nav button.on{color:var(--acc)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 6px 20px rgb(0 0 0/.05)}
 .lab{font-size:13px;color:var(--mute)}
 .stop{font-size:26px;font-weight:800;line-height:1.1;margin:2px 0 6px}
-.timer{font-weight:800;font-size:42px;line-height:1;font-variant-numeric:tabular-nums}
-.timer.over{color:var(--acc)}
+.timer{font-weight:800;font-size:42px;line-height:1;font-variant-numeric:tabular-nums}.timer.over{color:var(--acc)}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.pill{display:inline-block;font-size:13px;padding:3px 9px;border-radius:99px;background:#e7f0ee;white-space:nowrap}
-.pill.v{background:#dcfce7;color:#14532d}.pill.u{background:#fef3c7;color:#78350f}.pill.l{background:#ffe4d6;color:#9a3412}
+.pill{display:inline-block;font-size:12.5px;padding:3px 9px;border-radius:99px;background:#e7f0ee;white-space:nowrap}
+.pill.v{background:#dcfce7;color:#14532d}.pill.u{background:#fef3c7;color:#78350f}.pill.l{background:#ffe4d6;color:#9a3412}.pill.s{background:#ede9fe;color:#4c1d95}
 .btns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
-button{font:600 15px inherit;font-family:inherit;min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:4px 8px;cursor:pointer}
-button.go{background:var(--acc);border-color:var(--acc);color:#fff}
-button.dn{background:var(--teal);border-color:var(--teal);color:#fff}
+button{font:600 15px inherit;font-family:inherit;min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:4px 10px;cursor:pointer}
+button.go{background:var(--acc);border-color:var(--acc);color:#fff}button.dn{background:var(--teal);border-color:var(--teal);color:#fff}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.mini{min-height:36px;font-size:13px;padding:2px 10px}
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
-.stat{background:var(--bg);border-radius:12px;padding:7px 9px}.stat b{display:block;font-size:18px;white-space:nowrap}
+.stat{background:var(--bg);border-radius:12px;padding:7px 9px}.stat b{display:block;font-size:17px;white-space:nowrap}
 .next{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:15px}
-h2{font-size:19px;margin:20px 0 8px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}
+.chips button{flex:none;min-height:38px;font-size:14px;border-radius:99px}
+.chips button.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+h2{font-size:19px;margin:18px 0 8px}
 .list{list-style:none;margin:0;padding:0}
-.list li{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;padding:9px 2px;border-bottom:1px solid var(--line);align-items:start}
-.num{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 14px inherit;font-family:inherit;border:2px solid var(--acc);background:var(--card)}
-li.d .num{background:var(--ok);border-color:var(--ok);color:#fff}li.d .nm{text-decoration:line-through;color:var(--mute)}
-li.c{background:#fff3ec;border-radius:12px}li.c .num{background:var(--acc);color:#fff}
-li.lt .num{border-style:dashed;border-color:var(--warn)}
-.nm{font-weight:650}.sub{font-size:13px;color:var(--mute)}
-.t{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:600}
-.mini{min-height:38px;font-size:13px;padding:2px 10px}
-.set{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
-label{font-size:13px;color:var(--mute);display:grid;gap:4px}
+.it{display:grid;grid-template-columns:30px 34px minmax(0,1fr) auto;gap:8px;padding:9px 4px;border-bottom:1px solid var(--line);align-items:center;background:var(--bg)}
+.it.drag{background:#fff;box-shadow:0 8px 24px rgb(0 0 0/.2);border-radius:12px;position:relative;z-index:3}
+.hdl{touch-action:none;font-size:20px;color:var(--mute);text-align:center;cursor:grab;user-select:none;padding:8px 0}
+.num{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;border:2px solid var(--acc);background:var(--card)}
+.it.d .num{background:var(--ok);border-color:var(--ok);color:#fff}.it.d .nm{text-decoration:line-through;color:var(--mute)}
+.it.c .num{background:var(--acc);color:#fff}.it.lt .num{border-style:dashed;border-color:var(--warn)}
+.nm{font-weight:650;display:flex;gap:6px;align-items:center}
+.nm img,.res img{width:22px;height:22px;object-fit:contain;border-radius:5px;background:#fff;flex:none}
+.sub{font-size:12.5px;color:var(--mute)}
+.ctr{display:flex;align-items:center;gap:4px}
+.ctr button{min-height:34px;min-width:34px;padding:0;font-size:16px}
+.tool{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+.res{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line)}
+.res button.added{background:var(--ok);color:#fff;border-color:var(--ok)}
 input,select{font:16px inherit;font-family:inherit;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 10px;width:100%}
-.note{font-size:14px;color:var(--mute)}.note li{margin:4px 0}
-#load{position:absolute;inset:0;display:grid;place-items:center;font-size:15px;color:var(--mute);background:#e4ebe7}
-.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 16px);transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9;max-width:90vw}
+.spent{width:76px;min-height:34px;font-size:14px;padding:2px 6px}
+.set{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+label{font-size:13px;color:var(--mute);display:grid;gap:4px}
+.note{font-size:14px;color:var(--mute)}.note li{margin:5px 0}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+.steps li{counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:10px;margin:10px 0}
+.steps li::before{content:counter(s);width:30px;height:30px;border-radius:50%;background:var(--acc);color:#fff;display:grid;place-items:center;font-weight:800}
+#ob{position:fixed;inset:0;z-index:20;background:rgb(12 36 35/.6);display:none;align-items:flex-end;justify-content:center}
+#ob .card{width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom))}
+.empty{padding:20px;text-align:center;color:var(--mute)}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:30;max-width:90vw}
 .toast.on{opacity:1}
-#sres{list-style:none;margin:6px 0 0;padding:0;max-height:220px;overflow:auto}
-#sres li{padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer}
 svg text{font-family:-apple-system,system-ui,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
 </style></head><body>
-<header><h1>Sawgrass · Black Friday</h1><button class="hb" id="gpsBtn">📍 Locate me</button><button class="hb" id="setBtn">Tap my spot</button></header>
+<header><h1>Mall Run<small>Sawgrass Mills · live guide</small></h1><button class="hb" id="gpsBtn">📍 Locate</button><button class="hb" id="setBtn">Tap my spot</button></header>
 <div id="mapwrap">
  <svg id="map"><g id="world"></g><g id="ov"></g></svg>
  <div id="load">Loading Simon's mall map…</div>
- <div class="ctl"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="follow" aria-label="Follow me">◎</button><button id="fitb" aria-label="Show whole mall">⤢</button><button id="cmp" aria-label="Compass">N</button></div>
- <div id="banner"></div>
- <div id="gpsinfo">Location off · tap 📍 or "Tap my spot"</div>
+ <div class="ctl"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="follow" aria-label="Follow me">◎</button><button id="fitb" aria-label="Show my route">⤢</button><button id="cmp" aria-label="Compass">N</button></div>
+ <div id="banner"></div><div id="place"></div>
+ <div id="gpsinfo">Location off · tap 📍 Locate</div>
 </div>
-<div class="sheet">
- <div class="now" id="now"></div>
- <h2>Find any store</h2>
- <input id="q" placeholder="Search 300+ stores" autocomplete="off"><ul id="sres"></ul>
- <div class="row" style="justify-content:space-between;margin-top:8px"><h2 style="margin:12px 0 4px">Your route</h2><div class="row"><button class="mini" id="opt">Re-optimize from here</button><button class="mini" id="undo">Undo</button></div></div>
- <ul class="list" id="list"></ul>
- <h2>Tune the plan</h2>
- <div class="set">
-  <label>Start time<input type="time" id="start" value="06:00"></label>
-  <label>Crowds<select id="pace"><option value="1">Light</option><option value="1.3" selected>Busy</option><option value="1.7">Packed</option></select></label>
-  <label>Time in stores<select id="dw"><option value="0.75">Quick (−25%)</option><option value="1" selected>As planned</option><option value="1.25">Browsing (+25%)</option></select></label>
-  <label>Break (min)<input type="number" id="brk" value="20" min="0" max="90" step="5"></label>
- </div>
- <p class="row" style="margin-top:10px"><button class="mini" id="reset">Reset the day</button></p>
- <h2>How it works</h2>
- <ul class="note">
-  <li>The map, store outlines and walkways come straight from Simon's own mall map (Mappedin). Walk times are measured along the real walkways.</li>
-  <li>📍 uses your phone's GPS. Indoors it can drift 10–40 m, so the blue circle shows how sure it is. If it looks wrong, use <b>Tap my spot</b> and tap where you are.</li>
-  <li>When you're near your next store, a banner offers to start its timer. <b>Done</b> moves you on, <b>Closed / later</b> pushes it back, and <b>Re-optimize</b> reorders what's left from where you're standing.</li>
-  <li>Hours: “Opens 6 am ✓” means Simon's store page confirms it. rag &amp; bone lists 12–7 pm regular hours, so it's last. Call (754) 200-7650. lululemon is still marked “coming soon”, so call (954) 908-8829.</li>
-  <li>Add to Home Screen (Share → Add to Home Screen) to open it like an app. After the first load it keeps working on weak signal.</li>
- </ul>
-</div>
+<main>
+ <section class="panel on" id="p-guide">
+  <div class="card" id="now"></div>
+  <div class="chips" id="near" style="margin-top:12px">
+   <button data-near="rest">🚻 Restroom</button><button data-near="food">🍔 Food</button><button data-near="car">🚗 My car</button><button data-near="atm">🏧 ATM</button><button data-near="guest">ℹ️ Guest services</button><button data-near="clear">✕ Clear</button>
+  </div>
+  <div id="offsite" class="card" style="display:none;margin-top:10px"></div>
+ </section>
+ <section class="panel" id="p-list">
+  <div class="row" style="justify-content:space-between"><h2 style="margin:4px 0">My stores</h2><span class="lab" id="listsum"></span></div>
+  <div class="tool"><button class="mini go" id="opt">✨ Optimize order</button><button class="mini" id="share">Share list</button><button class="mini" id="undo">Undo</button></div>
+  <p class="sub" style="margin:2px 0 6px">Drag ⠿ to reorder · − / + minutes in store · ⭐ must-visit · 📝 note · 📌 keep in place when optimizing · ▶ go there next · ✕ remove</p>
+  <ul class="list" id="list"></ul>
+ </section>
+ <section class="panel" id="p-add">
+  <h2 style="margin:4px 0 8px">Add stores</h2>
+  <input id="q" placeholder="Store, brand (e.g. Nike) or category" autocomplete="off" enterkeyhint="search">
+  <div class="chips" id="cats" style="margin-top:8px"></div>
+  <ul class="list" id="res"></ul>
+ </section>
+ <section class="panel" id="p-help">
+  <h2 style="margin:4px 0">How it works</h2>
+  <ol class="steps">
+   <li><div><b>Build your list.</b> In <b>Add</b>, search by store, brand or category and tap + Add. Or load the Black Friday list below.</div></li>
+   <li><div><b>Set the order.</b> In <b>My list</b>, tap ✨ Optimize for the shortest walk, then drag to adjust. 📌 pins a store in place.</div></li>
+   <li><div><b>At the mall.</b> Tap 📍 Locate. Follow the orange line. Tap <b>I'm here</b> to start a store's timer and <b>Done</b> to move on.</div></li>
+   <li><div><b>If GPS is off</b> (common indoors), tap <b>Tap my spot</b> and touch where you are. Routes restart from there.</div></li>
+  </ol>
+  <div class="tool"><button class="mini" id="preset">Load Chris's Black Friday 23</button><button class="mini" id="clear">Clear my list</button><button class="mini" id="reset">Reset progress</button></div>
+  <h2>Settings</h2>
+  <div class="set">
+   <label>Start time<input type="time" id="start"></label>
+   <label>Start entrance<select id="entr"></select></label>
+   <label>Crowds<select id="pace"><option value="1">Light</option><option value="1.3">Busy</option><option value="1.7">Packed</option></select></label>
+   <label>Break (min, halfway)<input type="number" id="brk" min="0" max="90" step="5"></label>
+   <label>Finish by<input type="time" id="endby"></label>
+   <label>Budget ($)<input type="number" id="budget" min="0" step="50" inputmode="numeric"></label>
+  </div>
+  <h2>Good to know</h2>
+  <ul class="note">
+   <li>Map, store outlines, walkways, categories and regular hours come from Simon's own mall map (Mappedin), loaded live.</li>
+   <li>Mall hours Black Friday: 6 am–10 pm. “BF 6 am ✓” means Simon's store page confirms it. Otherwise the app shows the store's regular hours. Call if it matters.</li>
+   <li>GPS indoors drifts 10–40 m. The circle shows how sure it is.</li>
+   <li>Your list and progress stay on this phone. Share list sends a link with just the store list.</li>
+   <li>Add to Home Screen (Share → Add to Home Screen) to open it like an app. After one load it works on weak signal.</li>
+  </ul>
+ </section>
+</main>
+<nav><button data-tab="guide" class="on"><b>🧭</b>Guide</button><button data-tab="list"><b>📋</b><span id="tabn">My list</span></button><button data-tab="add"><b>➕</b>Add</button><button data-tab="help"><b>❔</b>Help</button></nav>
+<div id="ob"><div class="card"><h2 style="margin-top:0">Welcome to Mall Run</h2>
+ <ol class="steps"><li><div>Pick the stores you want at Sawgrass Mills.</div></li><li><div>Optimize the order, or drag to set your own.</div></li><li><div>At the mall, follow the orange line and check stores off as you go.</div></li></ol>
+ <div class="btns" style="grid-template-columns:1fr 1fr"><button class="go" id="obPreset">Use the Black Friday 23</button><button id="obOwn">Build my own list</button></div></div></div>
 <div class="toast" id="toast"></div>
 <script>
 {
-// ---- Sawgrass core: unzip Mappedin MVF bundle, build map model, routing ----
+// ===== core: Mappedin bundle → model =====
 const LON0=-80.322,LAT0=26.151,KX=Math.cos(LAT0*Math.PI/180)*111320,KY=110574;
 const toXY=(lo,la)=>[(lo-LON0)*KX,(la-LAT0)*KY];
-async function unzip(buf){
-  const dv=new DataView(buf);let e=buf.byteLength-22;while(dv.getUint32(e,true)!==0x06054b50)e--;
-  const n=dv.getUint16(e+10,true);let off=dv.getUint32(e+16,true);const files={};
-  for(let i=0;i<n;i++){const m=dv.getUint16(off+10,true),cs=dv.getUint32(off+20,true),fl=dv.getUint16(off+28,true),xl=dv.getUint16(off+30,true),cl=dv.getUint16(off+32,true),lo=dv.getUint32(off+42,true);
-    const name=new TextDecoder().decode(new Uint8Array(buf,off+46,fl));files[name]={m,cs,lo};off+=46+fl+xl+cl}
-  const read=async name=>{const f=files[name];if(!f)return null;const nl=dv.getUint16(f.lo+26,true),el=dv.getUint16(f.lo+28,true);const data=new Uint8Array(buf,f.lo+30+nl+el,f.cs);
-    if(f.m===0)return new TextDecoder().decode(data);return await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text()};
-  return {files,read};
-}
-async function buildModel(buf){
-  const z=await unzip(buf);
-  const spaceFile=Object.keys(z.files).find(k=>/^space\/.+\.geojson$/.test(k));
-  const [L,S,N]=await Promise.all([z.read('enterprise/locations.json'),z.read(spaceFile),z.read('node.geojson')].map(p=>p.then(JSON.parse)));
-  const nodes=[],idx={};N.features.forEach((f,i)=>{idx[f.properties.id]=i;nodes.push(toXY(...f.geometry.coordinates))});
-  const adj=nodes.map(()=>[]);
-  N.features.forEach((f,i)=>{for(const nb of f.properties.neighbors||[]){const j=idx[nb.id];if(j==null||j===i)continue;const d=Math.hypot(nodes[i][0]-nodes[j][0],nodes[i][1]-nodes[j][1]);if(!adj[i].some(a=>a[0]===j))adj[i].push([j,d]);if(!adj[j].some(a=>a[0]===i))adj[j].push([i,d])}});
-  const locs=[],sp2loc={};
-  for(const l of L){if(l.type!=='store'||l.hidden)continue;const nd=(l.nodes||[]).map(n=>idx[n.id||n]).filter(x=>x!=null);
-    const o={id:l.id,name:l.name,nodes:nd,phone:(l.phone&&l.phone.number)||'',spaces:[]};locs.push(o);for(const s of l.spaces||[])sp2loc[s.id||s]=o}
-  const spaces=[];
-  for(const f of S.features){const g=f.geometry;if(!g||(g.type!=='Polygon'&&g.type!=='MultiPolygon'))continue;
-    const rings=g.type==='Polygon'?[g.coordinates[0]]:g.coordinates.map(p=>p[0]);
-    for(const r of rings){const pts=r.map(c=>toXY(c[0],c[1]));let a=0;for(let i=0;i<pts.length-1;i++)a+=pts[i][0]*pts[i+1][1]-pts[i+1][0]*pts[i][1];a=Math.abs(a/2);
-      const loc=sp2loc[f.properties.id]||null;if(!loc&&a<60)continue;
-      let cx=0,cy=0;pts.forEach(p=>{cx+=p[0];cy+=p[1]});const sp={pts,loc,area:a,c:[cx/pts.length,cy/pts.length]};spaces.push(sp);if(loc)loc.spaces.push(sp)}}
-  for(const l of locs){if(!l.nodes.length&&l.spaces.length){l.nodes=[nearestNode(nodes,l.spaces[0].c)]}}
-  return {nodes,adj,locs:locs.filter(l=>l.nodes.length),spaces};
-}
+const ZIP='https://cdn.mappedin.com/573386b10ff1998d0d1097da/3082b71766ba8a6286af97657529601a4d413bde.zip';
+async function unzip(buf){const dv=new DataView(buf);let e=buf.byteLength-22;while(dv.getUint32(e,true)!==0x06054b50)e--;
+ const n=dv.getUint16(e+10,true);let off=dv.getUint32(e+16,true);const files={};
+ for(let i=0;i<n;i++){const m=dv.getUint16(off+10,true),cs=dv.getUint32(off+20,true),fl=dv.getUint16(off+28,true),xl=dv.getUint16(off+30,true),cl=dv.getUint16(off+32,true),lo=dv.getUint32(off+42,true);
+  files[new TextDecoder().decode(new Uint8Array(buf,off+46,fl))]={m,cs,lo};off+=46+fl+xl+cl}
+ const read=async name=>{const f=files[name];if(!f)return null;const nl=dv.getUint16(f.lo+26,true),el=dv.getUint16(f.lo+28,true);const data=new Uint8Array(buf,f.lo+30+nl+el,f.cs);
+  if(f.m===0)return new TextDecoder().decode(data);return await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text()};
+ return {files,read}}
 function nearestNode(nodes,[x,y],adj){let b=-1,bd=1e18;for(let i=0;i<nodes.length;i++){if(adj&&!adj[i].length)continue;const d=(nodes[i][0]-x)**2+(nodes[i][1]-y)**2;if(d<bd){bd=d;b=i}}return b}
-function route(M,src,targets){ // Dijkstra from src (node index) to any of targets
-  const T=new Set(targets),n=M.nodes.length,dist=new Float64Array(n).fill(Infinity),prev=new Int32Array(n).fill(-1),done=new Uint8Array(n);dist[src]=0;
-  const heap=[[0,src]];const push=(d,i)=>{heap.push([d,i]);let k=heap.length-1;while(k>0){const p=(k-1)>>1;if(heap[p][0]<=heap[k][0])break;[heap[p],heap[k]]=[heap[k],heap[p]];k=p}};
-  const pop=()=>{const t=heap[0],l=heap.pop();if(heap.length){heap[0]=l;let k=0;for(;;){const a=2*k+1,b=a+1;let m=k;if(a<heap.length&&heap[a][0]<heap[m][0])m=a;if(b<heap.length&&heap[b][0]<heap[m][0])m=b;if(m===k)break;[heap[m],heap[k]]=[heap[k],heap[m]];k=m}}return t};
-  while(heap.length){const [d,u]=pop();if(done[u])continue;done[u]=1;if(T.has(u)){const path=[];for(let v=u;v!==-1;v=prev[v])path.push(v);return {dist:d,path:path.reverse(),end:u}}
-    for(const [v,w] of M.adj[u]){const nd=d+w;if(nd<dist[v]){dist[v]=nd;prev[v]=u;push(nd,v)}}}
-  return null;
-}
+async function buildModel(buf){const z=await unzip(buf);const sf=Object.keys(z.files).find(k=>/^space\/.+\.geojson$/.test(k));
+ const [L,Sp,N,C]=await Promise.all(['enterprise/locations.json',sf,'node.geojson','enterprise/categories.json'].map(f=>z.read(f).then(t=>t?JSON.parse(t):[])));
+ const nodes=[],idx={};N.features.forEach((f,i)=>{idx[f.properties.id]=i;nodes.push(toXY(...f.geometry.coordinates))});
+ const adj=nodes.map(()=>[]);N.features.forEach((f,i)=>{for(const nb of f.properties.neighbors||[]){const j=idx[nb.id];if(j==null||j===i)continue;const d=Math.hypot(nodes[i][0]-nodes[j][0],nodes[i][1]-nodes[j][1]);if(!adj[i].some(a=>a[0]===j))adj[i].push([j,d]);if(!adj[j].some(a=>a[0]===i))adj[j].push([i,d])}});
+ const byId={},locs=[],amen=[],sp2={};
+ for(const l of L){const nd=(l.nodes||[]).map(n=>idx[n.id||n]).filter(x=>x!=null);
+  if(l.type==='store'&&!l.hidden){const o={id:l.id,name:l.name,nodes:nd,phone:(l.phone&&l.phone.number)||'',logo:l.logo||'',hours:l.operationHours||[],tags:l.tags||[],soon:!!(l.extra&&l.extra.comingSoon),cats:[],spaces:[]};locs.push(o);byId[l.id]=o;for(const s of l.spaces||[])sp2[s.id||s]=o}
+  else if(nd.length)amen.push({name:l.name,amenity:l.amenity||l.type,nodes:nd})}
+ for(const c of C)for(const id of c.locations||[])if(byId[id])byId[id].cats.push(c.name);
+ const spaces=[];for(const f of Sp.features){const g=f.geometry;if(!g||(g.type!=='Polygon'&&g.type!=='MultiPolygon'))continue;
+  for(const r of (g.type==='Polygon'?[g.coordinates[0]]:g.coordinates.map(p=>p[0]))){const pts=r.map(c=>toXY(c[0],c[1]));let a=0;for(let i=0;i<pts.length-1;i++)a+=pts[i][0]*pts[i+1][1]-pts[i+1][0]*pts[i][1];a=Math.abs(a/2);
+   const loc=sp2[f.properties.id]||null;if(!loc&&a<60)continue;let cx=0,cy=0;pts.forEach(p=>{cx+=p[0];cy+=p[1]});const sp={pts,loc,c:[cx/pts.length,cy/pts.length]};spaces.push(sp);if(loc)loc.spaces.push(sp)}}
+ for(const l of locs){if(!l.nodes.length&&l.spaces.length)l.nodes=[nearestNode(nodes,l.spaces[0].c,adj)];l.c=l.spaces[0]?l.spaces[0].c:(l.nodes.length?nodes[l.nodes[0]]:null)}
+ return {nodes,adj,locs:locs.filter(l=>l.nodes.length).sort((a,b)=>a.name.localeCompare(b.name)),byId,amen,spaces}}
+function route(M,src,targets){const T=new Set(targets),n=M.nodes.length,dist=new Float64Array(n).fill(Infinity),prev=new Int32Array(n).fill(-1),done=new Uint8Array(n);dist[src]=0;const H=[[0,src]];
+ const push=(d,i)=>{H.push([d,i]);let k=H.length-1;while(k>0){const p=(k-1)>>1;if(H[p][0]<=H[k][0])break;[H[p],H[k]]=[H[k],H[p]];k=p}};
+ const pop=()=>{const t=H[0],l=H.pop();if(H.length){H[0]=l;let k=0;for(;;){const a=2*k+1,b=a+1;let m=k;if(a<H.length&&H[a][0]<H[m][0])m=a;if(b<H.length&&H[b][0]<H[m][0])m=b;if(m===k)break;[H[m],H[k]]=[H[k],H[m]];k=m}}return t};
+ while(H.length){const [d,u]=pop();if(done[u])continue;done[u]=1;if(T.has(u)){const path=[];for(let v=u;v!==-1;v=prev[v])path.push(v);return {dist:d,path:path.reverse(),end:u}}for(const [v,w] of M.adj[u]){const nd=d+w;if(nd<dist[v]){dist[v]=nd;prev[v]=u;push(nd,v)}}}return null}
 
-const STORES=[
- ['jcrew','J.Crew Factory','J.Crew Factory',15,'v'],
- ['levis',"Levi's® Outlet Store","Levi's Outlet",15,'u'],
- ['tnf','The North Face','The North Face',12,'v'],
- ['sephora','Sephora','Sephora',20,'v'],
- ['samsonite','Samsonite','Samsonite',6,'v'],
- ['express','EXPRESS Factory Outlet','Express',12,'v'],
- ['birk','Birkenstock','Birkenstock',10,'v'],
- ['swarovski','Swarovski','Swarovski',8,'v'],
- ['br','Banana Republic Factory','Banana Republic',12,'u'],
- ['aerie','Aerie by American Eagle Outfitters','Aerie',12,'v'],
- ['gap','Gap Factory','Gap Factory',12,'u'],
- ['zales','Zales Outlet, The Diamond Store','Zales Outlet',10,'v'],
- ['colehaan','Cole Haan Outlet','Cole Haan',10,'u'],
- ['aritzia','Aritzia','Aritzia',18,'v'],
- ['hurley','Hurley','Hurley',8,'v'],
- ['skims','Skims','SKIMS',12,'v'],
- ['ck','Calvin Klein','Calvin Klein',12,'v'],
- ['lulu','lululemon','lululemon',15,'u'],
- ['columbia','Columbia Factory Store','Columbia',12,'u'],
- ['kate','Kate Spade New York Outlet','Kate Spade',15,'v'],
- ['coach','Coach Outlet','Coach',20,'v'],
- ['tumi','TUMI','TUMI',6,'u'],
- ['rag','rag & bone New York','rag & bone',10,'l']];
-const LAST='rag',START_LOC='The Cheesecake Factory';
-const LANDMARKS=['H & M','Burlington','Saks OFF 5TH',"Bloomingdale's - The Outlet Store",'Regal Cinemas & IMAX','Super Target','Marshalls','Primark','BrandsMart USA','Nike Factory Store','The Cheesecake Factory','Tommy Bahama Marlin Bar'];
-const HL={v:['v','Opens 6 am ✓'],u:['u','Hours not listed'],l:['l','May open noon']};
+// ===== app data =====
+const PRESET=[['J.Crew Factory',15],["Levi's® Outlet Store",15],['The North Face',12],['Sephora',20],['Samsonite',6],['EXPRESS Factory Outlet',12],['Birkenstock',10],['Swarovski',8],['Banana Republic Factory',12],['Aerie by American Eagle Outfitters',12],['Gap Factory',12],['Zales Outlet, The Diamond Store',10],['Cole Haan Outlet',10],['Aritzia',18],['Hurley',8],['Skims',12],['Calvin Klein',12],['lululemon',15],['Columbia Factory Store',12],['Kate Spade New York Outlet',15],['Coach Outlet',20],['TUMI',6],['rag & bone New York',10,1]];
+const BF6=new Set(['J.Crew Factory','Sephora','Samsonite','The North Face','EXPRESS Factory Outlet','Aritzia','Calvin Klein','Birkenstock','Skims','Hurley','Aerie by American Eagle Outfitters','Zales Outlet, The Diamond Store','Swarovski','Kate Spade New York Outlet','Coach Outlet']);
+const ENTR=[['The Cheesecake Factory','Oasis (Cheesecake / Regal)'],['H & M','East (H&M / adidas)'],["Bloomingdale's - The Outlet Store","Colonnade (Bloomingdale's)"],['Marshalls','West (Marshalls)'],['Super Target','Super Target']];
+const LANDMARKS=['H & M','Burlington','Saks OFF 5TH',"Bloomingdale's - The Outlet Store",'Regal Cinemas & IMAX','Super Target','Marshalls','Primark','BrandsMart USA','Nike Factory Store','The Cheesecake Factory'];
+const LUGGAGE=/luggage|samsonite|tumi|travel/i;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let M,S={},startNode,DC=new Map();
-let st={order:STORES.map(s=>s[0]),s:{},cur:null,arr:null,me:null,hist:[],cfg:{start:'06:00',pace:'1.3',dw:'1',brk:'20'}};
-try{const x=JSON.parse(localStorage.getItem('sg2')||'null');if(x&&x.order)st=Object.assign(st,x)}catch(e){}
-const save=()=>{try{localStorage.setItem('sg2',JSON.stringify(st))}catch(e){}};
-const toast=t=>{const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove('on'),2000)};
+let M,DC=new Map();
+const DEF={list:[],s:{},cur:null,arr:null,me:null,car:null,hist:[],ob:false,cfg:{start:'06:00',pace:'1.3',brk:'20',budget:'',entr:'The Cheesecake Factory',endby:''}};
+let st=JSON.parse(JSON.stringify(DEF));
+try{const x=JSON.parse(localStorage.getItem('mallrun1')||'null');if(x&&x.list)st=Object.assign(st,x,{cfg:Object.assign({},DEF.cfg,x.cfg)})}catch(e){}
+const save=()=>{try{localStorage.setItem('mallrun1',JSON.stringify(st))}catch(e){}};
+const toast=t=>{const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove('on'),2200)};
 const SPD=()=>1.25/(+st.cfg.pace);
-const dwell=k=>Math.round(S[k].dw*(+st.cfg.dw));
 const fmt=d=>new Date(d).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
 const mins=m=>{m=Math.round(m);return m>=60?Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')+'m':m+' min'};
 const meters=d=>d<1000?Math.round(d)+' m':(d/1000).toFixed(1)+' km';
-function dist(a,bNodes){const k=a+'>'+bNodes.join(',');if(DC.has(k))return DC.get(k);const r=route(M,a,bNodes);DC.set(k,r);return r}
-function startDate(){const [h,m]=st.cfg.start.split(':').map(Number);return new Date(2026,10,27,h,m).getTime()}
+const money=v=>'$'+(Math.round(v)||0).toLocaleString();
+const L=id=>M.byId[id];
+const item=id=>st.list.find(x=>x.id===id);
+function dist(a,b){const k=a+'>'+b.join(',');if(DC.has(k))return DC.get(k);const r=route(M,a,b);DC.set(k,r);return r}
+function startNode(){const l=M.locs.find(x=>x.name===st.cfg.entr)||M.locs.find(x=>x.name==='The Cheesecake Factory');return l?l.nodes[0]:0}
+function startDate(){const [h,m]=(st.cfg.start||'06:00').split(':').map(Number);const d=new Date();d.setHours(h,m,0,0);return d.getTime()}
 function meFresh(){return st.me&&Date.now()-st.me.t<15*60e3}
-function hereNode(){if(st.cur)return S[st.cur].node;if(meFresh())return nearestNode(M.nodes,[st.me.x,st.me.y],M.adj);
- const d=st.order.filter(k=>st.s[k]==='done');return d.length?S[d[d.length-1]].node:startNode}
-function remaining(){return st.order.filter(k=>st.s[k]!=='done'&&k!==st.cur)}
-function schedule(from,t,keys){let n=from,out=[];const doneN=st.order.filter(x=>st.s[x]==='done').length+(st.cur?1:0),full=keys.length===STORES.length;
- keys.forEach((k,i)=>{if((full?i:doneN+i)===12)t+=(+st.cfg.brk||0)*60e3;const r=dist(n,S[k].nodes);const w=r?r.dist:0;t+=w/SPD()*1000;out.push({k,walk:w,arr:t,path:r?r.path:[]});t+=dwell(k)*60e3;n=r?r.end:S[k].node});return {out,end:t}}
-function plan(){return schedule(startNode,startDate(),STORES.map(s=>s[0]))}
-function optimize(){const from=hereNode(),keys=remaining();if(keys.length<3)return;
- const later=keys.filter(k=>st.s[k]==='later'),pts=[from,...keys.map(k=>S[k].node)];
- const D=pts.map(a=>keys.map(k=>{const r=dist(a,S[k].nodes);return r?r.dist:1e7}));
- const cost=o=>{let c=D[0][o[0]];for(let i=1;i<o.length;i++)c+=D[o[i-1]+1][o[i]];if(later.includes(keys[o[0]])&&o.length>1)c+=5e5;const li=keys.indexOf(LAST);if(li>=0&&o[o.length-1]!==li)c+=5e5;return c};
- let best=keys.map((_,i)=>i),imp=true,guard=0;while(imp&&guard++<50){imp=false;
-  for(let i=0;i<best.length-1;i++)for(let j=i+1;j<best.length;j++){const c=[...best.slice(0,i),...best.slice(i,j+1).reverse(),...best.slice(j+1)];if(cost(c)<cost(best)-.5){best=c;imp=true}}
-  for(let i=0;i<best.length;i++)for(let j=0;j<best.length;j++){if(i===j)continue;const c=best.slice();const [x]=c.splice(i,1);c.splice(j,0,x);if(cost(c)<cost(best)-.5){best=c;imp=true}}}
- snap();const done=st.order.filter(k=>st.s[k]==='done');st.order=[...done,...(st.cur?[st.cur]:[]),...best.map(i=>keys[i])];toast('Route re-optimized from your spot');render()}
-function snap(){st.hist.push(JSON.stringify({order:st.order,s:st.s,cur:st.cur,arr:st.arr}));if(st.hist.length>40)st.hist.shift()}
+function hereNode(){if(st.cur&&L(st.cur))return L(st.cur).nodes[0];if(meFresh())return nearestNode(M.nodes,[st.me.x,st.me.y],M.adj);
+ const d=st.list.filter(x=>st.s[x.id]==='done');return d.length&&L(d[d.length-1].id)?L(d[d.length-1].id).nodes[0]:startNode()}
+const ids=()=>st.list.map(x=>x.id).filter(id=>L(id));
+function remaining(){return ids().filter(id=>st.s[id]!=='done'&&id!==st.cur)}
+function dwell(id){const i=item(id);return i?i.dw:12}
+function defDwell(l){return LUGGAGE.test(l.name+' '+l.cats.join(' '))?6:12}
+function today(l){const day=new Date().toLocaleDateString('en-US',{weekday:'long'});const h=(l.hours||[]).find(s=>(s.dayOfWeek||[]).includes(day));return h?h.opens+'–'+h.closes:''}
+const t12=s=>{if(!s)return'';const [h,m]=s.split(':').map(Number);return (h%12||12)+(m?':'+String(m).padStart(2,'0'):'')+(h<12?'a':'p')};
+function hoursPill(l){if(l.soon)return ['s','Coming soon: call first'];if(BF6.has(l.name))return ['v','BF 6 am ✓'];const t=today(l);if(!t)return ['u','Hours not listed'];const [o,c]=t.split('–');
+ return [+o.split(':')[0]>=11?'l':'u','Usually '+t12(o)+'–'+t12(c)]}
+function schedule(from,t,keys,doneN){let n=from,out=[];const half=Math.floor(st.list.length/2);
+ keys.forEach((k,i)=>{if(doneN+i===half&&half>0)t+=(+st.cfg.brk||0)*60e3;const r=dist(n,L(k).nodes),w=r?r.dist:0;t+=w/SPD()*1000;out.push({k,walk:w,arr:t});t+=dwell(k)*60e3;n=r?r.end:L(k).nodes[0]});return {out,end:t}}
+const plan=()=>schedule(startNode(),startDate(),ids(),0);
+function snap(){st.hist.push(JSON.stringify({list:st.list,s:st.s,cur:st.cur,arr:st.arr}));if(st.hist.length>40)st.hist.shift()}
+// ===== list ops =====
+function addStore(id){if(item(id))return;snap();const l=L(id);st.list.push({id,dw:defDwell(l),pin:false});toast('Added '+l.name);render()}
+function removeStore(id){snap();st.list=st.list.filter(x=>x.id!==id);delete st.s[id];if(st.cur===id)st.cur=null;render()}
+function loadPreset(){snap();st.list=PRESET.map(([n,dw,pin])=>{const l=M.locs.find(x=>x.name===n);return l?{id:l.id,dw,pin:!!pin}:null}).filter(Boolean);st.s={};st.cur=null;optimize(true);toast('Loaded the Black Friday 23');}
+function optimize(quiet){const keys=remaining();if(keys.length<2){if(!quiet)toast('Add a few stores first');return}
+ const from=hereNode(),fixedPos={};const doneOrCur=st.list.filter(x=>st.s[x.id]==='done'||x.id===st.cur);
+ const rest=st.list.filter(x=>keys.includes(x.id));rest.forEach((x,i)=>{if(x.pin)fixedPos[i]=x.id});
+ const free=rest.filter(x=>!x.pin).map(x=>x.id),slots=rest.map((_,i)=>i).filter(i=>fixedPos[i]==null);
+ const build=o=>{const arr=[];let f=0;for(let i=0;i<rest.length;i++)arr.push(fixedPos[i]!=null?fixedPos[i]:o[f++]);return arr};
+ const cost=o=>{const seq=build(o);let n=from,c=0;for(let i=0;i<seq.length;i++){const r=dist(n,L(seq[i]).nodes);c+=r?r.dist:1e6;n=r?r.end:n;if(i===0&&st.s[seq[i]]==='later'&&seq.length>1)c+=5e5}return c};
+ let best=free.slice();// greedy start
+ {let n=from,pool=free.slice(),g=[];while(pool.length){let bi=0,bd=1e18;pool.forEach((k,i)=>{const r=dist(n,L(k).nodes);const d=r?r.dist:1e9;if(d<bd){bd=d;bi=i}});const k=pool.splice(bi,1)[0];g.push(k);const r=dist(n,L(k).nodes);n=r?r.end:n}best=g}
+ let bc=cost(best),imp=true,guard=0;while(imp&&guard++<40){imp=false;
+  for(let i=0;i<best.length-1;i++)for(let j=i+1;j<best.length;j++){const c=[...best.slice(0,i),...best.slice(i,j+1).reverse(),...best.slice(j+1)],cc=cost(c);if(cc<bc-.5){best=c;bc=cc;imp=true}}
+  for(let i=0;i<best.length;i++)for(let j=0;j<best.length;j++){if(i===j)continue;const c=best.slice();const [x]=c.splice(i,1);c.splice(j,0,x);const cc=cost(c);if(cc<bc-.5){best=c;bc=cc;imp=true}}}
+ if(!quiet)snap();const seq=build(best);st.list=[...doneOrCur,...seq.map(id=>st.list.find(x=>x.id===id))];
+ if(!quiet)toast('Optimized: '+meters(plan().out.reduce((a,o)=>a+o.walk,0))+' total walking');render()}
 function act(a,k){snap();k=k||st.cur;
- if(a==='arrive'){if(st.cur&&st.cur!==k&&st.s[st.cur]!=='done')st.s[st.cur]='later';st.cur=k;st.arr=Date.now();delete st.s[k];toast('Timer started · '+S[k].label)}
- if(a==='done'){st.s[k]='done';if(st.cur===k)st.cur=null;st.me=null;toast('Checked off')}
- if(a==='later'){st.s[k]='later';if(st.cur===k)st.cur=null;const o=st.order.filter(x=>x!==k);o.splice(Math.min(o.length,o.indexOf(remaining().filter(x=>x!==k)[2]||o[o.length-1])+1),0,k);st.order=o;toast('Pushed back · revisit later')}
+ if(a==='arrive'){if(!st.first)st.first=Date.now();if(st.cur&&st.cur!==k&&st.s[st.cur]!=='done')st.s[st.cur]='later';st.cur=k;st.arr=Date.now();delete st.s[k];toast('Timer started · '+L(k).name)}
+ if(a==='done'){st.s[k]='done';if(st.cur===k)st.cur=null;st.me=null;toast('Checked off ✓')}
+ if(a==='later'){st.s[k]='later';if(st.cur===k)st.cur=null;const rem=remaining().filter(x=>x!==k),after=rem[Math.min(2,rem.length-1)];const it=item(k);st.list=st.list.filter(x=>x.id!==k);const pos=after?st.list.findIndex(x=>x.id===after)+1:st.list.length;st.list.splice(pos,0,it);toast('Moved back · revisit later')}
  if(a==='pause'){st.cur=null;toast('Paused')}
- if(a==='focus'){focusStore(k);return}
+ if(a==='more'){const it=item(k);if(it){it.dw+=5;toast('+5 min at '+L(k).name)}}
+ if(a==='focus'){focusLoc(L(k));return}
  render()}
-// ---------- map view ----------
-const svg=$('map'),W=$('world'),OV=$('ov');let V={s:1,tx:0,ty:0},follow=false,tapMode=false,heading=null,searchTarget=null;
-const scr=([x,y])=>[V.tx+V.s*x,V.ty-V.s*y];
-const wld=(sx,sy)=>[(sx-V.tx)/V.s,-(sy-V.ty)/V.s];
+// ===== map =====
+const svg=$('map'),W=$('world'),OV=$('ov');let V={s:1,tx:0,ty:0},follow=false,tapMode=null,heading=null,target=null,mallB=null;
+const scr=([x,y])=>[V.tx+V.s*x,V.ty-V.s*y],wld=(sx,sy)=>[(sx-V.tx)/V.s,-(sy-V.ty)/V.s];
 function applyView(){W.setAttribute('transform',`translate(${V.tx},${V.ty}) scale(${V.s},${-V.s})`);drawOverlay()}
-function fit(b){const r=svg.getBoundingClientRect(),[x0,y0,x1,y1]=b,s=Math.min(r.width/(x1-x0),r.height/(y1-y0))*0.92;V.s=s;V.tx=r.width/2-s*(x0+x1)/2;V.ty=r.height/2+s*(y0+y1)/2;applyView()}
+function fit(b){const r=svg.getBoundingClientRect(),[x0,y0,x1,y1]=b,s=Math.min(r.width/(x1-x0||1),r.height/(y1-y0||1))*0.9;V.s=Math.min(s,6);V.tx=r.width/2-V.s*(x0+x1)/2;V.ty=r.height/2+V.s*(y0+y1)/2;applyView()}
+function fitRoute(){const pts=ids().map(id=>L(id).c).filter(Boolean);pts.push(M.nodes[startNode()]);if(pts.length<2)return fit(mallB);const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);fit([Math.min(...xs)-25,Math.min(...ys)-25,Math.max(...xs)+25,Math.max(...ys)+25])}
 function zoomAt(f,cx,cy){const ns=Math.max(0.3,Math.min(30,V.s*f));f=ns/V.s;V.tx=cx-(cx-V.tx)*f;V.ty=cy-(cy-V.ty)*f;V.s=ns;applyView()}
 function centerOn([x,y],s){const r=svg.getBoundingClientRect();if(s)V.s=s;V.tx=r.width/2-V.s*x;V.ty=r.height/2+V.s*y;applyView()}
-let mallB,routeB;
-function drawStatic(){const tgt=new Set(STORES.map(s=>s[1]));let h='';
- const pth=pts=>'M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L')+'Z';
- for(const sp of M.spaces){if(sp.loc)continue;h+=`<path d="${pth(sp.pts)}" fill="var(--hall)" stroke="#c9d3cf" stroke-width=".4"/>`}
- for(const sp of M.spaces){if(!sp.loc)continue;const t=tgt.has(sp.loc.name);const k=t?STORES.find(s=>s[1]===sp.loc.name)[0]:'';
-  h+=`<path d="${pth(sp.pts)}" ${t?`data-k="${k}" class="tg"`:''} fill="${t?'var(--tgt)':'var(--store)'}" stroke="#fff" stroke-width=".6"/>`}
- W.innerHTML=h;
- const xs=[],ys=[];M.spaces.filter(s=>s.loc).forEach(s=>s.pts.forEach(p=>{xs.push(p[0]);ys.push(p[1])}));
- mallB=[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)]}
-function colorTargets(){for(const el of W.querySelectorAll('.tg')){const k=el.dataset.k;el.setAttribute('fill',st.s[k]==='done'?'#9fd8b4':k===st.cur?'var(--acc)':k===nextKey()?'#ffb08a':'var(--tgt)')}}
-function nextKey(){return st.cur||remaining()[0]}
+function drawStatic(){const pth=p=>'M'+p.map(q=>q[0].toFixed(1)+' '+q[1].toFixed(1)).join('L')+'Z';let h='';
+ for(const sp of M.spaces)if(!sp.loc)h+=`<path d="${pth(sp.pts)}" fill="var(--hall)" stroke="#c9d3cf" stroke-width=".4"/>`;
+ for(const sp of M.spaces)if(sp.loc)h+=`<path d="${pth(sp.pts)}" data-id="${sp.loc.id}" fill="var(--store)" stroke="#fff" stroke-width=".6"/>`;
+ W.innerHTML=h;const xs=[],ys=[];M.spaces.filter(s=>s.loc).forEach(s=>s.pts.forEach(p=>{xs.push(p[0]);ys.push(p[1])}));mallB=[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)]}
+function colorStores(){const inL=new Set(ids()),nk=st.cur||remaining()[0];for(const el of W.querySelectorAll('path[data-id]')){const id=el.dataset.id;
+ el.setAttribute('fill',!inL.has(id)?(target&&target.id===id?'#ddd6fe':'var(--store)'):st.s[id]==='done'?'#9fd8b4':id===nk?(st.cur?'var(--acc)':'#ffb08a'):'var(--tgt)')}}
 let ovq=false;function drawOverlay(){if(ovq)return;ovq=true;requestAnimationFrame(()=>{ovq=false;drawOv()})}
+const poly=(pts,a)=>`<polyline points="${pts.map(p=>scr(p).map(v=>v.toFixed(1)).join(',')).join(' ')}" ${a}/>`;
 function drawOv(){if(!M)return;let h='';const rem=remaining();
- // full remaining route faint
- let n=hereNode(),pts=[];for(const k of (st.cur?[st.cur,...rem]:rem)){const r=dist(n,S[k].nodes);if(r){pts.push(...r.path.map(i=>M.nodes[i]));n=r.end}}
- if(pts.length>1)h+=`<polyline points="${pts.map(p=>scr(p).map(v=>v.toFixed(1)).join(',')).join(' ')}" fill="none" stroke="#0f4c4a" stroke-opacity=".35" stroke-width="3" stroke-dasharray="4 5"/>`;
- // current leg bold
- const nk=searchTarget?null:(st.cur?null:rem[0]);let leg=null;
- if(searchTarget){leg=dist(hereNode(),searchTarget.nodes)}else if(nk){leg=dist(hereNode(),S[nk].nodes)}
- if(leg&&leg.path.length>1){let lp=leg.path.map(i=>M.nodes[i]);if(meFresh())lp=[[st.me.x,st.me.y],...lp];h+=`<polyline points="${lp.map(p=>scr(p).map(v=>v.toFixed(1)).join(',')).join(' ')}" fill="none" stroke="${searchTarget?'#7c3aed':'var(--acc)'}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`}
- // labels
+ let n=hereNode(),pts=[];for(const k of rem){const r=dist(n,L(k).nodes);if(r){pts.push(...r.path.map(i=>M.nodes[i]));n=r.end}}
+ if(pts.length>1)h+=poly(pts,'fill="none" stroke="#0f4c4a" stroke-opacity=".35" stroke-width="3" stroke-dasharray="4 5"');
+ const legTo=target?target.nodes:(!st.cur&&rem[0]?L(rem[0]).nodes:null);
+ if(legTo){const r=dist(hereNode(),legTo);if(r&&r.path.length>1){let lp=r.path.map(i=>M.nodes[i]);if(meFresh())lp=[[st.me.x,st.me.y],...lp];if(target&&target.car)lp.push(target.car);h+=poly(lp,`fill="none" stroke="${target?'var(--pur)':'var(--acc)'}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"`)}}
  const fs=V.s>2.2?13:11;
- if(V.s>0.9)for(const nm of LANDMARKS){const l=M.locs.find(x=>x.name===nm);if(!l||!l.spaces[0])continue;const [x,y]=scr(l.spaces[0].c);h+=`<text x="${x}" y="${y}" font-size="${fs-1}" fill="#46605e" text-anchor="middle" font-weight="600">${esc(nm.replace(' - The Outlet Store','').replace(' Cinemas & IMAX',''))}</text>`}
- st.order.forEach((k,i)=>{const s=S[k];if(!s.c)return;const [x,y]=scr(s.c);const dn=st.s[k]==='done',cu=k===st.cur||k===rem[0]&&!st.cur;
-  h+=`<g data-k="${k}"><circle cx="${x}" cy="${y}" r="${cu?13:10}" fill="${dn?'var(--ok)':cu?'var(--acc)':'#fff'}" stroke="${st.s[k]==='later'?'var(--warn)':'var(--acc)'}" stroke-width="2" ${st.s[k]==='later'?'stroke-dasharray="3 2"':''}/><text x="${x}" y="${y+4}" font-size="11" text-anchor="middle" font-weight="800" fill="${dn||cu?'#fff':'#0c2423'}" style="stroke:none">${i+1}</text>`;
-  if(V.s>1.6||cu)h+=`<text x="${x+15}" y="${y+4}" font-size="${fs}" font-weight="700" fill="#0c2423">${esc(s.label)}</text>`;h+='</g>'});
- if(searchTarget&&searchTarget.spaces[0]){const [x,y]=scr(searchTarget.spaces[0].c);h+=`<circle cx="${x}" cy="${y}" r="9" fill="#7c3aed"/><text x="${x+13}" y="${y+4}" font-size="13" font-weight="700" fill="#4c1d95">${esc(searchTarget.name)}</text>`}
- // you
- if(st.me){const [x,y]=scr([st.me.x,st.me.y]),ar=Math.max(8,(st.me.acc||0)*V.s);const old=!meFresh();
+ if(V.s>0.8)for(const nm of LANDMARKS){const l=M.locs.find(x=>x.name===nm);if(!l||!l.c||ids().includes(l.id))continue;const [x,y]=scr(l.c);h+=`<text x="${x}" y="${y}" font-size="${fs-1}" fill="#46605e" text-anchor="middle" font-weight="600">${esc(nm.replace(' - The Outlet Store','').replace(' Cinemas & IMAX',''))}</text>`}
+ ids().forEach((k,i)=>{const l=L(k);if(!l.c)return;const [x,y]=scr(l.c),dn=st.s[k]==='done',cu=k===st.cur||(!st.cur&&k===rem[0]);
+  h+=`<circle cx="${x}" cy="${y}" r="${cu?13:10}" fill="${dn?'var(--ok)':cu?'var(--acc)':'#fff'}" stroke="${st.s[k]==='later'?'var(--warn)':'var(--acc)'}" stroke-width="2" ${st.s[k]==='later'?'stroke-dasharray="3 2"':''}/><text x="${x}" y="${y+4}" font-size="11" text-anchor="middle" font-weight="800" fill="${dn||cu?'#fff':'#0c2423'}" style="stroke:none">${i+1}</text>`;
+  if(V.s>1.7||cu)h+=`<text x="${x+15}" y="${y+4}" font-size="${fs}" font-weight="700" fill="#0c2423">${esc(l.name)}</text>`});
+ if(target&&target.c){const [x,y]=scr(target.c);h+=`<circle cx="${x}" cy="${y}" r="9" fill="var(--pur)"/><text x="${x+13}" y="${y+4}" font-size="13" font-weight="700" fill="#4c1d95">${esc(target.label||target.name)}</text>`}
+ if(st.car){const [x,y]=scr([st.car.x,st.car.y]);h+=`<text x="${x}" y="${y+7}" font-size="20" text-anchor="middle" style="stroke:none">🚗</text>`}
+ if(st.me){const [x,y]=scr([st.me.x,st.me.y]),ar=Math.max(8,(st.me.acc||0)*V.s),old=!meFresh();
   h+=`<circle cx="${x}" cy="${y}" r="${ar}" fill="var(--you)" fill-opacity=".12" stroke="var(--you)" stroke-opacity=".4"/>`;
-  if(heading!=null)h+=`<path d="M${x} ${y} L${x+40*Math.sin((heading-25)*Math.PI/180)} ${y-40*Math.cos((heading-25)*Math.PI/180)} A40 40 0 0 1 ${x+40*Math.sin((heading+25)*Math.PI/180)} ${y-40*Math.cos((heading+25)*Math.PI/180)}Z" fill="var(--you)" fill-opacity=".25"/>`;
+  if(heading!=null){const a=d=>(heading+d)*Math.PI/180;h+=`<path d="M${x} ${y} L${x+40*Math.sin(a(-25))} ${y-40*Math.cos(a(-25))} A40 40 0 0 1 ${x+40*Math.sin(a(25))} ${y-40*Math.cos(a(25))}Z" fill="var(--you)" fill-opacity=".25"/>`}
   h+=`<circle cx="${x}" cy="${y}" r="8" fill="${old?'#94a3b8':'var(--you)'}" stroke="#fff" stroke-width="3"/>`}
  OV.innerHTML=h}
 // gestures
-const ptr=new Map();let gStart=null,moved=0;
-svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);ptr.set(e.pointerId,[e.offsetX,e.offsetY]);moved=0;if(ptr.size===2){const [a,b]=[...ptr.values()];gStart={d:Math.hypot(a[0]-b[0],a[1]-b[1])}}});
-svg.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const p=ptr.get(e.pointerId),np=[e.offsetX,e.offsetY];
- if(ptr.size===1){V.tx+=np[0]-p[0];V.ty+=np[1]-p[1];moved+=Math.abs(np[0]-p[0])+Math.abs(np[1]-p[1]);if(moved>6)follow=false,$('follow').classList.remove('on');ptr.set(e.pointerId,np);applyView()}
- else{ptr.set(e.pointerId,np);const [a,b]=[...ptr.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]);moved=99;if(gStart&&gStart.d){zoomAt(d/gStart.d,(a[0]+b[0])/2,(a[1]+b[1])/2);gStart.d=d}}});
-const up=e=>{if(!ptr.has(e.pointerId))return;ptr.delete(e.pointerId);if(ptr.size<2)gStart=null;if(moved<6&&ptr.size===0)tap(e.offsetX,e.offsetY)};
-svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',e=>{ptr.delete(e.pointerId);gStart=null});
+const ptr=new Map();let gd=null,moved=0;
+svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);ptr.set(e.pointerId,[e.offsetX,e.offsetY]);moved=0;if(ptr.size===2){const [a,b]=[...ptr.values()];gd=Math.hypot(a[0]-b[0],a[1]-b[1])}});
+svg.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const p=ptr.get(e.pointerId),np=[e.offsetX,e.offsetY];ptr.set(e.pointerId,np);
+ if(ptr.size===1){V.tx+=np[0]-p[0];V.ty+=np[1]-p[1];moved+=Math.abs(np[0]-p[0])+Math.abs(np[1]-p[1]);if(moved>6&&follow){follow=false;$('follow').classList.remove('on')}applyView()}
+ else{const [a,b]=[...ptr.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]);moved=99;if(gd){zoomAt(d/gd,(a[0]+b[0])/2,(a[1]+b[1])/2);gd=d}}});
+svg.addEventListener('pointerup',e=>{if(!ptr.has(e.pointerId))return;ptr.delete(e.pointerId);if(ptr.size<2)gd=null;if(moved<6&&!ptr.size)tap(e.offsetX,e.offsetY)});
+svg.addEventListener('pointercancel',e=>{ptr.delete(e.pointerId);gd=null});
 svg.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.deltaY<0?1.2:1/1.2,e.offsetX,e.offsetY)},{passive:false});
-function inPoly([x,y],pts){let c=false;for(let i=0,j=pts.length-1;i<pts.length;j=i++){const [xi,yi]=pts[i],[xj,yj]=pts[j];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)c=!c}return c}
+function inPoly([x,y],p){let c=false;for(let i=0,j=p.length-1;i<p.length;j=i++){const [xi,yi]=p[i],[xj,yj]=p[j];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)c=!c}return c}
 function tap(sx,sy){const w=wld(sx,sy);
- if(tapMode){st.me={x:w[0],y:w[1],acc:4,t:Date.now(),src:'tap'};tapMode=false;$('setBtn').classList.remove('on');$('gpsinfo').textContent='Spot set by tap · routes from here';toast('Got it, routing from here');render();return}
- for(const k of Object.keys(S)){const [x,y]=scr(S[k].c||[1e9,1e9]);if(Math.hypot(x-sx,y-sy)<16){focusStore(k);return}}
- const sp=M.spaces.find(s=>s.loc&&inPoly(w,s.pts));if(sp){searchTarget=sp.loc;const r=dist(hereNode(),sp.loc.nodes);toast(sp.loc.name+(r?' · '+meters(r.dist)+' · ~'+mins(r.dist/SPD()/60)+' walk':''));drawOverlay()}}
-function focusStore(k){const s=S[k];searchTarget=null;centerOn(s.c,Math.max(V.s,2.4));const r=dist(hereNode(),s.nodes);toast(s.label+(r?' · '+meters(r.dist)+' away':''))}
+ if(tapMode==='me'){st.me={x:w[0],y:w[1],acc:4,t:Date.now(),src:'tap'};tapMode=null;$('setBtn').classList.remove('on');$('gpsinfo').textContent='Spot set by tap · routing from here';toast('Got it, routing from here');render();return}
+ if(tapMode==='car'){st.car={x:w[0],y:w[1]};tapMode=null;$('setBtn').classList.remove('on');toast('🚗 Car saved');render();return}
+ for(const k of ids()){const l=L(k);if(!l.c)continue;const [x,y]=scr(l.c);if(Math.hypot(x-sx,y-sy)<16){showPlace(l);return}}
+ const sp=M.spaces.find(s=>s.loc&&inPoly(w,s.pts));if(sp)showPlace(sp.loc);else hidePlace()}
+function showPlace(l){target={id:l.id,name:l.name,nodes:l.nodes,c:l.c};const r=dist(hereNode(),l.nodes),hp=hoursPill(l),inL=!!item(l.id);
+ $('place').innerHTML=`<div class="nm">${l.logo?`<img src="${esc(l.logo)}" alt="">`:''}${esc(l.name)}</div><div class="sub">${esc(l.cats.slice(0,2).join(' · '))}${r?' · '+meters(r.dist)+' · ~'+mins(Math.max(1,r.dist/SPD()/60)):''}</div>
+ <div class="row"><span class="pill ${hp[0]}">${esc(hp[1])}</span><button class="mini ${inL?'':'go'}" id="pAdd">${inL?'In my list ✓':'+ Add to list'}</button><button class="mini" id="pX">Close</button></div>`;
+ $('place').style.display='block';$('pAdd').onclick=()=>{if(!item(l.id))addStore(l.id);showPlace(l)};$('pX').onclick=hidePlace;colorStores();drawOverlay()}
+function hidePlace(){$('place').style.display='none';target=null;colorStores();drawOverlay()}
+function focusLoc(l){if(!l)return;centerOn(l.c||M.nodes[l.nodes[0]],Math.max(V.s,2.4));showPlace(l)}
 $('zin').onclick=()=>{const r=svg.getBoundingClientRect();zoomAt(1.5,r.width/2,r.height/2)};
 $('zout').onclick=()=>{const r=svg.getBoundingClientRect();zoomAt(1/1.5,r.width/2,r.height/2)};
-$('fitb').onclick=()=>{follow=false;$('follow').classList.remove('on');fit(routeB||mallB)};
-$('follow').onclick=()=>{follow=!follow;$('follow').classList.toggle('on',follow);if(follow){if(st.me)centerOn([st.me.x,st.me.y],Math.max(V.s,2.6));else{toast('Turn on 📍 or tap your spot first');startGPS()}}};
-$('setBtn').onclick=()=>{tapMode=!tapMode;$('setBtn').classList.toggle('on',tapMode);toast(tapMode?'Tap the map where you are standing':'Cancelled')};
-// GPS
+$('fitb').onclick=()=>{follow=false;$('follow').classList.remove('on');fitRoute()};
+$('follow').onclick=()=>{follow=!follow;$('follow').classList.toggle('on',follow);if(follow){if(st.me)centerOn([st.me.x,st.me.y],Math.max(V.s,2.6));else{toast('Finding you…');if(watch==null)startGPS()}}};
+$('setBtn').onclick=()=>{tapMode=tapMode?null:'me';$('setBtn').classList.toggle('on',!!tapMode);toast(tapMode?'Tap the map where you are standing':'Cancelled')};
+// GPS + compass
 let watch=null;
-function startGPS(){if(!navigator.geolocation){toast('This browser has no location');return}
+function startGPS(){if(!navigator.geolocation){toast('No location on this browser');return}
  if(watch!=null){navigator.geolocation.clearWatch(watch);watch=null;$('gpsBtn').classList.remove('on');$('gpsinfo').textContent='Location off';return}
  $('gpsBtn').classList.add('on');$('gpsinfo').textContent='Finding you…';
  watch=navigator.geolocation.watchPosition(p=>{const [x,y]=toXY(p.coords.longitude,p.coords.latitude),acc=p.coords.accuracy;
+  const out=!(x>mallB[0]-250&&x<mallB[2]+250&&y>mallB[1]-250&&y<mallB[3]+250);renderOffsite(out,x,y);
+  if(out){$('gpsinfo').textContent='Not at Sawgrass Mills yet · '+meters(Math.hypot(x,y));return}
   if(st.me&&st.me.src==='tap'&&Date.now()-st.me.t<4*60e3&&acc>12){$('gpsinfo').textContent=`GPS ±${Math.round(acc)} m · keeping your tapped spot`;return}
-  st.me={x,y,acc,t:Date.now(),src:'gps'};if(p.coords.heading!=null&&!isNaN(p.coords.heading)&&heading==null)heading=p.coords.heading;
-  const out=!(x>mallB[0]-300&&x<mallB[2]+300&&y>mallB[1]-300&&y<mallB[3]+300);
-  $('gpsinfo').textContent=out?'You are not at Sawgrass Mills yet':`GPS ±${Math.round(acc)} m${acc>30?' · rough indoors, tap your spot if off':''}`;
+  st.me={x,y,acc,t:Date.now(),src:'gps'};$('gpsinfo').textContent=`GPS ±${Math.round(acc)} m${acc>30?' · rough indoors: Tap my spot if off':''}`;
   if(follow)centerOn([x,y]);checkArrive();save();renderNow();drawOverlay()},
-  e=>{$('gpsinfo').textContent=e.code===1?'Location blocked · allow it in Settings, or use Tap my spot':'No GPS fix yet · use Tap my spot';},{enableHighAccuracy:true,maximumAge:3000,timeout:20000})}
+  e=>{$('gpsinfo').textContent=e.code===1?'Location blocked · allow it in Settings or use Tap my spot':'No GPS fix yet · use Tap my spot'},{enableHighAccuracy:true,maximumAge:3000,timeout:20000})}
 $('gpsBtn').onclick=startGPS;
-$('cmp').onclick=async()=>{try{if(typeof DeviceOrientationEvent!=='undefined'&&DeviceOrientationEvent.requestPermission){const r=await DeviceOrientationEvent.requestPermission();if(r!=='granted'){toast('Compass not allowed');return}}
+$('cmp').onclick=async()=>{try{if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission){if(await DeviceOrientationEvent.requestPermission()!=='granted'){toast('Compass not allowed');return}}
  window.addEventListener('deviceorientation',e=>{const h=e.webkitCompassHeading!=null?e.webkitCompassHeading:(e.absolute&&e.alpha!=null?360-e.alpha:null);if(h!=null){heading=h;drawOverlay()}},true);$('cmp').classList.add('on');toast('Compass on: the cone shows where you face')}catch(e){toast('No compass on this device')}};
-let askedFor=null;
-function checkArrive(){const k=remaining()[0];if(st.cur||!k||!st.me||st.me.acc>35)return;const e=M.nodes[S[k].node];const d=Math.hypot(e[0]-st.me.x,e[1]-st.me.y);
- const b=$('banner');if(d<18&&askedFor!==k){askedFor=k;b.innerHTML=`Looks like you're at <b>${esc(S[k].label)}</b>.<div class="row"><button class="go" id="bgo">Start timer</button><button id="bno">Not yet</button></div>`;b.style.display='block';$('bgo').onclick=()=>{b.style.display='none';act('arrive',k)};$('bno').onclick=()=>b.style.display='none'}}
-// ---------- UI ----------
-function renderNow(){const P=plan(),now=Date.now(),started=now>=startDate()-30*60e3;const rem=remaining(),cur=st.cur,nk=rem[0];const done=st.order.filter(k=>st.s[k]==='done').length;let h='';
- if(cur){const left=dwell(cur)-(now-st.arr)/60e3,over=left<0,a=Math.abs(left);
-  h+=`<div class="lab">You're in</div><div class="stop">${esc(S[cur].label)}</div><div class="row"><span class="timer ${over?'over':''}">${over?'+':''}${Math.floor(a)}:${String(Math.floor(a*60%60)).padStart(2,'0')}</span><span class="lab">${over?'over the '+dwell(cur)+'-min target':'left of '+dwell(cur)+' min'}</span></div>
-  <div class="btns"><button class="dn" data-a="done">Done ✓</button><button data-a="later">Come back</button><button data-a="pause">Pause</button></div>`}
- else if(nk){const r=dist(hereNode(),S[nk].nodes),wm=r?r.dist/SPD()/60:0;
-  h+=`<div class="lab">${done?'Next stop':'First stop'} · ${st.order.indexOf(nk)+1} of 23</div><div class="stop">${esc(S[nk].label)}</div>
-  <div class="row"><span class="pill ${HL[S[nk].h][0]}">${HL[S[nk].h][1]}</span><span class="pill">${r?meters(r.dist)+' · ~'+mins(Math.max(1,wm)):''} walk</span><span class="pill">Shop ~${dwell(nk)} min</span></div>
-  <div class="btns"><button class="go" data-a="arrive" data-k="${nk}">I'm here</button><button data-a="later" data-k="${nk}">Closed / later</button><button data-a="focus" data-k="${nk}">Show on map</button></div>`}
- else h+=`<div class="stop">All done 🎉</div>`;
- const sc=schedule(hereNode(),Math.max(now,startDate())+(cur?Math.max(0,dwell(cur)*60e3-(now-st.arr)):0),rem);const proj=started?sc.end:P.end,diff=Math.round((proj-P.end)/60e3);
- h+=`<div class="stats"><div class="stat"><span class="lab">Done</span><b>${done}/23</b></div><div class="stat"><span class="lab">Finish ~</span><b>${fmt(proj)}</b></div><div class="stat"><span class="lab">vs plan</span><b style="color:${!started||Math.abs(diff)<5?'var(--ok)':diff>0?'var(--warn)':'var(--ok)'}">${!started?'on plan':Math.abs(diff)<5?'on time':(diff>0?'+':'−')+mins(Math.abs(diff))}</b></div></div>`;
- if(cur&&nk){const r=dist(S[cur].node,S[nk].nodes);h+=`<div class="next">Then <b>${esc(S[nk].label)}</b> · ${r?meters(r.dist):''}</div>`}
- const later=st.order.filter(k=>st.s[k]==='later');if(later.length)h+=`<div class="next lab">Come back to: ${later.map(k=>esc(S[k].label)).join(', ')}</div>`;
+let asked=null;
+function checkArrive(){const k=remaining()[0];if(st.cur||!k||!st.me||st.me.acc>35)return;const e=M.nodes[L(k).nodes[0]];if(Math.hypot(e[0]-st.me.x,e[1]-st.me.y)<18&&asked!==k){asked=k;const b=$('banner');
+ b.innerHTML=`Looks like you're at <b>${esc(L(k).name)}</b>.<div class="row" style="margin-top:6px"><button class="go mini" id="bgo">Start timer</button><button class="mini" id="bno">Not yet</button></div>`;b.style.display='block';$('bgo').onclick=()=>{b.style.display='none';act('arrive',k)};$('bno').onclick=()=>b.style.display='none'}}
+function renderOffsite(out,x,y){const o=$('offsite');if(!out){o.style.display='none';return}const q=encodeURIComponent('Sawgrass Mills, 12801 W Sunrise Blvd, Sunrise, FL 33323');
+ o.innerHTML=`<b>You're about ${meters(Math.hypot(x,y))} from the mall.</b><div class="row" style="margin-top:8px"><a href="https://maps.apple.com/?daddr=${q}"><button class="mini">Apple Maps</button></a><a href="https://www.google.com/maps/dir/?api=1&destination=${q}"><button class="mini">Google Maps</button></a></div>`;o.style.display='block'}
+// nearby
+function nearest(cands,label){const from=hereNode();let best=null;for(const c of cands){const r=dist(from,c.nodes);if(r&&(!best||r.dist<best.r.dist))best={c,r}}
+ if(!best){toast('None found nearby');return}const c=best.c;target={id:c.id||null,name:c.name,label:label+': '+c.name,nodes:c.nodes,c:c.c||M.nodes[c.nodes[0]]};centerOn(target.c,Math.max(V.s,2));toast(label+' · '+meters(best.r.dist)+' · ~'+mins(Math.max(1,best.r.dist/SPD()/60)));colorStores();drawOverlay()}
+$('near').onclick=e=>{const b=e.target.closest('[data-near]');if(!b)return;const k=b.dataset.near;
+ if(k==='clear'){hidePlace();return}
+ if(k==='rest')return nearest(M.amen.filter(a=>/washroom|restroom/i.test(a.amenity+' '+a.name)),'Restroom');
+ if(k==='atm')return nearest(M.amen.filter(a=>/atm/i.test(a.amenity)),'ATM');
+ if(k==='guest')return nearest(M.amen.filter(a=>/guest services/i.test(a.name)),'Guest services');
+ if(k==='food')return nearest(M.locs.filter(l=>l.cats.some(c=>/Restaurant|Dining|Gourmet/.test(c))),'Food');
+ if(k==='car'){if(!st.car){tapMode='car';$('setBtn').classList.add('on');toast(st.me?'Tap where you parked (or near the entrance you used)':'Tap where you parked');return}
+  const n=nearestNode(M.nodes,[st.car.x,st.car.y],M.adj);target={name:'My car',label:'🚗 My car',nodes:[n],c:[st.car.x,st.car.y],car:[st.car.x,st.car.y]};centerOn(target.c,Math.max(V.s,1.6));toast('Purple line = back to your car. Long-press 🚗 My car to move it.');drawOverlay()}};
+(()=>{const b=document.querySelector('[data-near=car]');let t;b.addEventListener('pointerdown',()=>{t=setTimeout(()=>{st.car=null;save();tapMode='car';$('setBtn').classList.add('on');toast('Tap the new parking spot')},700)});['pointerup','pointerleave'].forEach(ev=>b.addEventListener(ev,()=>clearTimeout(t)))})();
+// ===== UI =====
+function noteHTML(k){const it=item(k);return it&&it.note?`<div class="next">📝 ${esc(it.note)}</div>`:''}
+function renderNow(){const now=Date.now(),started=now>=startDate()-30*60e3,rem=remaining(),cur=st.cur&&L(st.cur)?st.cur:null,nk=rem[0];
+ const done=ids().filter(k=>st.s[k]==='done').length,tot=ids().length;let h='';
+ if(!tot){$('now').innerHTML=`<div class="stop">Let's build your list</div><p class="lab">Pick stores in <b>Add</b>, or load the Black Friday list.</p><div class="btns" style="grid-template-columns:1fr 1fr"><button class="go" data-tabgo="add">➕ Add stores</button><button id="nowPreset">Black Friday 23</button></div>`;$('nowPreset').onclick=loadPreset;return}
+ if(cur){const l=L(cur),left=dwell(cur)-(now-st.arr)/60e3,over=left<0,a=Math.abs(left);
+  h+=`<div class="lab">You're in</div><div class="stop">${esc(l.name)}</div><div class="row"><span class="timer ${over?'over':''}">${over?'+':''}${Math.floor(a)}:${String(Math.floor(a*60%60)).padStart(2,'0')}</span><span class="lab">${over?'over the '+dwell(cur)+'-min target':'left of '+dwell(cur)+' min'}</span></div>
+  <div class="btns"><button class="dn" data-a="done">Done ✓</button><button data-a="more">+5 min</button><button data-a="later">Come back</button></div>${noteHTML(cur)}`}
+ else if(nk){const l=L(nk),r=dist(hereNode(),l.nodes),hp=hoursPill(l);
+  h+=`<div class="lab">${done?'Next stop':'First stop'} · ${ids().indexOf(nk)+1} of ${tot}</div><div class="stop">${esc(l.name)}</div>
+  <div class="row"><span class="pill ${hp[0]}">${esc(hp[1])}</span>${r?`<span class="pill">${meters(r.dist)} · ~${mins(Math.max(1,r.dist/SPD()/60))} walk</span>`:''}<span class="pill">Shop ~${dwell(nk)} min</span></div>
+  <div class="btns"><button class="go" data-a="arrive" data-k="${nk}">I'm here</button><button data-a="later" data-k="${nk}">Closed / later</button><button data-a="focus" data-k="${nk}">Show on map</button></div>${noteHTML(nk)}`}
+ else{const P0=plan(),walked=P0.out.filter(o=>st.s[o.k]==='done').reduce((a,o)=>a+o.walk,0),sp=st.list.reduce((a,x)=>a+(+x.spent||0),0);h+=`<div class="stop">All done 🎉</div><p>${done} stores · about ${meters(walked)} walked${sp?' · '+money(sp)+' spent':''}${st.first?' · '+mins((Date.now()-st.first)/60e3)+' on the trip':''}.</p>`}
+ const P=plan(),sc=schedule(hereNode(),Math.max(now,startDate())+(cur?Math.max(0,dwell(cur)*60e3-(now-st.arr)):0),rem,done+(cur?1:0)),proj=started?sc.end:P.end,diff=Math.round((proj-P.end)/60e3);
+ const spent=st.list.reduce((a,x)=>a+(+x.spent||0),0),bud=+st.cfg.budget||0;
+ h+=`<div class="stats"><div class="stat"><span class="lab">Done</span><b>${done}/${tot}</b></div><div class="stat"><span class="lab">Finish ~</span><b>${fmt(proj)}</b></div>${bud?`<div class="stat"><span class="lab">Spent</span><b style="color:${spent>bud?'var(--acc)':'inherit'}">${money(spent)}<span class="lab"> / ${money(bud)}</span></b></div>`:`<div class="stat"><span class="lab">vs plan</span><b style="color:${!started||Math.abs(diff)<5?'var(--ok)':diff>0?'var(--warn)':'var(--ok)'}">${!started?'on plan':Math.abs(diff)<5?'on time':(diff>0?'+':'−')+mins(Math.abs(diff))}</b></div>`}</div>`;
+ if(st.cfg.endby&&rem.length){const [eh,em]=st.cfg.endby.split(':').map(Number),eb=new Date();eb.setHours(eh,em,0,0);const over=Math.round((proj-eb.getTime())/60e3);
+  if(over>0){const opt=rem.filter(k=>!item(k).must).sort((a,b)=>dwell(b)-dwell(a));let cut=0,pick=[];for(const k of opt){if(cut>=over)break;cut+=dwell(k)+3;pick.push(k)}
+   h+=`<div class="next" style="color:var(--warn)"><b>About ${mins(over)} past your finish-by time.</b> ${pick.length?'Optional stops you could skip: '+pick.map(k=>esc(L(k).name)).join(', ')+'.':'Mark must-visit stores with ⭐ so I can suggest what to skip.'}</div>`}
+  else h+=`<div class="next lab">On track to finish ${mins(-over)} before ${fmt(eb)}.</div>`}
+ if(cur&&nk){const r=dist(L(cur).nodes[0],L(nk).nodes);h+=`<div class="next">Then <b>${esc(L(nk).name)}</b>${r?' · '+meters(r.dist):''}</div>`}
+ const later=ids().filter(k=>st.s[k]==='later');if(later.length)h+=`<div class="next lab">Come back to: ${later.map(k=>esc(L(k).name)).join(', ')}</div>`;
  $('now').innerHTML=h}
-function renderList(){const P=plan(),pm=Object.fromEntries(P.out.map(o=>[o.k,o]));let n=startNode,L='';
- st.order.forEach((k,i)=>{const s=S[k],r=dist(n,s.nodes);n=r?r.end:s.node;const c=st.s[k]==='done'?'d':k===st.cur?'c':st.s[k]==='later'?'lt':'';
-  L+=`<li class="${c}"><span class="num">${i+1}</span><div><div class="nm">${esc(s.label)}</div><div class="sub">${r?meters(r.dist)+' walk · ':''}shop ${dwell(k)} min${s.phone?' · '+esc(s.phone):''}</div><div class="row" style="margin-top:3px"><span class="pill ${HL[s.h][0]}">${HL[s.h][1]}</span>${st.s[k]==='later'?'<span class="pill u">come back</span>':''}</div></div>
-  <div class="t">${pm[k]?fmt(pm[k].arr):''}<div class="sub">plan</div>${st.s[k]==='done'?'':`<button class="mini" data-a="arrive" data-k="${k}">Here</button>`}</div></li>`});
- const tot=P.out.reduce((a,o)=>a+o.walk,0);L+=`<li style="display:block" class="sub">Total walking ≈ ${meters(tot)} · planned finish ${fmt(P.end)}</li>`;
- $('list').innerHTML=L}
-function render(){renderNow();renderList();colorTargets();drawOverlay();save()}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&!b.closest('svg'))act(b.dataset.a,b.dataset.k)});
-$('opt').onclick=optimize;
+function renderList(){const P=plan(),pm=Object.fromEntries(P.out.map(o=>[o.k,o]));let n=startNode(),out='';
+ st.list.forEach((x,i)=>{const l=L(x.id);if(!l)return;const r=dist(n,l.nodes);n=r?r.end:l.nodes[0];const s=st.s[x.id],c=s==='done'?'d':x.id===st.cur?'c':s==='later'?'lt':'',hp=hoursPill(l);
+  out+=`<li class="it ${c}" data-id="${x.id}"><span class="hdl" aria-label="Drag to reorder">⠿</span><span class="num">${i+1}</span>
+  <div><div class="nm">${l.logo?`<img src="${esc(l.logo)}" alt="" loading="lazy">`:''}<span>${esc(l.name)}</span></div>
+  ${x.note?`<div class="sub">📝 ${esc(x.note)}</div>`:''}<div class="sub">${pm[x.id]?fmt(pm[x.id].arr)+' · ':''}${r?meters(r.dist)+' walk':''}</div>
+  <div class="row" style="margin-top:4px"><span class="pill ${hp[0]}">${esc(hp[1])}</span>${s==='later'?'<span class="pill u">come back</span>':''}${s==='done'?`<input class="spent" type="number" inputmode="decimal" placeholder="$ spent" data-sp="${x.id}" value="${x.spent||''}">`:''}</div></div>
+  <div style="display:grid;gap:4px;justify-items:end"><div class="ctr"><button data-dw="-5" data-id="${x.id}" aria-label="Less time">−</button><span class="sub" style="min-width:42px;text-align:center">${x.dw} min</span><button data-dw="5" data-id="${x.id}" aria-label="More time">+</button></div>
+  <div class="ctr"><button data-must="${x.id}" aria-label="Must visit" style="${x.must?'background:#facc15;border-color:#eab308':''}">⭐</button><button data-note="${x.id}" aria-label="Note" style="${x.note?'background:#e0f2fe':''}">📝</button><button data-pin="${x.id}" aria-label="Pin position" style="${x.pin?'background:var(--teal);color:#fff;border-color:var(--teal)':''}">📌</button>${s==='done'?'':`<button data-go="${x.id}" aria-label="Go now">▶</button>`}<button data-rm="${x.id}" aria-label="Remove">✕</button></div></div></li>`});
+ const tw=P.out.reduce((a,o)=>a+o.walk,0);
+ $('list').innerHTML=out||`<li class="empty">No stores yet.<br><button class="go mini" data-tabgo="add" style="margin-top:10px">➕ Add stores</button></li>`;
+ $('listsum').textContent=ids().length?`${ids().length} stores · ${meters(tw)} walk · done ~${fmt(P.end)}`:'';$('tabn').textContent=`My list (${ids().length})`}
+let cat='';
+function renderAdd(){const q=$('q').value.trim().toLowerCase();let res=M.locs;
+ if(cat)res=res.filter(l=>l.cats.includes(cat));
+ if(q)res=res.filter(l=>l.name.toLowerCase().includes(q)||l.tags.some(t=>t.toLowerCase().includes(q))||l.cats.some(c=>c.toLowerCase().includes(q)));
+ const from=hereNode();res=res.slice(0,q||cat?80:40);
+ $('res').innerHTML=res.map(l=>{const inL=!!item(l.id),hp=hoursPill(l),tagHit=q&&!l.name.toLowerCase().includes(q)&&l.tags.find(t=>t.toLowerCase().includes(q));
+  return `<li class="res"><span>${l.logo?`<img src="${esc(l.logo)}" alt="" loading="lazy">`:''}</span><div><div class="nm" data-show="${l.id}" style="cursor:pointer">${esc(l.name)}</div><div class="sub">${esc(l.cats.slice(0,2).join(' · '))}${tagHit?' · carries '+esc(tagHit):''}</div><span class="pill ${hp[0]}" style="margin-top:3px">${esc(hp[1])}</span></div>
+  <button class="mini ${inL?'added':''}" data-add="${l.id}">${inL?'✓ Added':'+ Add'}</button></li>`}).join('')||'<li class="empty">No match. Try a brand or category.</li>'}
+function renderCats(){const cnt={};M.locs.forEach(l=>l.cats.forEach(c=>cnt[c]=(cnt[c]||0)+1));
+ const top=Object.entries(cnt).filter(([c])=>!/Parking|Hotels|Medical|Services|Shopping$|Everything/.test(c)).sort((a,b)=>b[1]-a[1]).slice(0,16).map(x=>x[0]);
+ $('cats').innerHTML=`<button data-cat="" class="${cat?'':'on'}">All</button>`+top.map(c=>`<button data-cat="${esc(c)}" class="${c===cat?'on':''}">${esc(c)}</button>`).join('')}
+function render(){if(!M)return;renderNow();renderList();if($('p-add').classList.contains('on'))renderAdd();colorStores();drawOverlay();save()}
+// events
+document.addEventListener('click',e=>{const t=e.target;let b;
+ if(b=t.closest('[data-tab]'))return showTab(b.dataset.tab);
+ if(b=t.closest('[data-tabgo]'))return showTab(b.dataset.tabgo);
+ if(b=t.closest('[data-a]')){if(!b.closest('svg'))act(b.dataset.a,b.dataset.k);return}
+ if(b=t.closest('[data-add]')){const id=b.dataset.add;item(id)?removeStore(id):addStore(id);renderAdd();return}
+ if(b=t.closest('[data-show]')){showTab('guide');focusLoc(L(b.dataset.show));return}
+ if(b=t.closest('[data-cat]')){cat=b.dataset.cat;renderCats();renderAdd();return}
+ if(b=t.closest('[data-dw]')){snap();const x=item(b.dataset.id);x.dw=Math.max(2,Math.min(90,x.dw+ +b.dataset.dw));render();return}
+ if(b=t.closest('[data-must]')){snap();const x=item(b.dataset.must);x.must=!x.must;toast(x.must?'⭐ Must-visit':'Optional');render();return}
+ if(b=t.closest('[data-note]')){const x=item(b.dataset.note);const v=prompt('Note for '+L(x.id).name+' (items, sizes, who it is for)',x.note||'');if(v!==null){x.note=v.trim();render()}return}
+ if(b=t.closest('[data-pin]')){snap();const x=item(b.dataset.pin);x.pin=!x.pin;toast(x.pin?'📌 Pinned: Optimize keeps it here':'Unpinned');render();return}
+ if(b=t.closest('[data-rm]')){removeStore(b.dataset.rm);toast('Removed');return}
+ if(b=t.closest('[data-go]')){const id=b.dataset.go;snap();const x=item(id);const others=st.list.filter(y=>y.id!==id);const firstPending=others.findIndex(y=>st.s[y.id]!=='done'&&y.id!==st.cur);others.splice(firstPending<0?others.length:firstPending,0,x);st.list=others;if(st.s[id]==='later')delete st.s[id];render();showTab('guide');toast('Going to '+L(id).name+' next');return}
+});
+document.addEventListener('change',e=>{const t=e.target;if(t.dataset.sp){item(t.dataset.sp).spent=t.value;save();renderNow()}});
+function showTab(k){document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-'+k));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===k));if(k==='add'){renderCats();renderAdd()}window.scrollTo({top:0})}
+$('q').addEventListener('input',renderAdd);
+$('opt').onclick=()=>optimize(false);
 $('undo').onclick=()=>{const h=st.hist.pop();if(!h){toast('Nothing to undo');return}Object.assign(st,JSON.parse(h));toast('Undone');render()};
-$('reset').onclick=e=>{if(e.target.dataset.sure){st.order=STORES.map(s=>s[0]);st.s={};st.cur=null;st.arr=null;st.me=null;st.hist=[];delete e.target.dataset.sure;e.target.textContent='Reset the day';render();toast('Fresh start')}else{e.target.dataset.sure=1;e.target.textContent='Tap again to reset'}};
-for(const k of ['start','pace','dw','brk']){$(k).value=st.cfg[k];$(k).onchange=()=>{st.cfg[k]=$(k).value;render()}}
-$('q').oninput=()=>{const q=$('q').value.trim().toLowerCase();if(!q){$('sres').innerHTML='';return}
- const hits=M.locs.filter(l=>l.name.toLowerCase().includes(q)).slice(0,12);
- $('sres').innerHTML=hits.map((l,i)=>{const r=dist(hereNode(),l.nodes);return `<li data-i="${M.locs.indexOf(l)}"><b>${esc(l.name)}</b> <span class="sub">${r?meters(r.dist)+' · ~'+mins(Math.max(1,r.dist/SPD()/60)):''}</span></li>`}).join('')||'<li class="sub">No match</li>'};
-$('sres').onclick=e=>{const li=e.target.closest('[data-i]');if(!li)return;searchTarget=M.locs[+li.dataset.i];centerOn(searchTarget.spaces[0]?searchTarget.spaces[0].c:M.nodes[searchTarget.nodes[0]],Math.max(V.s,2.2));toast('Purple line = walk to '+searchTarget.name);window.scrollTo({top:0,behavior:'smooth'})};
-window.addEventListener('resize',()=>drawOverlay());
-// ---------- boot ----------
-(async()=>{try{
- let buf=null;
- const SRC=['https://cdn.mappedin.com/573386b10ff1998d0d1097da/3082b71766ba8a6286af97657529601a4d413bde.zip','mvf.zip'];
- try{let r=null;for(const u of SRC){try{r=await fetch(u);if(r.ok)break}catch(e){r=null}}if(!r||!r.ok)throw 0;buf=await r.arrayBuffer();try{const c=await caches.open('sg-data');await c.put('/mvf.zip',new Response(buf.slice(0)))}catch(e){}}
- catch(e){const c=await caches.open('sg-data'),r=await c.match('/mvf.zip');if(r)buf=await r.arrayBuffer()}
- if(!buf)throw new Error('no map data');
+$('preset').onclick=()=>{loadPreset();showTab('list')};
+$('clear').onclick=e=>{if(e.target.dataset.sure){snap();st.list=[];st.s={};st.cur=null;delete e.target.dataset.sure;e.target.textContent='Clear my list';render();toast('List cleared · Undo on My list')}else{e.target.dataset.sure=1;e.target.textContent='Tap again to clear'}};
+$('reset').onclick=e=>{if(e.target.dataset.sure){snap();st.s={};st.cur=null;st.arr=null;st.me=null;st.list.forEach(x=>delete x.spent);delete e.target.dataset.sure;e.target.textContent='Reset progress';render();toast('Progress reset')}else{e.target.dataset.sure=1;e.target.textContent='Tap again to reset'}};
+for(const k of ['start','pace','brk','budget','entr','endby']){const el=$(k);el.addEventListener('change',()=>{st.cfg[k]=el.value;DC.clear();render()})}
+// share
+function shareURL(){const enc=st.list.map(x=>x.id.replace(/^el_/,'')+'-'+x.dw+(x.pin?'p':'')).join('.');return location.origin+location.pathname+'#l='+enc}
+$('share').onclick=async()=>{if(!ids().length){toast('Add stores first');return}const url=shareURL();
+ try{if(navigator.share){await navigator.share({title:'My Sawgrass Mills list',text:ids().length+' stores · Mall Run',url});return}}catch(e){if(e.name==='AbortError')return}
+ try{await navigator.clipboard.writeText(url);toast('Link copied')}catch(e){prompt('Copy this link',url)}};
+function checkShared(){const m=location.hash.match(/^#l=([\w.\-]+)/);if(!m)return;history.replaceState(null,'',location.pathname);
+ const list=m[1].split('.').map(s=>{const [id,rest]=s.split('-');const dw=parseInt(rest)||12;return {id:'el_'+id,dw,pin:/p$/.test(rest||'')}}).filter(x=>L(x.id));if(!list.length)return;
+ const b=$('banner');b.innerHTML=`Someone shared a list of <b>${list.length} stores</b>.<div class="row" style="margin-top:6px"><button class="go mini" id="shY">Load it</button><button class="mini" id="shN">Keep mine</button></div>`;b.style.display='block';
+ $('shY').onclick=()=>{snap();st.list=list;st.s={};st.cur=null;st.ob=true;b.style.display='none';$('ob').style.display='none';render();fitRoute();toast('Shared list loaded')};$('shN').onclick=()=>b.style.display='none'}
+// drag reorder
+let drag=null;
+$('list').addEventListener('pointerdown',e=>{const h=e.target.closest('.hdl');if(!h)return;e.preventDefault();const li=h.closest('.it');drag={li,y0:e.clientY,ptr:e.pointerId};li.classList.add('drag');h.setPointerCapture(e.pointerId)});
+$('list').addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.ptr)return;const li=drag.li;li.style.transform=`translateY(${e.clientY-drag.y0}px)`;
+ const sib=[...$('list').children].filter(x=>x!==li&&x.classList.contains('it'));for(const s of sib){const r=s.getBoundingClientRect(),mid=r.top+r.height/2;
+  const lr=li.getBoundingClientRect(),lm=lr.top+lr.height/2;
+  if(s.compareDocumentPosition(li)&Node.DOCUMENT_POSITION_FOLLOWING&&lm<mid){const before=li.getBoundingClientRect().top;$('list').insertBefore(li,s);drag.y0+=li.getBoundingClientRect().top-before;li.style.transform=`translateY(${e.clientY-drag.y0}px)`;break}
+  if(s.compareDocumentPosition(li)&Node.DOCUMENT_POSITION_PRECEDING&&lm>mid&&s===li.nextElementSibling){const before=li.getBoundingClientRect().top;$('list').insertBefore(s,li);drag.y0+=li.getBoundingClientRect().top-before;li.style.transform=`translateY(${e.clientY-drag.y0}px)`;break}}
+ const r=$('list').getBoundingClientRect();if(e.clientY<80)window.scrollBy(0,-12);if(e.clientY>innerHeight-110)window.scrollBy(0,12)});
+const endDrag=e=>{if(!drag)return;const li=drag.li;li.classList.remove('drag');li.style.transform='';drag=null;snap();
+ const order=[...$('list').querySelectorAll('.it')].map(x=>x.dataset.id);st.list=order.map(id=>item(id)).filter(Boolean);render()};
+$('list').addEventListener('pointerup',endDrag);$('list').addEventListener('pointercancel',endDrag);
+// onboarding
+$('obPreset').onclick=()=>{st.ob=true;$('ob').style.display='none';loadPreset();fitRoute()};
+$('obOwn').onclick=()=>{st.ob=true;$('ob').style.display='none';save();showTab('add')};
+// boot
+(async()=>{try{let buf=null;
+ for(const u of [ZIP,'mvf.zip']){try{const r=await fetch(u);if(r.ok){buf=await r.arrayBuffer();break}}catch(e){}}
+ if(buf){try{const c=await caches.open('mr-data');await c.put('mvf.zip',new Response(buf.slice(0)))}catch(e){}}
+ else{try{const c=await caches.open('mr-data'),r=await c.match('mvf.zip');if(r)buf=await r.arrayBuffer()}catch(e){}}
+ if(!buf)throw new Error('no map data yet');
  M=await buildModel(buf);
- for(const [k,nm,label,dw,h] of STORES){const l=M.locs.find(x=>x.name===nm);S[k]={k,label,dw,h,nodes:l?l.nodes:[],node:l?l.nodes[0]:0,c:l&&l.spaces[0]?l.spaces[0].c:(l?M.nodes[l.nodes[0]]:null),phone:l?l.phone:''}}
- startNode=(M.locs.find(l=>l.name===START_LOC)||{nodes:[0]}).nodes[0];
- $('load').remove();drawStatic();routeB=(()=>{const xs=[],ys=[];Object.values(S).forEach(s=>{if(s.c){xs.push(s.c[0]);ys.push(s.c[1])}});const sn=M.nodes[startNode];xs.push(sn[0]);ys.push(sn[1]);return [Math.min(...xs)-25,Math.min(...ys)-25,Math.max(...xs)+25,Math.max(...ys)+25]})();fit(routeB);render();
- setInterval(()=>{if(st.cur)renderNow()},1000);setInterval(render,30000);
+ // migrate v2 list (sg2) if present
+ if(!st.list.length){try{const o=JSON.parse(localStorage.getItem('sg2')||'null');if(o&&o.order){/* old Black Friday list */}}catch(e){}}
+ st.list=st.list.filter(x=>L(x.id));
+ $('entr').innerHTML=ENTR.filter(([n])=>M.locs.some(l=>l.name===n)).map(([n,lab])=>`<option value="${esc(n)}">${esc(lab)}</option>`).join('');
+ for(const k of ['start','pace','brk','budget','entr','endby'])$(k).value=st.cfg[k];
+ $('load').remove();drawStatic();render();ids().length?fitRoute():fit(mallB);
+ if(!st.ob&&!location.hash.startsWith('#l='))$('ob').style.display='flex';
+ checkShared();
+ setInterval(()=>{if(st.cur)renderNow()},1000);setInterval(()=>{if(!drag)render()},30000);
  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 }catch(e){$('load').textContent='Could not load the mall map ('+e.message+'). Check your connection and reload.'}})();
 }

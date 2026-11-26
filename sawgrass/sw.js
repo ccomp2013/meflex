@@ -1,4 +1,4 @@
-const C='sg-shell-v1';
+const C='mr-shell-v2';
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>self.clients.claim());
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);
