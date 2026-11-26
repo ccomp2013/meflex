@@ -367,7 +367,7 @@ let cat='';
 function renderAdd(){const q=$('q').value.trim().toLowerCase();let res=M.locs;
  if(cat)res=res.filter(l=>l.cats.includes(cat));
  if(q)res=res.filter(l=>l.name.toLowerCase().includes(q)||l.tags.some(t=>t.toLowerCase().includes(q))||l.cats.some(c=>c.toLowerCase().includes(q)));
- const from=hereNode();res=res.slice(0,q||cat?80:40);
+ if(q){const sc=l=>{const n=l.name.toLowerCase();return n.startsWith(q)?0:n.includes(q)?1:l.cats.some(c=>c.toLowerCase().includes(q))?2:3};res=res.slice().sort((x,y)=>sc(x)-sc(y)||x.name.localeCompare(y.name))}res=res.slice(0,q||cat?80:40);
  $('res').innerHTML=res.map(l=>{const inL=!!item(l.id),hp=hoursPill(l),tagHit=q&&!l.name.toLowerCase().includes(q)&&l.tags.find(t=>t.toLowerCase().includes(q));
   return `<li class="res"><span>${l.logo?`<img src="${esc(l.logo)}" alt="" loading="lazy">`:''}</span><div><div class="nm" data-show="${l.id}" style="cursor:pointer">${esc(l.name)}</div><div class="sub">${esc(l.cats.slice(0,2).join(' · '))}${tagHit?' · carries '+esc(tagHit):''}</div><span class="pill ${hp[0]}" style="margin-top:3px">${esc(hp[1])}</span></div>
   <button class="mini ${inL?'added':''}" data-add="${l.id}">${inL?'✓ Added':'+ Add'}</button></li>`}).join('')||'<li class="empty">No match. Try a brand or category.</li>'}
@@ -410,7 +410,7 @@ function checkShared(){const m=location.hash.match(/^#l=([\w.\-]+)/);if(!m)retur
  $('shY').onclick=()=>{snap();st.list=list;st.s={};st.cur=null;st.ob=true;b.style.display='none';$('ob').style.display='none';render();fitRoute();toast('Shared list loaded')};$('shN').onclick=()=>b.style.display='none'}
 // drag reorder
 let drag=null;
-$('list').addEventListener('pointerdown',e=>{const h=e.target.closest('.hdl');if(!h)return;e.preventDefault();const li=h.closest('.it');drag={li,y0:e.clientY,ptr:e.pointerId};li.classList.add('drag');h.setPointerCapture(e.pointerId)});
+$('list').addEventListener('pointerdown',e=>{const h=e.target.closest('.hdl');if(!h)return;e.preventDefault();const li=h.closest('.it');drag={li,y0:e.clientY,ptr:e.pointerId};li.classList.add('drag');try{h.setPointerCapture(e.pointerId)}catch(_){}});
 $('list').addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.ptr)return;const li=drag.li;li.style.transform=`translateY(${e.clientY-drag.y0}px)`;
  const sib=[...$('list').children].filter(x=>x!==li&&x.classList.contains('it'));for(const s of sib){const r=s.getBoundingClientRect(),mid=r.top+r.height/2;
   const lr=li.getBoundingClientRect(),lm=lr.top+lr.height/2;
