@@ -50,14 +50,14 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .chips button.on{background:var(--teal);color:#fff;border-color:var(--teal)}
 h2{font-size:19px;margin:18px 0 8px}
 .list{list-style:none;margin:0;padding:0}
-.it{display:grid;grid-template-columns:30px 34px minmax(0,1fr) auto;gap:8px;padding:9px 4px;border-bottom:1px solid var(--line);align-items:center;background:var(--bg)}
+.it{display:grid;grid-template-columns:30px 34px minmax(0,1fr);gap:8px;padding:9px 4px;border-bottom:1px solid var(--line);align-items:center;background:var(--bg)}
 .it.drag{background:#fff;box-shadow:0 8px 24px rgb(0 0 0/.2);border-radius:12px;position:relative;z-index:3}
 .hdl{touch-action:none;font-size:20px;color:var(--mute);text-align:center;cursor:grab;user-select:none;padding:8px 0}
 .num{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;border:2px solid var(--acc);background:var(--card)}
 .it.d .num{background:var(--ok);border-color:var(--ok);color:#fff}.it.d .nm{text-decoration:line-through;color:var(--mute)}
 .it.c .num{background:var(--acc);color:#fff}.it.lt .num{border-style:dashed;border-color:var(--warn)}
 .nm{font-weight:650;display:flex;gap:6px;align-items:center}
-.nm img,.res img{width:22px;height:22px;object-fit:contain;border-radius:5px;background:#fff;flex:none}
+.nm img,.res img{width:22px;height:22px;object-fit:contain;border-radius:5px;background:#fff;flex:none}.nm img[src=''],img.bad{display:none}
 .sub{font-size:12.5px;color:var(--mute)}
 .ctr{display:flex;align-items:center;gap:4px}
 .ctr button{min-height:34px;min-width:34px;padding:0;font-size:16px}
@@ -355,11 +355,10 @@ function renderNow(){const now=Date.now(),started=now>=startDate()-30*60e3,rem=r
 function renderList(){const P=plan(),pm=Object.fromEntries(P.out.map(o=>[o.k,o]));let n=startNode(),out='';
  st.list.forEach((x,i)=>{const l=L(x.id);if(!l)return;const r=dist(n,l.nodes);n=r?r.end:l.nodes[0];const s=st.s[x.id],c=s==='done'?'d':x.id===st.cur?'c':s==='later'?'lt':'',hp=hoursPill(l);
   out+=`<li class="it ${c}" data-id="${x.id}"><span class="hdl" aria-label="Drag to reorder">⠿</span><span class="num">${i+1}</span>
-  <div><div class="nm">${l.logo?`<img src="${esc(l.logo)}" alt="" loading="lazy">`:''}<span>${esc(l.name)}</span></div>
+  <div><div class="nm">${l.logo?`<img src="${esc(l.logo)}" alt="" loading="lazy" onerror="this.remove()">`:''}<span>${esc(l.name)}</span></div>
   ${x.note?`<div class="sub">📝 ${esc(x.note)}</div>`:''}<div class="sub">${pm[x.id]?fmt(pm[x.id].arr)+' · ':''}${r?meters(r.dist)+' walk':''}</div>
-  <div class="row" style="margin-top:4px"><span class="pill ${hp[0]}">${esc(hp[1])}</span>${s==='later'?'<span class="pill u">come back</span>':''}${s==='done'?`<input class="spent" type="number" inputmode="decimal" placeholder="$ spent" data-sp="${x.id}" value="${x.spent||''}">`:''}</div></div>
-  <div style="display:grid;gap:4px;justify-items:end"><div class="ctr"><button data-dw="-5" data-id="${x.id}" aria-label="Less time">−</button><span class="sub" style="min-width:42px;text-align:center">${x.dw} min</span><button data-dw="5" data-id="${x.id}" aria-label="More time">+</button></div>
-  <div class="ctr"><button data-must="${x.id}" aria-label="Must visit" style="${x.must?'background:#facc15;border-color:#eab308':''}">⭐</button><button data-note="${x.id}" aria-label="Note" style="${x.note?'background:#e0f2fe':''}">📝</button><button data-pin="${x.id}" aria-label="Pin position" style="${x.pin?'background:var(--teal);color:#fff;border-color:var(--teal)':''}">📌</button>${s==='done'?'':`<button data-go="${x.id}" aria-label="Go now">▶</button>`}<button data-rm="${x.id}" aria-label="Remove">✕</button></div></div></li>`});
+  <div class="row" style="margin-top:4px"><span class="pill ${hp[0]}">${esc(hp[1])}</span>${s==='later'?'<span class="pill u">come back</span>':''}${s==='done'?`<input class="spent" type="number" inputmode="decimal" placeholder="$ spent" data-sp="${x.id}" value="${x.spent||''}">`:''}</div>
+  <div class="ctr" style="margin-top:6px;flex-wrap:wrap"><button data-dw="-5" data-id="${x.id}" aria-label="Less time">−</button><span class="sub" style="min-width:46px;text-align:center">${x.dw} min</span><button data-dw="5" data-id="${x.id}" aria-label="More time">+</button><span style="width:8px"></span><button data-must="${x.id}" aria-label="Must visit" style="${x.must?'background:#facc15;border-color:#eab308':''}">⭐</button><button data-note="${x.id}" aria-label="Note" style="${x.note?'background:#e0f2fe':''}">📝</button><button data-pin="${x.id}" aria-label="Pin position" style="${x.pin?'background:var(--teal);color:#fff;border-color:var(--teal)':''}">📌</button>${s==='done'?'':`<button data-go="${x.id}" aria-label="Go now">▶</button>`}<button data-rm="${x.id}" aria-label="Remove">✕</button></div></div></li>`});
  const tw=P.out.reduce((a,o)=>a+o.walk,0);
  $('list').innerHTML=out||`<li class="empty">No stores yet.<br><button class="go mini" data-tabgo="add" style="margin-top:10px">➕ Add stores</button></li>`;
  $('listsum').textContent=ids().length?`${ids().length} stores · ${meters(tw)} walk · done ~${fmt(P.end)}`:'';$('tabn').textContent=`My list (${ids().length})`}
